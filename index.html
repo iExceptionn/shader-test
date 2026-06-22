@@ -151,9 +151,7 @@ async function build(){
         a.download=($('packName').value||'Text-Shader-Test-Pack').replace(/[^a-z0-9._-]+/gi,'-')+'.zip';
         a.click();
         setTimeout(()=>URL.revokeObjectURL(u),1000);
-        $('log').value='Resource pack built: '+a.download+'
-Files: '+Object.keys(files).length+'
-ZIP: '+(window.JSZip?'JSZip':'fallback zip');
+        $('log').value='Resource pack built: '+a.download+'\nFiles: '+Object.keys(files).length+'\nZIP: '+(window.JSZip?'JSZip':'fallback zip');
     }catch(e){
         $('log').value='Build failed: '+e.message;
         console.error(e);
