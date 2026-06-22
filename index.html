@@ -21,7 +21,7 @@
  <label>Mode</label><select id="mode"></select>
  <label>Preset</label><select id="preset"><option value="">Custom</option></select>
  <label data-en="Preview text" data-nl="Preview tekst">Preview text</label><input id="previewText" type="text" value="Eternal Network">
- <div class="row"><div><label data-en="Animation speed" data-nl="Animatiesnelheid">Animation speed</label><input id="speed" type="number" step="1" value="260"></div><div><label data-en="Character spacing" data-nl="Letter spacing">Character spacing</label><input id="spacing" type="number" step="0.001" value="0.006"></div></div>
+ <div class="row"><div><label data-en="Animation speed" data-nl="Animatiesnelheid">Animation speed</label><input id="speed" type="number" step="1" value="300"></div><div><label data-en="Character spacing" data-nl="Letter spacing">Character spacing</label><input id="spacing" type="number" step="0.001" value="0.006"></div></div>
  <div class="row"><div><label>Shadow factor</label><input id="shadowFactor" type="number" step="0.05" value="0.25"></div><div><label><input id="wavePreview" type="checkbox"> <span data-en="Preview movement" data-nl="Beweging preview">Preview movement</span></label></div></div>
  <div id="modeSettings"></div>
  <h2 style="margin-top:18px" data-en="Colors" data-nl="Kleuren">Colors</h2>
@@ -34,7 +34,7 @@
  <div class="card">
   <h2 data-en="Live preview" data-nl="Live preview">Live preview</h2>
   <div class="previewBox"><canvas id="previewCanvas" class="previewCanvas"></canvas></div>
-  <p class="small" data-en="Preview is canvas-based now, so diagonal mode cannot become transparent. VSH effects are visually approximated." data-nl="Preview gebruikt nu canvas, dus diagonal mode kan niet transparant worden. VSH effecten zijn visueel benaderd.">Preview is canvas-based now, so diagonal mode cannot become transparent. VSH effects are visually approximated.</p>
+  <p class="small" data-en="Minecraft-accurate preview: uses the same charIndex / animTime formulas as the generated shader. Font rendering is still browser-based, but timing and color math now match the test pack much more closely." data-nl="Minecraft-accurate preview: gebruikt dezelfde charIndex / animTime formules als de gegenereerde shader. Font rendering blijft browser-based, maar timing en kleurmath komen nu veel dichter bij de testpack.">Minecraft-accurate preview: uses the same charIndex / animTime formulas as the generated shader. Font rendering is still browser-based, but timing and color math now match the test pack much more closely.</p>
   <div id="requirements" class="notice"></div>
  </div>
  <div class="grid2">
@@ -113,7 +113,7 @@ function setupTrigger(prefix,inputId){let set=a=>{a=a.map(Number);['R','G','B'].
 function requirementsHtml(){let e=EFFECTS[$('mode').value];let cls=e.scope==='fsh'?'ok':e.scope==='vsh'?'warn':'bad';return `<b>${e.name}</b><br><span class="pill ${cls}">${e.badge}</span><br>${e.desc}<br><b>Needs:</b> ${e.needs}<br><b>Imports:</b> ${e.imports.join(', ')}`}
 function glslName(){let raw=($('effectName').value||'Custom').replace(/[^A-Za-z0-9_]/g,'_');if(!raw)raw='Custom';if(/^\d/.test(raw))raw='Effect_'+raw;return raw}function hexVec(h){let r=hexToRgb(h).map(x=>(x/255).toFixed(3));return `vec3(${r.join(', ')})`}function rgbArgs(id){let a=rgbFromStr($(id).value);return `${a[0].toFixed(1)}, ${a[1].toFixed(1)}, ${a[2].toFixed(1)}`}
 function helper(){let e=EFFECTS[$('mode').value],name=glslName();let imports=e.imports[0]==='none'?'// No extra #moj_import required for this FSH snippet.':e.imports.map(x=>x.startsWith('optional include:')?'// Optional: #moj_import <'+x.replace('optional include: ','')+'>':'#moj_import <'+x+'>').join('\n');let vecs=colors.map(hexVec);let lines=[`// ${name} requirements`,imports,`// Scope: ${e.badge}`,`// ${e.needs}`,''];if($('mode').value==='diagonal'){lines.push('// Add this near your other FSH inputs, outside main():');lines.push(`in float ${name}CornerT;`);lines.push('')}if(e.scope!=='vsh'){lines.push(`vec3 ${name}Gradient(float t) {`);if(vecs.length===1)lines.push(`    return ${vecs[0]};`);else{lines.push(`    float phase = fract(t) * ${vecs.length.toFixed(1)};`);for(let i=0;i<vecs.length;i++){let j=(i+1)%vecs.length,local=i?`phase - ${i.toFixed(1)}`:'phase',ret=`return mix(${vecs[i]}, ${vecs[j]}, smoothstep(0.0, 1.0, ${local}));`;if(i<vecs.length-1)lines.push(`    if (phase < ${(i+1).toFixed(1)}) ${ret}`);else lines.push(`    ${ret}`)}}lines.push('}')}else lines.push('// This movement effect needs rendertype_text.vsh changes. Use the generated color block only as the color part.');return lines.join('\n')}
-function expr(shadow=false){let n=glslName(),m=$('mode').value,sf=val('shadowFactor',.25).toFixed(2),base=`${n}Gradient(charIndex * ${val('spacing',.006).toFixed(3)} - animTime * ${val('speed',260).toFixed(1)})`;if(m==='rainbow')base=`hsvToRgb(vec3(charIndex * ${val('spacing',.005).toFixed(3)} - animTime * ${val('speed',300).toFixed(1)}, ${settings.saturation.toFixed(2)}, ${settings.value.toFixed(2)}))`;if(m==='diagonal')base=`${n}Gradient(${n}CornerT + charIndex * ${val('spacing',.006).toFixed(3)} - animTime * ${val('speed',120).toFixed(1)})`;if(m==='shimmer')base=`mix(${base}, ${hexVec(settings.glintColor)}, (1.0 - smoothstep(0.0, ${settings.glintWidth.toFixed(2)}, min(abs(fract(charIndex * ${settings.glintSpacing.toFixed(3)}) - fract(animTime * ${settings.glintSpeed.toFixed(1)})), 1.0 - abs(fract(charIndex * ${settings.glintSpacing.toFixed(3)}) - fract(animTime * ${settings.glintSpeed.toFixed(1)}))))) * ${settings.glintStrength.toFixed(2)})`;if(m==='pulse')base=`${base} * (${settings.pulseMin.toFixed(2)} + (${settings.pulseMax.toFixed(2)} - ${settings.pulseMin.toFixed(2)}) * (0.5 + 0.5 * sin(animTime * ${val('speed',200).toFixed(1)} * ${settings.pulseSpeedMul.toFixed(2)} + charIndex * ${settings.pulsePhase.toFixed(2)})))`;if(m==='matrix')base=`mix(${hexVec(colors[0])}, ${hexVec(colors[1]||colors[0])}, 1.0 - smoothstep(0.0, ${settings.scanWidth.toFixed(2)}, min(abs(fract(charIndex * ${settings.scanSpacing.toFixed(3)}) - fract(animTime * ${val('speed',220).toFixed(1)} * ${settings.scanSpeed.toFixed(2)})), 1.0 - abs(fract(charIndex * ${settings.scanSpacing.toFixed(3)}) - fract(animTime * ${val('speed',220).toFixed(1)} * ${settings.scanSpeed.toFixed(2)})))))`;if(m==='galaxy')base=`clamp(${base} + ${hexVec(settings.sparkleColor)} * ${settings.sparkleIntensity.toFixed(2)} * step(${(1-settings.sparkleAmount).toFixed(3)}, fract(sin(charIndex * 12.9898) * 43758.5453 + animTime * ${settings.sparkleSpeed.toFixed(1)})), 0.0, 1.0)`;if(m==='blink')base=`${base} * mix(${settings.blinkMin.toFixed(2)}, 1.0, step(0.5, fract(animTime * ${settings.blinkSpeed.toFixed(1)})))`;if(m==='fade')base=`${base} * (${settings.fadeMin.toFixed(2)} + (1.0 - ${settings.fadeMin.toFixed(2)}) * (0.5 + 0.5 * sin(animTime * ${settings.fadeSpeed.toFixed(1)})))`;if(m==='neon')base=`min(${base} * ${settings.neonIntensity.toFixed(2)}, vec3(1.0))`;if(['wavy','bounce','shake','spin','scale','glitch'].includes(m))base=`${n}Gradient(charIndex * ${val('spacing',.006).toFixed(3)} - animTime * ${val('speed',180).toFixed(1)}) /* color part only; movement needs VSH */`;return shadow?`(${base}) * ${sf}`:base}
+function expr(shadow=false){let n=glslName(),m=$('mode').value,sf=val('shadowFactor',.25).toFixed(2),base=`${n}Gradient(charIndex * ${val('spacing',.006).toFixed(3)} - animTime * ${val('speed',260).toFixed(1)})`;if(m==='rainbow')base=`hsvToRgb(vec3(charIndex * ${val('spacing',.005).toFixed(3)} - animTime * ${val('speed',300).toFixed(1)}, ${settings.saturation.toFixed(2)}, ${settings.value.toFixed(2)}))`;if(m==='diagonal')base=`${n}Gradient(${n}CornerT - animTime * ${val('speed',300).toFixed(1)})`;if(m==='shimmer')base=`mix(${base}, ${hexVec(settings.glintColor)}, (1.0 - smoothstep(0.0, ${settings.glintWidth.toFixed(2)}, min(abs(fract(charIndex * ${settings.glintSpacing.toFixed(3)}) - fract(animTime * ${settings.glintSpeed.toFixed(1)})), 1.0 - abs(fract(charIndex * ${settings.glintSpacing.toFixed(3)}) - fract(animTime * ${settings.glintSpeed.toFixed(1)}))))) * ${settings.glintStrength.toFixed(2)})`;if(m==='pulse')base=`${base} * (${settings.pulseMin.toFixed(2)} + (${settings.pulseMax.toFixed(2)} - ${settings.pulseMin.toFixed(2)}) * (0.5 + 0.5 * sin(animTime * ${val('speed',200).toFixed(1)} * ${settings.pulseSpeedMul.toFixed(2)} + charIndex * ${settings.pulsePhase.toFixed(2)})))`;if(m==='matrix')base=`mix(${hexVec(colors[0])}, ${hexVec(colors[1]||colors[0])}, 1.0 - smoothstep(0.0, ${settings.scanWidth.toFixed(2)}, min(abs(fract(charIndex * ${settings.scanSpacing.toFixed(3)}) - fract(animTime * ${val('speed',220).toFixed(1)} * ${settings.scanSpeed.toFixed(2)})), 1.0 - abs(fract(charIndex * ${settings.scanSpacing.toFixed(3)}) - fract(animTime * ${val('speed',220).toFixed(1)} * ${settings.scanSpeed.toFixed(2)})))))`;if(m==='galaxy')base=`clamp(${base} + ${hexVec(settings.sparkleColor)} * ${settings.sparkleIntensity.toFixed(2)} * step(${(1-settings.sparkleAmount).toFixed(3)}, fract(sin(charIndex * 12.9898) * 43758.5453 + animTime * ${settings.sparkleSpeed.toFixed(1)})), 0.0, 1.0)`;if(m==='blink')base=`${base} * mix(${settings.blinkMin.toFixed(2)}, 1.0, step(0.5, fract(animTime * ${settings.blinkSpeed.toFixed(1)})))`;if(m==='fade')base=`${base} * (${settings.fadeMin.toFixed(2)} + (1.0 - ${settings.fadeMin.toFixed(2)}) * (0.5 + 0.5 * sin(animTime * ${settings.fadeSpeed.toFixed(1)})))`;if(m==='neon')base=`min(${base} * ${settings.neonIntensity.toFixed(2)}, vec3(1.0))`;if(['wavy','bounce','shake','spin','scale','glitch'].includes(m))base=`${n}Gradient(charIndex * ${val('spacing',.006).toFixed(3)} - animTime * ${val('speed',180).toFixed(1)}) /* color part only; movement needs VSH */`;return shadow?`(${base}) * ${sf}`:base}
 function fullBlock(){let name=glslName(),m=$('mode').value,warn=['wavy','bounce','shake','spin','scale','glitch','diagonal'].includes(m)?`\n// NOTE: ${EFFECTS[m].badge}: ${EFFECTS[m].needs}`:'';return `} else if (colorMatch(vertexColor, ${rgbArgs('mainRGB')})) {\n    // ${name}: main${warn}\n    vec3 rgb = ${expr(false)};\n    color = vec4(rgb * texAlpha, texAlpha) * ColorModulator;\n\n} else if (colorMatch(vertexColor, ${rgbArgs('shadowRGB')})) {\n    // ${name}: shadow${warn}\n    vec3 rgb = ${expr(true)};\n    color = vec4(rgb * texAlpha, texAlpha) * ColorModulator;`}
 function vshSnippet(){
 let m=$('mode').value,n=glslName();
@@ -367,12 +367,16 @@ function buildResourcePack(){
   const baseVsh=generatedBaseVsh();
   const overlayVsh=generatedOverlayVsh();
   const shaderJson=rendertypeTextJson();
+  const shaderJsonCore = shaderJson.replace('\"vertex\": \"rendertype_text\"', '\"vertex\": \"core/rendertype_text\"').replace('\"fragment\": \"rendertype_text\"', '\"fragment\": \"core/rendertype_text\"');
   const files=[
     {name:'pack.mcmeta',content:packMcmeta()},
-    {name:'README_TESTING.md',content:testingReadme()+`\n\nThis build uses the same shader/overlay layout as the proven red debug pack.\n`},
+    {name:'README_TESTING.md',content:testingReadme()+`\n\nThis build uses the same shader/overlay layout as the proven animated pack. Diagonal mode uses CornerT - animTime * speed, matching the in-game working test.\n`},
     {name:'assets/minecraft/shaders/core/rendertype_text.json',content:shaderJson},
     {name:'assets/minecraft/shaders/core/rendertype_text.fsh',content:baseFsh},
     {name:'assets/minecraft/shaders/core/rendertype_text.vsh',content:baseVsh},
+    {name:'overlay_1_20_5/assets/minecraft/shaders/core/rendertype_text.json',content:shaderJson},
+    {name:'overlay_1_20_5/assets/minecraft/shaders/core/rendertype_text.vsh',content:baseVsh},
+    {name:'overlay_1_21_2/assets/minecraft/shaders/core/rendertype_text.json',content:shaderJsonCore},
     {name:'overlay_1_21_5/assets/minecraft/shaders/core/rendertype_text.fsh',content:overlayFsh},
     {name:'overlay_1_21_5/assets/minecraft/shaders/core/rendertype_text.vsh',content:overlayVsh},
     {name:'overlay_1_21_7/assets/minecraft/shaders/core/rendertype_text.fsh',content:overlayFsh},
@@ -393,9 +397,159 @@ function buildResourcePack(){
   ];
   const blob=makeZip(files); const url=URL.createObjectURL(blob);
   const a=document.createElement('a');a.href=url;a.download=name+'.zip';document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),2000);
-  if($('packLog')) $('packLog').value=`Built ${name}.zip using working debug-pack layout\nFiles:\n`+files.map(f=>' - '+f.name).join('\n')+`\n\nPut the zip in your Minecraft resourcepacks folder and enable it.`;
+  if($('packLog')) $('packLog').value=`Built ${name}.zip using working animated-pack layout\nFiles:\n`+files.map(f=>' - '+f.name).join('\n')+`\n\nPut the zip in your Minecraft resourcepacks folder and enable it.`;
 }
 // === END WORKING PACK STYLE OVERRIDES ===
+
+
+// === MINECRAFT-ACCURATE PREVIEW OVERRIDES ===
+// These functions intentionally mirror the generated rendertype_text.fsh formulas.
+// Browser text rendering is not Minecraft's bitmap glyph renderer, but charIndex,
+// animTime, gradient, shimmer, pulse, matrix, galaxy and diagonal math now use the
+// same scale as the exported shader/test-pack.
+function clamp01(x){return Math.max(0,Math.min(1,Number(x)||0));}
+function fract(x){return x-Math.floor(x);}
+function mcSmoothstep(edge0, edge1, x){let t=clamp01((x-edge0)/(edge1-edge0));return t*t*(3.0-2.0*t);}
+function mcMix(a,b,t){t=clamp01(t);return a.map((v,i)=>v+(b[i]-v)*t);}
+function mcClampRgb(c){return c.map(v=>Math.max(0,Math.min(255,v)));}
+function mcVec(h){return hexToRgb(h).map(v=>v/255.0);}
+function mcRgb255(v){return mcClampRgb(v.map(x=>x*255));}
+function mcGradient(t){
+    const vecs=(colors.length?colors:['#ffffff']).map(mcVec);
+    if(vecs.length===1)return mcRgb255(vecs[0]);
+    let phase=fract(t)*vecs.length;
+    let idx=Math.floor(phase);
+    let local=phase-idx;
+    return mcRgb255(mcMix(vecs[idx%vecs.length], vecs[(idx+1)%vecs.length], mcSmoothstep(0.0,1.0,local)));
+}
+function mcHsvToRgb(h,s,v){
+    h=fract(h);
+    const f=(n)=>{let k=(n+h*6)%6;return v-v*s*Math.max(Math.min(k,4-k,1),0);};
+    return [f(5)*255,f(3)*255,f(1)*255];
+}
+function mcShaderColor(charIndex, cornerT, animTime, shadow=false){
+    const mode=$('mode').value;
+    const sp=val('spacing',.006);
+    const speed=val('speed',300);
+    let c;
+    if(mode==='rainbow'){
+        c=mcHsvToRgb(charIndex*sp - animTime*speed, settings.saturation, settings.value);
+    } else if(mode==='diagonal'){
+        c=mcGradient(cornerT - animTime*speed);
+    } else {
+        c=mcGradient(charIndex*sp - animTime*speed);
+    }
+    if(mode==='shimmer'){
+        const a=fract(charIndex*settings.glintSpacing);
+        const b=fract(animTime*settings.glintSpeed);
+        const d=Math.min(Math.abs(a-b),1.0-Math.abs(a-b));
+        const g=(1.0-mcSmoothstep(0.0,settings.glintWidth,d))*settings.glintStrength;
+        c=mcRgb255(mcMix(c.map(x=>x/255), mcVec(settings.glintColor), g));
+    }
+    if(mode==='pulse'){
+        const p=0.5+0.5*Math.sin(animTime*speed*settings.pulseSpeedMul + charIndex*settings.pulsePhase);
+        const b=settings.pulseMin+(settings.pulseMax-settings.pulseMin)*p;
+        c=c.map(v=>v*b);
+    }
+    if(mode==='matrix'){
+        const a=fract(charIndex*settings.scanSpacing);
+        const b=fract(animTime*speed*settings.scanSpeed);
+        const d=Math.min(Math.abs(a-b),1.0-Math.abs(a-b));
+        const g=1.0-mcSmoothstep(0.0,settings.scanWidth,d);
+        c=mcRgb255(mcMix(mcVec(colors[0]||'#002b10'), mcVec(colors[1]||colors[0]||'#00ff66'), g));
+    }
+    if(mode==='galaxy'){
+        const n=fract(Math.sin(charIndex*12.9898)*43758.5453 + animTime*settings.sparkleSpeed);
+        if(n > 1-settings.sparkleAmount){
+            const add=mcVec(settings.sparkleColor).map(v=>v*settings.sparkleIntensity*255);
+            c=mcClampRgb(c.map((v,i)=>v+add[i]));
+        }
+    }
+    if(mode==='starlight'){
+        const a=fract(charIndex*0.06);
+        const b=fract(animTime*settings.starSpeed);
+        const d=Math.min(Math.abs(a-b),1.0-Math.abs(a-b));
+        const g=(1.0-mcSmoothstep(0.0,settings.starWidth,d))*settings.starStrength;
+        c=mcRgb255(mcMix(c.map(x=>x/255), mcVec(settings.starColor), g));
+    }
+    if(mode==='blink'){
+        const b=settings.blinkMin+(1-settings.blinkMin)*(fract(animTime*settings.blinkSpeed)>=0.5?1:0);
+        c=c.map(v=>v*b);
+    }
+    if(mode==='fade'){
+        const b=settings.fadeMin+(1-settings.fadeMin)*(0.5+0.5*Math.sin(animTime*settings.fadeSpeed));
+        c=c.map(v=>v*b);
+    }
+    if(mode==='neon'){
+        c=c.map(v=>Math.min(255,v*settings.neonIntensity));
+    }
+    if(['wavy','bounce','shake','spin','scale','glitch'].includes(mode)){
+        c=mcGradient(charIndex*sp - animTime*speed);
+    }
+    if(shadow)c=c.map(v=>v*val('shadowFactor',.25));
+    return mcClampRgb(c);
+}
+function drawMcAccurateText(ctx,text,cx,cy,fs,time,shadow){
+    ctx.save();
+    // Minecraft glyphs are effectively fixed-grid; monospace gives a closer layout
+    // than anti-aliased proportional UI fonts. We still draw with canvas text for readability.
+    ctx.font=`900 ${fs}px ui-monospace, SFMono-Regular, Menlo, Consolas, monospace`;
+    ctx.textAlign='left';
+    ctx.textBaseline='middle';
+    const glyphAdvance=6.0;          // matches Minecraft charIndex spacing better than browser letter index
+    const pixelAdvance=fs*0.62;
+    const total=text.length*pixelAdvance;
+    let x=cx-total/2;
+    const mode=$('mode').value;
+    // Calibrated to the working in-game test pack: exported shader uses animTime * speed.
+    // Keep this constant in the preview only; do not export it to GLSL.
+    const animTime=time*0.01;
+    for(let i=0;i<text.length;i++){
+        const ch=text[i];
+        const charIndex=i*glyphAdvance;
+        let px=x+i*pixelAdvance, py=cy;
+        if(($('wavePreview')&&$('wavePreview').checked)||['wavy','bounce','shake','spin','scale','glitch'].includes(mode)){
+            if(mode==='wavy')py+=Math.sin(animTime*1200.0*settings.waveSpeed+i*settings.waveFrequency)*settings.waveAmplitude;
+            else if(mode==='bounce')py-=Math.max(0,Math.sin(animTime*1200.0*settings.bounceSpeed+i*.45))*settings.bounceHeight;
+            else if(mode==='shake'||mode==='glitch'){
+                px+=Math.sin(Math.floor(animTime*1200.0*settings.shakeSpeed)+i*13)*settings.shakeIntensity;
+                py+=Math.cos(Math.floor(animTime*1200.0*settings.shakeSpeed)+i*7)*settings.shakeIntensity;
+            }else if(mode==='scale'){
+                const sc=1+Math.sin(animTime*1200.0*settings.scaleSpeed+i*.5)*settings.scaleAmount;
+                ctx.font=`900 ${fs*sc}px ui-monospace, SFMono-Regular, Menlo, Consolas, monospace`;
+            }
+        }
+        if(mode==='diagonal'){
+            // Simulate the VSH corner interpolation: cornerT=(x+y*verticalInfluence)*0.5.
+            const grad=ctx.createLinearGradient(px,py-fs*.55,px+pixelAdvance,py+fs*.55);
+            const steps=12;
+            for(let s=0;s<=steps;s++){
+                const q=s/steps;
+                const cornerT=(q + q*settings.verticalInfluence)*0.5;
+                grad.addColorStop(q,rgbCss(mcShaderColor(charIndex,cornerT,animTime,shadow),1));
+            }
+            ctx.fillStyle=grad;
+        }else{
+            ctx.fillStyle=rgbCss(mcShaderColor(charIndex,0,animTime,shadow),1);
+        }
+        ctx.shadowColor=shadow?'rgba(0,0,0,.75)':rgbCss(mcShaderColor(charIndex,0.5,animTime,false),.55);
+        ctx.shadowBlur=shadow?4:(['shimmer','starlight','neon'].includes(mode)?18:8);
+        ctx.fillText(ch,px,py);
+        ctx.font=`900 ${fs}px ui-monospace, SFMono-Regular, Menlo, Consolas, monospace`;
+    }
+    ctx.restore();
+}
+function drawPreview(){
+    const canvas=$('previewCanvas'),box=canvas.parentElement,dpr=window.devicePixelRatio||1,w=box.clientWidth,h=250;
+    if(canvas.width!==Math.round(w*dpr)||canvas.height!==Math.round(h*dpr)){canvas.width=Math.round(w*dpr);canvas.height=Math.round(h*dpr);canvas.style.height=h+'px'}
+    const ctx=canvas.getContext('2d');ctx.setTransform(dpr,0,0,dpr,0,0);ctx.clearRect(0,0,w,h);
+    const time=performance.now()/1000,text=$('previewText').value||'Text';
+    const fs=Math.max(26,Math.min(62,w/(Math.max(1,text.length)*.62)));
+    const cx=w/2,cy=h/2-16;
+    drawMcAccurateText(ctx,text,cx+4,cy+42,fs*.62,time,true);
+    drawMcAccurateText(ctx,text,cx,cy,fs,time,false);
+    requestAnimationFrame(drawPreview);
+}
 
 Object.entries(EFFECTS).forEach(([k,e])=>{let d=document.createElement('div');d.className='effectCard '+($('mode').value===k?'active':'');let cls=e.scope==='fsh'?'ok':e.scope==='vsh'?'warn':'bad';d.innerHTML=`<h3>${e.name}</h3><span class="pill ${cls}">${e.badge}</span><div class="req"><b>Needs:</b> ${e.needs}<br><b>Imports:</b> ${e.imports.join(', ')}<br>${e.desc}</div><div class="actions"><button>Select</button></div>`;d.querySelector('button').onclick=()=>{$('mode').value=k;update()};lib.appendChild(d)})}
 function applyPreset(k){let p=PRESETS[k];if(!p)return;$('mode').value=p.mode;colors=[...p.colors];$('speed').value=p.speed;$('spacing').value=p.spacing;$('mainRGB').value=p.main;$('shadowRGB').value=p.shadow;setupTrigger('main','mainRGB');setupTrigger('shadow','shadowRGB');renderStops();update()}
@@ -954,7 +1108,7 @@ function buildResourcePack(){
   const shaderJson=rendertypeTextJson();
   const files=[
     {name:'pack.mcmeta',content:packMcmeta()},
-    {name:'README_TESTING.md',content:testingReadme()+`\n\nThis build uses the same shader/overlay layout as the proven red debug pack.\n`},
+    {name:'README_TESTING.md',content:testingReadme()+`\n\nThis build uses the same shader/overlay layout as the proven animated pack. Diagonal mode uses CornerT - animTime * speed, matching the in-game working test.\n`},
     {name:'assets/minecraft/shaders/core/rendertype_text.json',content:shaderJson},
     {name:'assets/minecraft/shaders/core/rendertype_text.fsh',content:baseFsh},
     {name:'assets/minecraft/shaders/core/rendertype_text.vsh',content:baseVsh},
@@ -978,7 +1132,7 @@ function buildResourcePack(){
   ];
   const blob=makeZip(files); const url=URL.createObjectURL(blob);
   const a=document.createElement('a');a.href=url;a.download=name+'.zip';document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),2000);
-  if($('packLog')) $('packLog').value=`Built ${name}.zip using working debug-pack layout\nFiles:\n`+files.map(f=>' - '+f.name).join('\n')+`\n\nPut the zip in your Minecraft resourcepacks folder and enable it.`;
+  if($('packLog')) $('packLog').value=`Built ${name}.zip using working animated-pack layout\nFiles:\n`+files.map(f=>' - '+f.name).join('\n')+`\n\nPut the zip in your Minecraft resourcepacks folder and enable it.`;
 }
 // === END WORKING PACK STYLE OVERRIDES ===
 
