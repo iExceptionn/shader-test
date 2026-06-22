@@ -134,7 +134,270 @@ if(m==='glitch')return `// ${n} - GLITCH OFFSET for rendertype_text.vsh\nvec3 ${
 if(m==='spin')return `// ${n} - SPIN needs a more complete VSH setup because each glyph corner must rotate around the glyph center.\n// Minimal starting point / placeholder:\nvec3 ${n}Position = Position;\nfloat ${n}Vid = mod(float(gl_VertexID), 4.0);\nvec2 ${n}Dir = (${n}Vid < 0.5) ? vec2(-1.0,-1.0) : (${n}Vid < 1.5) ? vec2(-1.0,1.0) : (${n}Vid < 2.5) ? vec2(1.0,1.0) : vec2(1.0,-1.0);\nfloat ${n}A = GameTime * ${spinSpeed};\nmat2 ${n}Rot = mat2(cos(${n}A), -sin(${n}A), sin(${n}A), cos(${n}A));\n${n}Position.xy += (${n}Rot * ${n}Dir - ${n}Dir) * ${spinScale};\n// gl_Position = ProjMat * ModelViewMat * vec4(${n}Position, 1.0);`;
 return '// No VSH snippet available for this mode.';
 }
-function renderLibrary(){let lib=$('library');lib.innerHTML='';Object.entries(EFFECTS).forEach(([k,e])=>{let d=document.createElement('div');d.className='effectCard '+($('mode').value===k?'active':'');let cls=e.scope==='fsh'?'ok':e.scope==='vsh'?'warn':'bad';d.innerHTML=`<h3>${e.name}</h3><span class="pill ${cls}">${e.badge}</span><div class="req"><b>Needs:</b> ${e.needs}<br><b>Imports:</b> ${e.imports.join(', ')}<br>${e.desc}</div><div class="actions"><button>Select</button></div>`;d.querySelector('button').onclick=()=>{$('mode').value=k;update()};lib.appendChild(d)})}
+function renderLibrary(){let lib=$('library');lib.innerHTML='';
+
+// === WORKING PACK STYLE OVERRIDES (based on the user's proven debug pack) ===
+function generatedOverlayFsh(){
+  const mode=$('mode').value;
+  const diagonalInput = mode==='diagonal' ? `\n// Required only for true VSH diagonal mode.\nin float ${glslName()}CornerT;\n` : '';
+  const helperText = helper().split('\n').filter(line=>!line.trim().startsWith('#moj_import')).join('\n');
+  return `#version 150
+
+#moj_import <minecraft:fog.glsl>
+#moj_import <minecraft:dynamictransforms.glsl>
+#moj_import <minecraft:globals.glsl>
+
+uniform sampler2D Sampler0;
+uniform float FogStart;
+uniform float FogEnd;
+
+in float sphericalVertexDistance;
+in float cylindricalVertexDistance;
+in vec4 vertexColor;
+in vec2 texCoord0;
+in float charIndex;
+in float animTime;${diagonalInput}
+
+out vec4 fragColor;
+
+vec3 hsvToRgb(vec3 c) {
+    vec4 K = vec4(1.0, 2.0 / 3.0, 1.0 / 3.0, 3.0);
+    vec3 p = abs(fract(c.xxx + K.xyz) * 6.0 - K.www);
+    return c.z * mix(K.xxx, clamp(p - K.xxx, 0.0, 1.0), c.y);
+}
+
+vec3 gradient3(vec3 c1, vec3 c2, vec3 c3, float t) {
+    float phase = fract(t) * 3.0;
+    if (phase < 1.0) return mix(c1, c2, phase);
+    if (phase < 2.0) return mix(c2, c3, phase - 1.0);
+    return mix(c3, c1, phase - 2.0);
+}
+
+bool colorMatch(vec4 col, float r, float g, float b) {
+    return abs(col.r * 255.0 - r) < 1.0
+        && abs(col.g * 255.0 - g) < 1.0
+        && abs(col.b * 255.0 - b) < 1.0;
+}
+
+${helperText}
+
+void main() {
+    vec4 color = texture(Sampler0, texCoord0) * vertexColor * ColorModulator;
+    if (color.a < 0.1) discard;
+
+    float texAlpha = texture(Sampler0, texCoord0).a;
+
+    ${fshBlockForStandalone().replace(/\n/g,'\n    ')}
+
+    fragColor = apply_fog(color, sphericalVertexDistance, cylindricalVertexDistance,
+                         FogEnvironmentalStart, FogEnvironmentalEnd,
+                         FogRenderDistanceStart, FogRenderDistanceEnd, FogColor);
+}
+`;
+}
+function generatedBaseFsh(){
+  const mode=$('mode').value;
+  const diagonalInput = mode==='diagonal' ? `\nin float ${glslName()}CornerT;` : '';
+  const helperText = helper().split('\n').filter(line=>!line.trim().startsWith('#moj_import')).join('\n');
+  return `#version 150
+
+#moj_import <fog.glsl>
+
+uniform sampler2D Sampler0;
+
+uniform vec4 ColorModulator;
+uniform float FogStart;
+uniform float FogEnd;
+uniform vec4 FogColor;
+uniform float GameTime;
+
+in float vertexDistance;
+in vec4 vertexColor;
+in vec2 texCoord0;
+in float charIndex;${diagonalInput}
+
+out vec4 fragColor;
+
+vec3 hsvToRgb(vec3 c) {
+    vec4 K = vec4(1.0, 2.0 / 3.0, 1.0 / 3.0, 3.0);
+    vec3 p = abs(fract(c.xxx + K.xyz) * 6.0 - K.www);
+    return c.z * mix(K.xxx, clamp(p - K.xxx, 0.0, 1.0), c.y);
+}
+
+vec3 gradient3(vec3 c1, vec3 c2, vec3 c3, float t) {
+    float phase = fract(t) * 3.0;
+    if (phase < 1.0) return mix(c1, c2, phase);
+    if (phase < 2.0) return mix(c2, c3, phase - 1.0);
+    return mix(c3, c1, phase - 2.0);
+}
+
+bool colorMatch(vec4 col, float r, float g, float b) {
+    return abs(col.r * 255.0 - r) < 1.0
+        && abs(col.g * 255.0 - g) < 1.0
+        && abs(col.b * 255.0 - b) < 1.0;
+}
+
+${helperText}
+
+void main() {
+    vec4 color = texture(Sampler0, texCoord0) * vertexColor * ColorModulator;
+    if (color.a < 0.1) discard;
+
+    float texAlpha = texture(Sampler0, texCoord0).a;
+    float animTime = GameTime;
+
+    ${fshBlockForStandalone().replace(/\n/g,'\n    ')}
+
+    fragColor = linear_fog(color, vertexDistance, FogStart, FogEnd, FogColor);
+}
+`;
+}
+// Keep existing generatedFullFsh panel/output pointed at the modern overlay shader.
+function generatedFullFsh(){ return generatedOverlayFsh(); }
+
+function generatedOverlayVsh(){ return generatedFullVsh(); }
+function generatedBaseVsh(){
+  const n=glslName();
+  const main=rgbArgs('mainRGB');
+  const shadow=rgbArgs('shadowRGB');
+  const mode=$('mode').value;
+  const diagonalOut = mode==='diagonal' ? `\nout float ${n}CornerT;` : '';
+  const diagonalInit = mode==='diagonal' ? `\n    ${n}CornerT = 0.0;` : '';
+  let effectCode='';
+  if(['diagonal','wavy','bounce','shake','scale','glitch','spin'].includes(mode)){
+    effectCode = generatedFullVsh().match(/bool .*?Active[\s\S]*?gl_Position =/);
+    effectCode = effectCode ? effectCode[0].replace(/gl_Position =$/,'') : '';
+  } else {
+    effectCode = `bool ${n}Active = vshColorMatch(Color, ${main}) || vshColorMatch(Color, ${shadow});\n    // ${n} is FSH-only. No vertex movement needed.`;
+  }
+  return `#version 150
+
+#moj_import <fog.glsl>
+
+in vec3 Position;
+in vec4 Color;
+in vec2 UV0;
+in ivec2 UV2;
+
+uniform sampler2D Sampler2;
+
+uniform mat4 ModelViewMat;
+uniform mat4 ProjMat;
+uniform float GameTime;
+
+out float vertexDistance;
+out vec4 vertexColor;
+out vec2 texCoord0;
+out float charIndex;${diagonalOut}
+
+bool vshColorMatch(vec4 col, float r, float g, float b) {
+    return abs(col.r * 255.0 - r) < 1.0
+        && abs(col.g * 255.0 - g) < 1.0
+        && abs(col.b * 255.0 - b) < 1.0;
+}
+
+void main() {
+    vec3 pos = Position;
+
+    ivec3 ic = ivec3(Color.rgb * 255.0 + 0.5);
+    bool isTrigger = (ic.r == 230) && (ic.g >= 200) && (ic.b >= 250);
+    bool isShadowTrigger = (ic.r == 57) && (ic.g >= 50) && (ic.b >= 62);
+    bool ${n}ShadowTrigger = vshColorMatch(Color, ${shadow});
+    if (${n}ShadowTrigger || isShadowTrigger) {
+        charIndex = pos.x - 1.0;
+    } else {
+        charIndex = pos.x;
+    }
+    float animTime = GameTime;${diagonalInit}
+
+    ${effectCode}
+
+    gl_Position = ProjMat * ModelViewMat * vec4(pos, 1.0);
+    vertexDistance = length((ModelViewMat * vec4(pos, 1.0)).xyz);
+
+    if (isTrigger || isShadowTrigger) {
+        vertexColor = Color;
+    } else {
+        vertexColor = Color * texelFetch(Sampler2, UV2 / 16, 0);
+    }
+
+    texCoord0 = UV0;
+}
+`;
+}
+
+function packMcmeta(){
+  const desc = (($('packName')&&$('packName').value)||'Text Shader Test Pack') + ' - generated by Minecraft Text Shader Designer';
+  return JSON.stringify({
+    pack:{pack_format:46,description:desc,supported_formats:{min_inclusive:7,max_inclusive:100},min_format:7,max_format:100},
+    overlays:{entries:[
+      {directory:'overlay_1_20_5',formats:[32,41],min_format:32,max_format:41},
+      {directory:'overlay_1_21_2',formats:[42,100],min_format:42,max_format:100},
+      {directory:'overlay_1_21_5',formats:[55,63],min_format:55,max_format:63},
+      {directory:'overlay_1_21_7',formats:[64,68],min_format:64,max_format:68},
+      {directory:'overlay_1_21_9',formats:[69,75],min_format:69,max_format:75},
+      {directory:'overlay_26_1',formats:[84,100],min_format:84,max_format:100}
+    ]}
+  },null,2);
+}
+
+function rendertypeTextJson(){
+  return `{
+    "blend": { "func": "add", "srcrgb": "srcalpha", "dstrgb": "1-srcalpha" },
+    "vertex": "rendertype_text",
+    "fragment": "rendertype_text",
+    "attributes": [ "Position", "Color", "UV0", "UV2" ],
+    "samplers": [ { "name": "Sampler0" }, { "name": "Sampler2" } ],
+    "uniforms": [
+        { "name": "ModelViewMat",   "type": "matrix4x4", "count": 16, "values": [ 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0 ] },
+        { "name": "ProjMat",        "type": "matrix4x4", "count": 16, "values": [ 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0 ] },
+        { "name": "ColorModulator", "type": "float",     "count": 4,  "values": [ 1.0, 1.0, 1.0, 1.0 ] },
+        { "name": "FogStart",       "type": "float",     "count": 1,  "values": [ 0.0 ] },
+        { "name": "FogEnd",         "type": "float",     "count": 1,  "values": [ 1.0 ] },
+        { "name": "FogColor",       "type": "float",     "count": 4,  "values": [ 0.0, 0.0, 0.0, 0.0 ] },
+        { "name": "GameTime",       "type": "float",     "count": 1,  "values": [ 0.0 ] }
+    ]
+}`;
+}
+
+function buildResourcePack(){
+  const name=sanitizeFileName(($('packName')&&$('packName').value)||'Text Shader Test Pack');
+  const baseFsh=generatedBaseFsh();
+  const overlayFsh=generatedOverlayFsh();
+  const baseVsh=generatedBaseVsh();
+  const overlayVsh=generatedOverlayVsh();
+  const shaderJson=rendertypeTextJson();
+  const files=[
+    {name:'pack.mcmeta',content:packMcmeta()},
+    {name:'README_TESTING.md',content:testingReadme()+`\n\nThis build uses the same shader/overlay layout as the proven red debug pack.\n`},
+    {name:'assets/minecraft/shaders/core/rendertype_text.json',content:shaderJson},
+    {name:'assets/minecraft/shaders/core/rendertype_text.fsh',content:baseFsh},
+    {name:'assets/minecraft/shaders/core/rendertype_text.vsh',content:baseVsh},
+    {name:'overlay_1_21_5/assets/minecraft/shaders/core/rendertype_text.fsh',content:overlayFsh},
+    {name:'overlay_1_21_5/assets/minecraft/shaders/core/rendertype_text.vsh',content:overlayVsh},
+    {name:'overlay_1_21_7/assets/minecraft/shaders/core/rendertype_text.fsh',content:overlayFsh},
+    {name:'overlay_1_21_7/assets/minecraft/shaders/core/rendertype_text.vsh',content:overlayVsh},
+    {name:'overlay_1_21_9/assets/minecraft/shaders/core/rendertype_text.fsh',content:overlayFsh},
+    {name:'overlay_1_21_9/assets/minecraft/shaders/core/rendertype_text.vsh',content:overlayVsh},
+    {name:'overlay_26_1/assets/minecraft/shaders/core/rendertype_text.fsh',content:overlayFsh},
+    {name:'overlay_26_1/assets/minecraft/shaders/core/rendertype_text.vsh',content:overlayVsh},
+    {name:'generated/rendertype_text_json.json',content:shaderJson},
+    {name:'generated/rendertype_text_base.fsh',content:baseFsh},
+    {name:'generated/rendertype_text_overlay.fsh',content:overlayFsh},
+    {name:'generated/rendertype_text_base.vsh',content:baseVsh},
+    {name:'generated/rendertype_text_overlay.vsh',content:overlayVsh},
+    {name:'generated/rendertype_text_vsh_snippet.glsl',content:vshSnippet()},
+    {name:'generated/fsh_helper.glsl',content:helper()},
+    {name:'generated/fsh_block.glsl',content:fullBlock()},
+    {name:'generated/shader-project.json',content:JSON.stringify(currentProject(),null,2)}
+  ];
+  const blob=makeZip(files); const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');a.href=url;a.download=name+'.zip';document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),2000);
+  if($('packLog')) $('packLog').value=`Built ${name}.zip using working debug-pack layout\nFiles:\n`+files.map(f=>' - '+f.name).join('\n')+`\n\nPut the zip in your Minecraft resourcepacks folder and enable it.`;
+}
+// === END WORKING PACK STYLE OVERRIDES ===
+
+Object.entries(EFFECTS).forEach(([k,e])=>{let d=document.createElement('div');d.className='effectCard '+($('mode').value===k?'active':'');let cls=e.scope==='fsh'?'ok':e.scope==='vsh'?'warn':'bad';d.innerHTML=`<h3>${e.name}</h3><span class="pill ${cls}">${e.badge}</span><div class="req"><b>Needs:</b> ${e.needs}<br><b>Imports:</b> ${e.imports.join(', ')}<br>${e.desc}</div><div class="actions"><button>Select</button></div>`;d.querySelector('button').onclick=()=>{$('mode').value=k;update()};lib.appendChild(d)})}
 function applyPreset(k){let p=PRESETS[k];if(!p)return;$('mode').value=p.mode;colors=[...p.colors];$('speed').value=p.speed;$('spacing').value=p.spacing;$('mainRGB').value=p.main;$('shadowRGB').value=p.shadow;setupTrigger('main','mainRGB');setupTrigger('shadow','shadowRGB');renderStops();update()}
 function update(rebuild=true){if(rebuild)renderSettings();$('requirements').innerHTML=requirementsHtml();$('helperCode').value=helper();$('fullCode').value=fullBlock();$('vshCode').value=vshSnippet();renderLibrary();queueAutosave()}
 
@@ -346,23 +609,30 @@ void main() {
 }
 
 function packMcmeta(){
-  // Minecraft 1.21.9+/1.21.11 uses the new pack.mcmeta format.
-  // Do NOT write pack_format, supported_formats, or overlay formats here.
-  // min_format/max_format must be arrays: [major, minor].
+  // Match the user's working 1.21.11 pack style.
+  // Important: pack_format stays 46, otherwise Minecraft treats overlay formats as deprecated.
+  // The supported/min/max fields keep the pack accepted by newer clients.
   const desc = (($('packName')&&$('packName').value)||'Text Shader Test Pack') + ' - generated by Minecraft Text Shader Designer';
   return JSON.stringify({
     pack:{
+      pack_format:46,
       description:desc,
-      min_format:[75,0],
-      max_format:[100,0]
+      supported_formats:{min_inclusive:7,max_inclusive:100},
+      min_format:7,
+      max_format:100
+    },
+    overlays:{
+      entries:[
+        {directory:'overlay_26_1',formats:[84,100],min_format:84,max_format:100}
+      ]
     }
   },null,2);
 }
 function rendertypeTextJson(){
   return JSON.stringify({
     blend:{func:'add',srcrgb:'srcalpha',dstrgb:'1-srcalpha'},
-    vertex:'core/rendertype_text',
-    fragment:'core/rendertype_text',
+    vertex:'rendertype_text',
+    fragment:'rendertype_text',
     attributes:['Position','Color','UV0','UV2'],
     samplers:[{name:'Sampler0'},{name:'Sampler2'}],
     uniforms:[
@@ -448,6 +718,269 @@ function buildResourcePack(){
   const a=document.createElement('a');a.href=url;a.download=name+'.zip';document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),2000);
   if($('packLog')) $('packLog').value=`Built ${name}.zip\nFiles:\n`+files.map(f=>' - '+f.name).join('\n')+`\n\nPut the zip in your Minecraft resourcepacks folder and enable it.`;
 }
+
+
+
+// === WORKING PACK STYLE OVERRIDES (based on the user's proven debug pack) ===
+function generatedOverlayFsh(){
+  const mode=$('mode').value;
+  const diagonalInput = mode==='diagonal' ? `\n// Required only for true VSH diagonal mode.\nin float ${glslName()}CornerT;\n` : '';
+  const helperText = helper().split('\n').filter(line=>!line.trim().startsWith('#moj_import')).join('\n');
+  return `#version 150
+
+#moj_import <minecraft:fog.glsl>
+#moj_import <minecraft:dynamictransforms.glsl>
+#moj_import <minecraft:globals.glsl>
+
+uniform sampler2D Sampler0;
+uniform float FogStart;
+uniform float FogEnd;
+
+in float sphericalVertexDistance;
+in float cylindricalVertexDistance;
+in vec4 vertexColor;
+in vec2 texCoord0;
+in float charIndex;
+in float animTime;${diagonalInput}
+
+out vec4 fragColor;
+
+vec3 hsvToRgb(vec3 c) {
+    vec4 K = vec4(1.0, 2.0 / 3.0, 1.0 / 3.0, 3.0);
+    vec3 p = abs(fract(c.xxx + K.xyz) * 6.0 - K.www);
+    return c.z * mix(K.xxx, clamp(p - K.xxx, 0.0, 1.0), c.y);
+}
+
+vec3 gradient3(vec3 c1, vec3 c2, vec3 c3, float t) {
+    float phase = fract(t) * 3.0;
+    if (phase < 1.0) return mix(c1, c2, phase);
+    if (phase < 2.0) return mix(c2, c3, phase - 1.0);
+    return mix(c3, c1, phase - 2.0);
+}
+
+bool colorMatch(vec4 col, float r, float g, float b) {
+    return abs(col.r * 255.0 - r) < 1.0
+        && abs(col.g * 255.0 - g) < 1.0
+        && abs(col.b * 255.0 - b) < 1.0;
+}
+
+${helperText}
+
+void main() {
+    vec4 color = texture(Sampler0, texCoord0) * vertexColor * ColorModulator;
+    if (color.a < 0.1) discard;
+
+    float texAlpha = texture(Sampler0, texCoord0).a;
+
+    ${fshBlockForStandalone().replace(/\n/g,'\n    ')}
+
+    fragColor = apply_fog(color, sphericalVertexDistance, cylindricalVertexDistance,
+                         FogEnvironmentalStart, FogEnvironmentalEnd,
+                         FogRenderDistanceStart, FogRenderDistanceEnd, FogColor);
+}
+`;
+}
+function generatedBaseFsh(){
+  const mode=$('mode').value;
+  const diagonalInput = mode==='diagonal' ? `\nin float ${glslName()}CornerT;` : '';
+  const helperText = helper().split('\n').filter(line=>!line.trim().startsWith('#moj_import')).join('\n');
+  return `#version 150
+
+#moj_import <fog.glsl>
+
+uniform sampler2D Sampler0;
+
+uniform vec4 ColorModulator;
+uniform float FogStart;
+uniform float FogEnd;
+uniform vec4 FogColor;
+uniform float GameTime;
+
+in float vertexDistance;
+in vec4 vertexColor;
+in vec2 texCoord0;
+in float charIndex;${diagonalInput}
+
+out vec4 fragColor;
+
+vec3 hsvToRgb(vec3 c) {
+    vec4 K = vec4(1.0, 2.0 / 3.0, 1.0 / 3.0, 3.0);
+    vec3 p = abs(fract(c.xxx + K.xyz) * 6.0 - K.www);
+    return c.z * mix(K.xxx, clamp(p - K.xxx, 0.0, 1.0), c.y);
+}
+
+vec3 gradient3(vec3 c1, vec3 c2, vec3 c3, float t) {
+    float phase = fract(t) * 3.0;
+    if (phase < 1.0) return mix(c1, c2, phase);
+    if (phase < 2.0) return mix(c2, c3, phase - 1.0);
+    return mix(c3, c1, phase - 2.0);
+}
+
+bool colorMatch(vec4 col, float r, float g, float b) {
+    return abs(col.r * 255.0 - r) < 1.0
+        && abs(col.g * 255.0 - g) < 1.0
+        && abs(col.b * 255.0 - b) < 1.0;
+}
+
+${helperText}
+
+void main() {
+    vec4 color = texture(Sampler0, texCoord0) * vertexColor * ColorModulator;
+    if (color.a < 0.1) discard;
+
+    float texAlpha = texture(Sampler0, texCoord0).a;
+    float animTime = GameTime;
+
+    ${fshBlockForStandalone().replace(/\n/g,'\n    ')}
+
+    fragColor = linear_fog(color, vertexDistance, FogStart, FogEnd, FogColor);
+}
+`;
+}
+// Keep existing generatedFullFsh panel/output pointed at the modern overlay shader.
+function generatedFullFsh(){ return generatedOverlayFsh(); }
+
+function generatedOverlayVsh(){ return generatedFullVsh(); }
+function generatedBaseVsh(){
+  const n=glslName();
+  const main=rgbArgs('mainRGB');
+  const shadow=rgbArgs('shadowRGB');
+  const mode=$('mode').value;
+  const diagonalOut = mode==='diagonal' ? `\nout float ${n}CornerT;` : '';
+  const diagonalInit = mode==='diagonal' ? `\n    ${n}CornerT = 0.0;` : '';
+  let effectCode='';
+  if(['diagonal','wavy','bounce','shake','scale','glitch','spin'].includes(mode)){
+    effectCode = generatedFullVsh().match(/bool .*?Active[\s\S]*?gl_Position =/);
+    effectCode = effectCode ? effectCode[0].replace(/gl_Position =$/,'') : '';
+  } else {
+    effectCode = `bool ${n}Active = vshColorMatch(Color, ${main}) || vshColorMatch(Color, ${shadow});\n    // ${n} is FSH-only. No vertex movement needed.`;
+  }
+  return `#version 150
+
+#moj_import <fog.glsl>
+
+in vec3 Position;
+in vec4 Color;
+in vec2 UV0;
+in ivec2 UV2;
+
+uniform sampler2D Sampler2;
+
+uniform mat4 ModelViewMat;
+uniform mat4 ProjMat;
+uniform float GameTime;
+
+out float vertexDistance;
+out vec4 vertexColor;
+out vec2 texCoord0;
+out float charIndex;${diagonalOut}
+
+bool vshColorMatch(vec4 col, float r, float g, float b) {
+    return abs(col.r * 255.0 - r) < 1.0
+        && abs(col.g * 255.0 - g) < 1.0
+        && abs(col.b * 255.0 - b) < 1.0;
+}
+
+void main() {
+    vec3 pos = Position;
+
+    ivec3 ic = ivec3(Color.rgb * 255.0 + 0.5);
+    bool isTrigger = (ic.r == 230) && (ic.g >= 200) && (ic.b >= 250);
+    bool isShadowTrigger = (ic.r == 57) && (ic.g >= 50) && (ic.b >= 62);
+    bool ${n}ShadowTrigger = vshColorMatch(Color, ${shadow});
+    if (${n}ShadowTrigger || isShadowTrigger) {
+        charIndex = pos.x - 1.0;
+    } else {
+        charIndex = pos.x;
+    }
+    float animTime = GameTime;${diagonalInit}
+
+    ${effectCode}
+
+    gl_Position = ProjMat * ModelViewMat * vec4(pos, 1.0);
+    vertexDistance = length((ModelViewMat * vec4(pos, 1.0)).xyz);
+
+    if (isTrigger || isShadowTrigger) {
+        vertexColor = Color;
+    } else {
+        vertexColor = Color * texelFetch(Sampler2, UV2 / 16, 0);
+    }
+
+    texCoord0 = UV0;
+}
+`;
+}
+
+function packMcmeta(){
+  const desc = (($('packName')&&$('packName').value)||'Text Shader Test Pack') + ' - generated by Minecraft Text Shader Designer';
+  return JSON.stringify({
+    pack:{pack_format:46,description:desc,supported_formats:{min_inclusive:7,max_inclusive:100},min_format:7,max_format:100},
+    overlays:{entries:[
+      {directory:'overlay_1_20_5',formats:[32,41],min_format:32,max_format:41},
+      {directory:'overlay_1_21_2',formats:[42,100],min_format:42,max_format:100},
+      {directory:'overlay_1_21_5',formats:[55,63],min_format:55,max_format:63},
+      {directory:'overlay_1_21_7',formats:[64,68],min_format:64,max_format:68},
+      {directory:'overlay_1_21_9',formats:[69,75],min_format:69,max_format:75},
+      {directory:'overlay_26_1',formats:[84,100],min_format:84,max_format:100}
+    ]}
+  },null,2);
+}
+
+function rendertypeTextJson(){
+  return `{
+    "blend": { "func": "add", "srcrgb": "srcalpha", "dstrgb": "1-srcalpha" },
+    "vertex": "rendertype_text",
+    "fragment": "rendertype_text",
+    "attributes": [ "Position", "Color", "UV0", "UV2" ],
+    "samplers": [ { "name": "Sampler0" }, { "name": "Sampler2" } ],
+    "uniforms": [
+        { "name": "ModelViewMat",   "type": "matrix4x4", "count": 16, "values": [ 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0 ] },
+        { "name": "ProjMat",        "type": "matrix4x4", "count": 16, "values": [ 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0 ] },
+        { "name": "ColorModulator", "type": "float",     "count": 4,  "values": [ 1.0, 1.0, 1.0, 1.0 ] },
+        { "name": "FogStart",       "type": "float",     "count": 1,  "values": [ 0.0 ] },
+        { "name": "FogEnd",         "type": "float",     "count": 1,  "values": [ 1.0 ] },
+        { "name": "FogColor",       "type": "float",     "count": 4,  "values": [ 0.0, 0.0, 0.0, 0.0 ] },
+        { "name": "GameTime",       "type": "float",     "count": 1,  "values": [ 0.0 ] }
+    ]
+}`;
+}
+
+function buildResourcePack(){
+  const name=sanitizeFileName(($('packName')&&$('packName').value)||'Text Shader Test Pack');
+  const baseFsh=generatedBaseFsh();
+  const overlayFsh=generatedOverlayFsh();
+  const baseVsh=generatedBaseVsh();
+  const overlayVsh=generatedOverlayVsh();
+  const shaderJson=rendertypeTextJson();
+  const files=[
+    {name:'pack.mcmeta',content:packMcmeta()},
+    {name:'README_TESTING.md',content:testingReadme()+`\n\nThis build uses the same shader/overlay layout as the proven red debug pack.\n`},
+    {name:'assets/minecraft/shaders/core/rendertype_text.json',content:shaderJson},
+    {name:'assets/minecraft/shaders/core/rendertype_text.fsh',content:baseFsh},
+    {name:'assets/minecraft/shaders/core/rendertype_text.vsh',content:baseVsh},
+    {name:'overlay_1_21_5/assets/minecraft/shaders/core/rendertype_text.fsh',content:overlayFsh},
+    {name:'overlay_1_21_5/assets/minecraft/shaders/core/rendertype_text.vsh',content:overlayVsh},
+    {name:'overlay_1_21_7/assets/minecraft/shaders/core/rendertype_text.fsh',content:overlayFsh},
+    {name:'overlay_1_21_7/assets/minecraft/shaders/core/rendertype_text.vsh',content:overlayVsh},
+    {name:'overlay_1_21_9/assets/minecraft/shaders/core/rendertype_text.fsh',content:overlayFsh},
+    {name:'overlay_1_21_9/assets/minecraft/shaders/core/rendertype_text.vsh',content:overlayVsh},
+    {name:'overlay_26_1/assets/minecraft/shaders/core/rendertype_text.fsh',content:overlayFsh},
+    {name:'overlay_26_1/assets/minecraft/shaders/core/rendertype_text.vsh',content:overlayVsh},
+    {name:'generated/rendertype_text_json.json',content:shaderJson},
+    {name:'generated/rendertype_text_base.fsh',content:baseFsh},
+    {name:'generated/rendertype_text_overlay.fsh',content:overlayFsh},
+    {name:'generated/rendertype_text_base.vsh',content:baseVsh},
+    {name:'generated/rendertype_text_overlay.vsh',content:overlayVsh},
+    {name:'generated/rendertype_text_vsh_snippet.glsl',content:vshSnippet()},
+    {name:'generated/fsh_helper.glsl',content:helper()},
+    {name:'generated/fsh_block.glsl',content:fullBlock()},
+    {name:'generated/shader-project.json',content:JSON.stringify(currentProject(),null,2)}
+  ];
+  const blob=makeZip(files); const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');a.href=url;a.download=name+'.zip';document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),2000);
+  if($('packLog')) $('packLog').value=`Built ${name}.zip using working debug-pack layout\nFiles:\n`+files.map(f=>' - '+f.name).join('\n')+`\n\nPut the zip in your Minecraft resourcepacks folder and enable it.`;
+}
+// === END WORKING PACK STYLE OVERRIDES ===
 
 Object.entries(EFFECTS).forEach(([k,e])=>{let o=document.createElement('option');o.value=k;o.textContent=e.name;$('mode').appendChild(o)});Object.keys(PRESETS).forEach(k=>{let o=document.createElement('option');o.value=k;o.textContent=k;$('preset').appendChild(o)});$('mainTrigger').innerHTML=triggerEditor('main','Main RGB menu');$('shadowTrigger').innerHTML=triggerEditor('shadow','Shadow RGB menu');$('preset').onchange=e=>applyPreset(e.target.value);$('addColor').onclick=()=>{colors.push('#ffffff');renderStops();update(false)};$('mode').onchange=update;['effectName','previewText','speed','spacing','shadowFactor','wavePreview','mainRGB','shadowRGB'].forEach(id=>$(id).addEventListener('input',()=>update(false)));$('copyFull').onclick=()=>navigator.clipboard.writeText($('fullCode').value);$('copyHelper').onclick=()=>navigator.clipboard.writeText($('helperCode').value);$('copyVsh').onclick=()=>navigator.clipboard.writeText($('vshCode').value);if($('buildPack'))$('buildPack').onclick=buildResourcePack;if($('saveNow'))$('saveNow').onclick=()=>saveProject(true);if($('exportJson'))$('exportJson').onclick=exportProject;if($('importJson'))$('importJson').onclick=()=>$('importFile').click();if($('importFile'))$('importFile').onchange=e=>importProjectFile(e.target.files[0]);if($('resetSaved'))$('resetSaved').onclick=resetSavedProject;if($('packName'))$('packName').addEventListener('input',()=>update(false));if($('packFormat'))$('packFormat').addEventListener('input',()=>update(false));$('tabLibrary').onclick=()=>{$('library').classList.remove('hidden');$('notes').classList.add('hidden');$('tabLibrary').classList.add('active');$('tabNotes').classList.remove('active')};$('tabNotes').onclick=()=>{$('library').classList.add('hidden');$('notes').classList.remove('hidden');$('tabLibrary').classList.remove('active');$('tabNotes').classList.add('active')};$('langEn').onclick=()=>setLang('en');$('langNl').onclick=()=>setLang('nl');renderStops();setupTrigger('main','mainRGB');setupTrigger('shadow','shadowRGB');setLang('en');loadSavedProject();requestAnimationFrame(drawPreview);
 </script>
