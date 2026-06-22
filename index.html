@@ -6,7 +6,8 @@
 <title>Minecraft Text Shader Designer</title>
 <script src="vendor/jszip.min.js"></script>
 <style>
-:root{--bg:#0b0f18;--panel:#121a29;--panel2:#172235;--text:#e8eefc;--muted:#9fb0ce;--line:#26344f;--accent:#79b8ff;--bad:#ff6b6b;--good:#7cffb2}*{box-sizing:border-box}body{margin:0;background:linear-gradient(135deg,#080b12,#11192a);color:var(--text);font-family:Inter,system-ui,Segoe UI,Arial,sans-serif}.wrap{max-width:1320px;margin:0 auto;padding:22px}h1{margin:0 0 8px;font-size:28px}.sub{color:var(--muted);margin-bottom:18px}.grid{display:grid;grid-template-columns:390px 1fr;gap:16px}.card{background:rgba(18,26,41,.96);border:1px solid var(--line);border-radius:16px;padding:16px;box-shadow:0 12px 40px rgba(0,0,0,.25)}label{display:block;font-size:12px;color:var(--muted);margin:12px 0 6px}input,select,button,textarea{font:inherit}input[type=text],input[type=number],select,textarea{width:100%;background:#0c1220;color:var(--text);border:1px solid #2b3b58;border-radius:10px;padding:9px}input[type=color]{width:44px;height:36px;border:0;background:transparent}input[type=range]{width:100%}button{background:#20304a;color:var(--text);border:1px solid #395070;border-radius:10px;padding:9px 10px;cursor:pointer}button:hover{border-color:var(--accent)}.btns{display:flex;gap:8px;flex-wrap:wrap}.mini{font-size:12px;padding:6px 8px}.row{display:grid;grid-template-columns:1fr 90px;gap:8px;align-items:center}.colorRow{display:grid;grid-template-columns:44px 1fr 32px 32px 32px;gap:7px;align-items:center;margin:7px 0}.pill{display:inline-flex;gap:6px;align-items:center;border:1px solid #344865;border-radius:999px;padding:7px 9px;margin:4px 4px 0 0;color:#dce8ff;background:#0e1626}.danger{border-color:#704040}.ok{color:var(--good)}.warn{color:#ffd36f}.previewBox{background:#05070d;border-radius:16px;border:1px solid #243652;padding:16px;overflow:hidden}canvas{width:100%;height:170px;display:block}.muted{color:var(--muted);font-size:12px}.tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}.tab{background:#10182a}.tab.active{border-color:#7ab7ff;background:#1b2a44}pre{background:#060a12;color:#dce8ff;border:1px solid #22314a;border-radius:12px;padding:12px;overflow:auto;max-height:330px;white-space:pre-wrap}.settingPanel{display:none;border:1px solid #243652;border-radius:12px;padding:12px;margin-top:10px;background:#0e1626}.settingPanel.show{display:block}.shortcutGrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:8px}.smallnote{font-size:12px;color:#9fb0ce;line-height:1.4}.split{display:grid;grid-template-columns:1fr 1fr;gap:10px}.hr{height:1px;background:#253551;margin:14px 0}.checkrow{display:flex;gap:8px;align-items:center;margin:8px 0}.status{font-size:12px;margin-top:8px}.hidden{display:none!important}
+:root{--bg:#0b0f18;--panel:#121a29;--panel2:#172235;--text:#e8eefc;--muted:#9fb0ce;--line:#26344f;--accent:#79b8ff;--bad:#ff6b6b;--good:#7cffb2}*{box-sizing:border-box}body{margin:0;background:linear-gradient(135deg,#080b12,#11192a);color:var(--text);font-family:Inter,system-ui,Segoe UI,Arial,sans-serif}.wrap{max-width:1540px;margin:0 auto;padding:22px}h1{margin:0 0 8px;font-size:28px}.sub{color:var(--muted);margin-bottom:18px}.grid{display:grid;grid-template-columns:360px minmax(760px,1fr);gap:18px;align-items:start}.card{background:rgba(18,26,41,.96);border:1px solid var(--line);border-radius:16px;padding:16px;box-shadow:0 12px 40px rgba(0,0,0,.25)}label{display:block;font-size:12px;color:var(--muted);margin:12px 0 6px}input,select,button,textarea{font:inherit}input[type=text],input[type=number],select,textarea{width:100%;background:#0c1220;color:var(--text);border:1px solid #2b3b58;border-radius:10px;padding:9px}input[type=color]{width:44px;height:36px;border:0;background:transparent}input[type=range]{width:100%}button{background:#20304a;color:var(--text);border:1px solid #395070;border-radius:10px;padding:9px 10px;cursor:pointer}button:hover{border-color:var(--accent)}.btns{display:flex;gap:8px;flex-wrap:wrap}.mini{font-size:12px;padding:6px 8px}.row{display:grid;grid-template-columns:1fr 90px;gap:8px;align-items:center}.colorRow{display:grid;grid-template-columns:44px 1fr 32px 32px 32px;gap:7px;align-items:center;margin:7px 0}.pill{display:inline-flex;gap:6px;align-items:center;border:1px solid #344865;border-radius:999px;padding:7px 9px;margin:4px 4px 0 0;color:#dce8ff;background:#0e1626}.danger{border-color:#704040}.ok{color:var(--good)}.warn{color:#ffd36f}.previewBox{background:#05070d;border-radius:16px;border:1px solid #243652;padding:16px;overflow:hidden}canvas{width:100%;height:360px;display:block}.previewBox{min-height:392px}.previewCard{position:sticky;top:14px}.outputCard{margin-top:16px}.widePreviewHint{font-size:12px;color:var(--muted);margin-top:8px}.muted{color:var(--muted);font-size:12px}.tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}.tab{background:#10182a}.tab.active{border-color:#7ab7ff;background:#1b2a44}pre{background:#060a12;color:#dce8ff;border:1px solid #22314a;border-radius:12px;padding:12px;overflow:auto;max-height:330px;white-space:pre-wrap}.settingPanel{display:none;border:1px solid #243652;border-radius:12px;padding:12px;margin-top:10px;background:#0e1626}.settingPanel.show{display:block}.shortcutGrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:8px}.smallnote{font-size:12px;color:#9fb0ce;line-height:1.4}.split{display:grid;grid-template-columns:1fr 1fr;gap:10px}.hr{height:1px;background:#253551;margin:14px 0}.checkrow{display:flex;gap:8px;align-items:center;margin:8px 0}.status{font-size:12px;margin-top:8px}.hidden{display:none!important}
+@media(max-width:1100px){.grid{grid-template-columns:1fr}.previewCard{position:static}canvas{height:300px}}
 </style>
 </head>
 <body>
@@ -21,7 +22,7 @@
       <label>Base effect</label><select id="baseMode"><option>Gradient</option><option>Rainbow</option><option>Solid</option><option>Fire</option><option>Aurora</option><option>Galaxy</option><option>Ocean</option><option>Venom</option><option>Starlight</option></select>
       <div class="split"><div><label>Speed</label><input id="speed" type="number" value="300" step="1"></div><div><label>Spacing</label><input id="spacing" type="number" value="0.005" step="0.001"></div></div>
       <div class="smallnote">Uses server-pack defaults: <code>charIndex = pos.x</code>, shadow offset <code>-1.0</code>, <code>GameTime</code>, speed default <code>300</code>, spacing default <code>0.005</code>.</div>
-      <details class="settingPanel" style="display:none"><summary><b>Legacy preview multipliers</b></summary>
+      <details class="settingPanel show" style="display:block"><summary><b>Preview calibration helper</b></summary>
         <div class="smallnote">These values affect <b>only the browser preview</b>, not the generated Minecraft shader. Defaults are tuned from your working export: site preview at speed 10 / spacing 0.2 ≈ Minecraft speed 300 / spacing 0.005.</div>
         <div class="split"><div><label>Preview speed multiplier</label><input id="previewSpeedMultiplier" type="number" value="0.033333" step="0.001"></div><div><label>Preview spacing multiplier</label><input id="previewSpacingMultiplier" type="number" value="40" step="1"></div></div>
         <div class="btns" style="margin-top:8px"><button class="mini" id="previewMatchMinecraft" type="button">Use calibrated preview</button><button class="mini" id="previewRawShader" type="button">Raw shader math</button></div>
@@ -50,15 +51,15 @@
       <div class="btns"><button id="saveNow">Save now</button><button id="exportJson">Export JSON</button><button id="importJsonBtn">Import JSON</button><button class="danger" id="resetSaved">Reset saved</button><input id="importFile" type="file" accept=".json" class="hidden"></div>
     </div>
     <div>
-      <div class="card">
+      <div class="card previewCard">
         <h2>Preview</h2>
-        <div class="previewBox"><canvas id="preview" width="920" height="210"></canvas></div>
-        <div class="status" id="previewStatus"></div>
+        <div class="previewBox"><canvas id="preview" width="1280" height="420"></canvas></div>
+        <div class="status" id="previewStatus"></div><div class="widePreviewHint">Large bitmap preview: the preview uses Minecraft shader math; the calibration controls only change the browser display size.</div>
         <div class="hr"></div>
         <h3>Shortcuts</h3>
         <div class="shortcutGrid" id="shortcuts"></div>
       </div>
-      <div class="card" style="margin-top:16px">
+      <div class="card outputCard">
         <h2>Build / Output</h2>
         <div class="btns"><button id="buildPack">Download test resource pack .zip</button><button id="copyFsh">Copy FSH</button><button id="copyVsh">Copy VSH</button><button id="validate">Validate</button></div>
         <div id="buildStatus" class="status"></div>
@@ -101,136 +102,10 @@ function mix(a,b,t){return a+(b-a)*t}
 function mix3(c1,c2,t){return [mix(c1[0],c2[0],t),mix(c1[1],c2[1],t),mix(c1[2],c2[2],t)]}
 function gradientAt(colors,t){let n=colors.length;if(n===1)return hexToRgb(colors[0]);let x=phase(t)*n;let i=Math.floor(x)%n;return mix3(hexToRgb(colors[i]),hexToRgb(colors[(i+1)%n]),x-i)}
 function hsvToRgb(h,s,v){let f=(n,k=(n+h*6)%6)=>v-v*s*Math.max(Math.min(k,4-k,1),0);return [f(5)*255,f(3)*255,f(1)*255]}
-function colorAt(pos,corner,gameTime,shadow=false){
-  let d=collect();
-  // Minecraft-accurate shader math: keep speed/spacing exactly as exported.
-  // In VSH: charIndex = pos.x, animTime = GameTime.
-  // Minecraft GameTime is simulated in draw() as seconds / 1200.
-  let t=pos*d.spacing-gameTime*d.speed;
-  if(d.addons.diagonal)t+=corner*d.settings.diagonalStrength+d.settings.diagonalOffset;
-  let rgb;
-  if(d.baseMode==='Rainbow') rgb=hsvToRgb(phase(t),.7,1);
-  else rgb=gradientAt(d.colors,t);
-  if(d.addons.shimmer){
-    let sweep=phase(gameTime*d.settings.glintSpeed);
-    let p=phase(pos*d.settings.glintSpacing);
-    let dist=Math.abs(p-sweep); dist=Math.min(dist,1-dist);
-    let g=1-smoothstep(0,d.settings.glintWidth,dist);
-    let gc=hexToRgb(d.settings.glintColor);
-    rgb=mix3(rgb,gc,g*d.settings.glintStrength);
-  }
-  if(d.addons.pulse){
-    let p=(Math.sin(gameTime*d.settings.pulseSpeed+pos*.03)+1)/2;
-    let mul=mix(d.settings.pulseMin,d.settings.pulseMax,p);
-    rgb=rgb.map(v=>v*mul);
-  }
-  if(d.addons.sparkle){
-    let s=Math.sin(pos*12.9898+gameTime*d.settings.sparkleSpeed)*43758.5453;
-    s=phase(s);
-    if(s>1-d.settings.sparkleAmount*.08){
-      let sc=hexToRgb(d.settings.sparkleColor);
-      rgb=mix3(rgb,sc,.85);
-    }
-  }
-  if(d.addons.neon)rgb=rgb.map(v=>v*d.settings.neonBoost);
-  if(shadow)rgb=rgb.map(v=>v*.25);
-  return rgb.map(v=>clamp(v,0,255));
-}
+function colorAt(pos,corner,time,shadow=false){let d=collect(),previewSpacing=d.spacing*(d.preview?.spacingMultiplier??40),previewSpeed=d.speed*(d.preview?.speedMultiplier??0.033333),t=pos*previewSpacing-time*previewSpeed; if(d.addons.diagonal)t+=corner*d.settings.diagonalStrength+d.settings.diagonalOffset;let rgb;if(d.baseMode==='Rainbow')rgb=hsvToRgb(phase(t),.7,1);else rgb=gradientAt(d.colors,t); if(d.addons.shimmer){let sweep=phase(time*d.settings.glintSpeed);let p=phase(pos*d.settings.glintSpacing);let dist=Math.abs(p-sweep);dist=Math.min(dist,1-dist);let g=1-smoothstep(0,d.settings.glintWidth,dist);let gc=hexToRgb(d.settings.glintColor);rgb=mix3(rgb,gc,g*d.settings.glintStrength)} if(d.addons.pulse){let p=(Math.sin(time*d.settings.pulseSpeed+pos*.03)+1)/2;let mul=mix(d.settings.pulseMin,d.settings.pulseMax,p);rgb=rgb.map(v=>v*mul)} if(d.addons.sparkle){let s=Math.sin(pos*12.9898+time*d.settings.sparkleSpeed)*43758.5453;s=phase(s);if(s>1-d.settings.sparkleAmount*.08){let sc=hexToRgb(d.settings.sparkleColor);rgb=mix3(rgb,sc,.85)}} if(d.addons.neon)rgb=rgb.map(v=>v*d.settings.neonBoost); if(shadow)rgb=rgb.map(v=>v*.25);return rgb.map(v=>clamp(v,0,255))}
 function smoothstep(a,b,x){let t=clamp((x-a)/(b-a),0,1);return t*t*(3-2*t)}
-const MC_FONT={
-' ':['000','000','000','000','000','000','000'],
-'A':['01110','10001','10001','11111','10001','10001','10001'],
-'B':['11110','10001','10001','11110','10001','10001','11110'],
-'C':['01111','10000','10000','10000','10000','10000','01111'],
-'D':['11110','10001','10001','10001','10001','10001','11110'],
-'E':['11111','10000','10000','11110','10000','10000','11111'],
-'F':['11111','10000','10000','11110','10000','10000','10000'],
-'G':['01111','10000','10000','10011','10001','10001','01110'],
-'H':['10001','10001','10001','11111','10001','10001','10001'],
-'I':['111','010','010','010','010','010','111'],
-'J':['00111','00010','00010','00010','10010','10010','01100'],
-'K':['10001','10010','10100','11000','10100','10010','10001'],
-'L':['10000','10000','10000','10000','10000','10000','11111'],
-'M':['10001','11011','10101','10101','10001','10001','10001'],
-'N':['10001','11001','10101','10011','10001','10001','10001'],
-'O':['01110','10001','10001','10001','10001','10001','01110'],
-'P':['11110','10001','10001','11110','10000','10000','10000'],
-'Q':['01110','10001','10001','10001','10101','10010','01101'],
-'R':['11110','10001','10001','11110','10100','10010','10001'],
-'S':['01111','10000','10000','01110','00001','00001','11110'],
-'T':['11111','00100','00100','00100','00100','00100','00100'],
-'U':['10001','10001','10001','10001','10001','10001','01110'],
-'V':['10001','10001','10001','10001','10001','01010','00100'],
-'W':['10001','10001','10001','10101','10101','10101','01010'],
-'X':['10001','10001','01010','00100','01010','10001','10001'],
-'Y':['10001','10001','01010','00100','00100','00100','00100'],
-'Z':['11111','00001','00010','00100','01000','10000','11111'],
-'0':['01110','10001','10011','10101','11001','10001','01110'],
-'1':['010','110','010','010','010','010','111'],
-'2':['01110','10001','00001','00010','00100','01000','11111'],
-'3':['11110','00001','00001','01110','00001','00001','11110'],
-'4':['10010','10010','10010','11111','00010','00010','00010'],
-'5':['11111','10000','10000','11110','00001','00001','11110'],
-'6':['01110','10000','10000','11110','10001','10001','01110'],
-'7':['11111','00001','00010','00100','01000','01000','01000'],
-'8':['01110','10001','10001','01110','10001','10001','01110'],
-'9':['01110','10001','10001','01111','00001','00001','01110'],
-'-':['00000','00000','00000','11111','00000','00000','00000'],
-'_':['00000','00000','00000','00000','00000','00000','11111'],
-'[':['111','100','100','100','100','100','111'],
-']':['111','001','001','001','001','001','111'],
-':':['0','1','0','0','1','0','0'],
-'.':['0','0','0','0','0','0','1']
-};
-function glyphRows(ch){
-  if(MC_FONT[ch]) return MC_FONT[ch];
-  let u=ch.toUpperCase();
-  return MC_FONT[u] || ['11111','00001','00010','00100','00100','00000','00100'];
-}
-function glyphWidth(ch){return glyphRows(ch)[0].length;}
-function textLogicalWidth(text,letterGap){let w=0; for(let ch of text){w+=glyphWidth(ch)+letterGap+1;} return Math.max(0,w-1-letterGap);}
-function drawGlyphPixels(ctx,ch,baseX,baseY,scale,gameTime,shadow=false,shadowOffset=1){
-  let rows=glyphRows(ch), h=rows.length, w=rows[0].length;
-  let ox=shadow?shadowOffset:0, oy=shadow?shadowOffset:0;
-  for(let yy=0; yy<h; yy++){
-    let row=rows[yy];
-    for(let xx=0; xx<w; xx++){
-      if(row[xx]!=='1') continue;
-      let localX=w<=1?0:xx/(w-1);
-      let localY=h<=1?0:yy/(h-1);
-      let corner=(localX+(1-localY))*0.5;
-      let pos=baseX+xx;
-      let rgb=colorAt(pos,corner,gameTime,shadow);
-      ctx.fillStyle=`rgb(${rgb[0]|0},${rgb[1]|0},${rgb[2]|0})`;
-      ctx.fillRect(Math.round((baseX+xx+ox)*scale),Math.round((baseY+yy+oy)*scale),Math.ceil(scale),Math.ceil(scale));
-    }
-  }
-}
-function draw(){
-  let c=$('preview'),ctx=c.getContext('2d'),d=collect();
-  ctx.imageSmoothingEnabled=false;
-  ctx.clearRect(0,0,c.width,c.height);
-  ctx.fillStyle='#05070d';ctx.fillRect(0,0,c.width,c.height);
-  let text=d.previewText||'Eternal Network';
-  // True shader time simulation. This is the only time value used for preview color math.
-  let gameTime=(performance.now()/1000)/1200;
-  let fontScaleEl=$('previewFontScale');
-  let letterSpacingEl=$('previewLetterSpacing');
-  let shadowOffsetEl=$('previewShadowOffset');
-  let scale=8*(fontScaleEl?parseFloat(fontScaleEl.value||'0.58'):0.58);
-  scale=clamp(scale,2.5,10);
-  let letterGap=letterSpacingEl?parseFloat(letterSpacingEl.value||'0'):0;
-  let shadowOffset=shadowOffsetEl?parseFloat(shadowOffsetEl.value||'1'):1;
-  let logicalW=textLogicalWidth(text,letterGap);
-  let start=(c.width/scale-logicalW)/2;
-  let y=(c.height/scale-7)/2;
-  let x=start;
-  for(let ch of text){drawGlyphPixels(ctx,ch,x,y,scale,gameTime,true,shadowOffset); x+=glyphWidth(ch)+1+letterGap;}
-  x=start;
-  for(let ch of text){drawGlyphPixels(ctx,ch,x,y,scale,gameTime,false,shadowOffset); x+=glyphWidth(ch)+1+letterGap;}
-  $('previewStatus').textContent=`Minecraft bitmap preview: GameTime = seconds / 1200, charIndex = pixel X, speed ${d.speed}, spacing ${d.spacing}. Visual scale only: ${scale.toFixed(2)}×.`;
-  requestAnimationFrame(draw);
-}
+function draw(){let c=$('preview'),ctx=c.getContext('2d'),d=collect();ctx.clearRect(0,0,c.width,c.height);ctx.fillStyle='#05070d';ctx.fillRect(0,0,c.width,c.height);ctx.font='bold 54px monospace';ctx.textBaseline='middle';let text=d.previewText||'Eternal Network';let start=42,y=105;let time=performance.now()/1000; // browser seconds; preview multipliers calibrate this to Minecraft GameTime feel
+let x=start;for(let i=0;i<text.length;i++){let ch=text[i],w=ctx.measureText(ch).width||32;let pos=x;let corner=(i%2)*.5;let sh=colorAt(pos-1,corner,time,true);ctx.fillStyle=`rgb(${sh[0]},${sh[1]},${sh[2]})`;ctx.fillText(ch,x+3,y+4);let rgb=colorAt(pos,corner,time,false);ctx.fillStyle=`rgb(${rgb[0]},${rgb[1]},${rgb[2]})`;ctx.fillText(ch,x,y);x+=w} $('previewStatus').textContent=`Preview uses calibrated values only visually: speed ${d.speed} × ${d.preview.speedMultiplier} = ${(d.speed*d.preview.speedMultiplier).toFixed(3)}, spacing ${d.spacing} × ${d.preview.spacingMultiplier} = ${(d.spacing*d.preview.spacingMultiplier).toFixed(3)}. Export remains speed ${d.speed}, spacing ${d.spacing}.`;requestAnimationFrame(draw)}
 function glslGradientFn(){let name=normName();let cols=state.colors.map(vec);let body=''; if(cols.length===1) body=`return ${cols[0]};`; else {body+=`float phase = fract(t) * ${cols.length.toFixed(1)};\n`; for(let i=0;i<cols.length;i++){let next=cols[(i+1)%cols.length];if(i<cols.length-1)body+=`    if (phase < ${(i+1).toFixed(1)}) return mix(${cols[i]}, ${next}, phase - ${i.toFixed(1)});\n`;else body+=`    return mix(${cols[i]}, ${next}, phase - ${i.toFixed(1)});`;}}return `vec3 ${name}Gradient(float t) {\n    ${body}\n}`}
 function effectExpr(shadow=false){let d=collect(),name=normName(),base;if(d.baseMode==='Rainbow')base=`hsvToRgb(vec3(fract(t), 0.7, 1.0))`;else base=`${name}Gradient(t)`;let lines=[`float t = charIndex * ${d.spacing.toFixed(6)} - animTime * ${d.speed.toFixed(3)};`];if(d.addons.diagonal)lines.push(`t += CustomEffectCornerT * ${d.settings.diagonalStrength.toFixed(3)} + ${d.settings.diagonalOffset.toFixed(3)};`);lines.push(`vec3 rgb = ${base};`);if(d.addons.shimmer){lines.push(`float sweep = fract(animTime * ${d.settings.glintSpeed.toFixed(3)});`);lines.push(`float spos = fract(charIndex * ${d.settings.glintSpacing.toFixed(3)});`);lines.push(`float sd = abs(spos - sweep); sd = min(sd, 1.0 - sd);`);lines.push(`float glint = 1.0 - smoothstep(0.0, ${d.settings.glintWidth.toFixed(3)}, sd);`);lines.push(`rgb = mix(rgb, ${vec(d.settings.glintColor)}, glint * ${d.settings.glintStrength.toFixed(3)});`)}if(d.addons.pulse)lines.push(`rgb *= mix(${d.settings.pulseMin.toFixed(3)}, ${d.settings.pulseMax.toFixed(3)}, 0.5 + 0.5 * sin(animTime * ${d.settings.pulseSpeed.toFixed(3)} + charIndex * 0.03));`);if(d.addons.sparkle){lines.push(`float spark = fract(sin(charIndex * 12.9898 + animTime * ${d.settings.sparkleSpeed.toFixed(3)}) * 43758.5453);`);lines.push(`rgb = mix(rgb, ${vec(d.settings.sparkleColor)}, step(${(1-d.settings.sparkleAmount*.08).toFixed(3)}, spark) * 0.85);`)}if(d.addons.neon)lines.push(`rgb = min(rgb * ${d.settings.neonBoost.toFixed(3)}, vec3(1.0));`);if(shadow)lines.push(`rgb *= 0.25;`);return lines.join('\n        ')}
 function fsh(){let d=collect(),m=hexToRgb(d.mainHex),s=hexToRgb(d.shadowHex),name=normName();return `#version 150\n\n#moj_import <minecraft:fog.glsl>\n#moj_import <minecraft:dynamictransforms.glsl>\n#moj_import <minecraft:globals.glsl>\n\nuniform sampler2D Sampler0;\nuniform float FogStart;\nuniform float FogEnd;\n\nin float sphericalVertexDistance;\nin float cylindricalVertexDistance;\nin vec4 vertexColor;\nin vec2 texCoord0;\nin float charIndex;\nin float animTime;\nin float CustomEffectCornerT;\n\nout vec4 fragColor;\n\nvec3 hsvToRgb(vec3 c) {\n    vec4 K = vec4(1.0, 2.0 / 3.0, 1.0 / 3.0, 3.0);\n    vec3 p = abs(fract(c.xxx + K.xyz) * 6.0 - K.www);\n    return c.z * mix(K.xxx, clamp(p - K.xxx, 0.0, 1.0), c.y);\n}\n\nbool colorMatch(vec4 col, float r, float g, float b) {\n    return abs(col.r * 255.0 - r) < 1.0 && abs(col.g * 255.0 - g) < 1.0 && abs(col.b * 255.0 - b) < 1.0;\n}\n\n${glslGradientFn()}\n\nvoid main() {\n    vec4 color = texture(Sampler0, texCoord0) * vertexColor * ColorModulator;\n    if (color.a < 0.1) discard;\n    float texAlpha = texture(Sampler0, texCoord0).a;\n\n    if (colorMatch(vertexColor, ${m[0]}.0, ${m[1]}.0, ${m[2]}.0)) {\n        // ${d.effectName}: ${d.mainHex}\n        ${effectExpr(false)}\n        color = vec4(rgb * texAlpha, texAlpha) * ColorModulator;\n    } else if (colorMatch(vertexColor, ${s[0]}.0, ${s[1]}.0, ${s[2]}.0)) {\n        // ${d.effectName} shadow: ${d.shadowHex}\n        ${effectExpr(true)}\n        color = vec4(rgb * texAlpha, texAlpha) * ColorModulator;\n    }\n\n    fragColor = apply_fog(color, sphericalVertexDistance, cylindricalVertexDistance, FogEnvironmentalStart, FogEnvironmentalEnd, FogRenderDistanceStart, FogRenderDistanceEnd, FogColor);\n}\n`}
@@ -338,8 +213,8 @@ init();
     return `
       <div class="card" id="previewFontCalibrationCard">
         <h2>Minecraft bitmap preview calibration</h2>
-        <p class="muted">Only scales the pixel preview. Shader speed and spacing stay 1:1 with Minecraft.</p>
-        <label>Preview pixel scale <input id="previewFontScale" type="range" min="0.35" max="1.2" step="0.01"></label>
+        <p class="muted">Only changes the browser preview. Exported Minecraft shader values stay unchanged.</p>
+        <label>Preview font scale <input id="previewFontScale" type="range" min="0.35" max="1.2" step="0.01"></label>
         <label>Preview letter spacing <input id="previewLetterSpacing" type="range" min="-2" max="8" step="0.25"></label>
         <label>Preview shadow offset <input id="previewShadowOffset" type="range" min="0" max="5" step="0.25"></label>
         <label style="display:flex;gap:8px;align-items:center"><input id="previewCompactMode" type="checkbox"> Compact Minecraft chat preview</label>
