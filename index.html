@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>Minecraft Text Shader Designer - VSH/FSH Generator</title>
 <style>
-:root{--bg:#080b13;--panel:#12182a;--panel2:#0d1220;--line:#293452;--text:#eef4ff;--muted:#a8b3d0;--accent:#7c5cff;--ok:#43d18b;--warn:#ffd166;--bad:#ff6384}*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at top,#202c5e,#080b13 55%);color:var(--text);font-family:Inter,system-ui,Segoe UI,Arial,sans-serif}header,main{max-width:1260px;margin:auto}header{padding:28px 22px 10px}main{padding:12px 22px 42px;display:grid;grid-template-columns:410px 1fr;gap:18px}@media(max-width:950px){main{grid-template-columns:1fr}}h1{margin:0;font-size:clamp(28px,4vw,42px)}p{color:var(--muted);line-height:1.5}.card{background:linear-gradient(180deg,rgba(255,255,255,.06),rgba(255,255,255,.02));border:1px solid var(--line);border-radius:18px;padding:16px;box-shadow:0 18px 50px rgba(0,0,0,.26)}h2{font-size:18px;margin:0 0 14px}h3{font-size:15px;margin:0 0 8px}label{display:block;font-size:13px;color:#cfdbfa;margin:12px 0 6px}input,select,textarea,button{font:inherit}input[type=text],input[type=number],select,textarea{width:100%;background:#080d1a;color:var(--text);border:1px solid var(--line);border-radius:12px;padding:10px 11px;outline:none}textarea{min-height:220px;resize:vertical;font-size:12px;line-height:1.42;font-family:ui-monospace,SFMono-Regular,Consolas,monospace}input[type=color]{width:52px;height:40px;border:0;background:transparent}.row{display:grid;grid-template-columns:1fr 1fr;gap:10px}.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}button{border:1px solid var(--line);background:#1a2340;color:var(--text);border-radius:12px;padding:9px 12px;cursor:pointer}button:hover{filter:brightness(1.15)}.primary{background:linear-gradient(135deg,#6e5cff,#33d6ff);border:0;font-weight:800}.danger{background:#3a1420;border-color:#763044;color:#ffd9e0}.stop{display:grid;grid-template-columns:52px 1fr auto auto;gap:8px;align-items:center;padding:8px;border:1px solid var(--line);border-radius:14px;background:rgba(0,0,0,.16);margin:8px 0}.previewBox{min-height:250px;border-radius:18px;background:linear-gradient(135deg,#070a14,#151d38);border:1px solid var(--line);position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center}.previewBox:before{content:"";position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.04) 1px,transparent 1px);background-size:24px 24px;opacity:.38}.previewCanvas{position:relative;width:100%;height:250px;display:block}.pill{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);border-radius:999px;padding:6px 10px;background:#10172d;color:#dbe4ff;font-size:12px;margin:3px 4px 3px 0}.pill.ok{border-color:rgba(68,209,141,.45);color:#bcffd9}.pill.warn{border-color:rgba(255,204,102,.45);color:#ffe4a3}.pill.bad{border-color:rgba(255,100,128,.45);color:#ffd0d9}.notice{border-left:3px solid var(--accent);padding:10px 12px;background:#10172d;border-radius:12px;color:#ccd8fa;font-size:13px}.small{font-size:12px;color:var(--muted)}.grid2{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:18px}@media(max-width:950px){.grid2{grid-template-columns:1fr}}.modePanel{border:1px solid var(--line);border-radius:14px;background:rgba(0,0,0,.14);padding:10px;margin-top:12px}.hidden{display:none}.effectGrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}@media(max-width:650px){.effectGrid{grid-template-columns:1fr}}.effectCard{border:1px solid var(--line);border-radius:14px;background:rgba(0,0,0,.14);padding:12px}.effectCard.active{outline:2px solid var(--accent)}.req{font-size:12px;line-height:1.55;color:#cbd6f3;margin-top:8px}.tabbar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}.tabbar button.active,.langbar button.active{background:linear-gradient(135deg,#6e5cff,#33d6ff);border:0;font-weight:800}.rgbGrid{display:grid;grid-template-columns:18px 1fr 70px;gap:8px;align-items:center;margin-top:8px}.rgbGrid input[type=range]{width:100%;accent-color:#7c5cff}.rgbGrid span{font-size:12px;color:var(--muted);font-weight:800}.langbar{display:flex;justify-content:flex-end;gap:8px}.modeList{font-size:13px;color:#cbd6f3;line-height:1.5}.status{font-size:12px;color:var(--muted);margin-top:8px}.fileInput{display:none}
+:root{--bg:#080b13;--panel:#12182a;--panel2:#0d1220;--line:#293452;--text:#eef4ff;--muted:#a8b3d0;--accent:#7c5cff;--ok:#43d18b;--warn:#ffd166;--bad:#ff6384}*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at top,#202c5e,#080b13 55%);color:var(--text);font-family:Inter,system-ui,Segoe UI,Arial,sans-serif}header,main{max-width:1260px;margin:auto}header{padding:28px 22px 10px}main{padding:12px 22px 42px;display:grid;grid-template-columns:410px 1fr;gap:18px}@media(max-width:950px){main{grid-template-columns:1fr}}h1{margin:0;font-size:clamp(28px,4vw,42px)}p{color:var(--muted);line-height:1.5}.card{background:linear-gradient(180deg,rgba(255,255,255,.06),rgba(255,255,255,.02));border:1px solid var(--line);border-radius:18px;padding:16px;box-shadow:0 18px 50px rgba(0,0,0,.26)}h2{font-size:18px;margin:0 0 14px}h3{font-size:15px;margin:0 0 8px}label{display:block;font-size:13px;color:#cfdbfa;margin:12px 0 6px}input,select,textarea,button{font:inherit}input[type=text],input[type=number],select,textarea{width:100%;background:#080d1a;color:var(--text);border:1px solid var(--line);border-radius:12px;padding:10px 11px;outline:none}textarea{min-height:220px;resize:vertical;font-size:12px;line-height:1.42;font-family:ui-monospace,SFMono-Regular,Consolas,monospace}input[type=color]{width:52px;height:40px;border:0;background:transparent}.row{display:grid;grid-template-columns:1fr 1fr;gap:10px}.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}button{border:1px solid var(--line);background:#1a2340;color:var(--text);border-radius:12px;padding:9px 12px;cursor:pointer}button:hover{filter:brightness(1.15)}.primary{background:linear-gradient(135deg,#6e5cff,#33d6ff);border:0;font-weight:800}.danger{background:#3a1420;border-color:#763044;color:#ffd9e0}.stop{display:grid;grid-template-columns:52px 1fr auto auto;gap:8px;align-items:center;padding:8px;border:1px solid var(--line);border-radius:14px;background:rgba(0,0,0,.16);margin:8px 0}.previewBox{min-height:250px;border-radius:18px;background:linear-gradient(135deg,#070a14,#151d38);border:1px solid var(--line);position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center}.previewBox:before{content:"";position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.04) 1px,transparent 1px);background-size:24px 24px;opacity:.38}.previewCanvas{position:relative;width:100%;height:250px;display:block}.pill{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);border-radius:999px;padding:6px 10px;background:#10172d;color:#dbe4ff;font-size:12px;margin:3px 4px 3px 0}.pill.ok{border-color:rgba(68,209,141,.45);color:#bcffd9}.pill.warn{border-color:rgba(255,204,102,.45);color:#ffe4a3}.pill.bad{border-color:rgba(255,100,128,.45);color:#ffd0d9}.notice{border-left:3px solid var(--accent);padding:10px 12px;background:#10172d;border-radius:12px;color:#ccd8fa;font-size:13px}.small{font-size:12px;color:var(--muted)}.grid2{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:18px}@media(max-width:950px){.grid2{grid-template-columns:1fr}}.modePanel{border:1px solid var(--line);border-radius:14px;background:rgba(0,0,0,.14);padding:10px;margin-top:12px}.hidden{display:none}.effectGrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}@media(max-width:650px){.effectGrid{grid-template-columns:1fr}}.effectCard{border:1px solid var(--line);border-radius:14px;background:rgba(0,0,0,.14);padding:12px}.effectCard.active{outline:2px solid var(--accent)}.req{font-size:12px;line-height:1.55;color:#cbd6f3;margin-top:8px}.tabbar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}.tabbar button.active,.langbar button.active{background:linear-gradient(135deg,#6e5cff,#33d6ff);border:0;font-weight:800}.rgbGrid{display:grid;grid-template-columns:18px 1fr 70px;gap:8px;align-items:center;margin-top:8px}.rgbGrid input[type=range]{width:100%;accent-color:#7c5cff}.rgbGrid span{font-size:12px;color:var(--muted);font-weight:800}.langbar{display:flex;justify-content:flex-end;gap:8px}.modeList{font-size:13px;color:#cbd6f3;line-height:1.5}
 </style>
 </head>
 <body>
@@ -29,16 +29,6 @@
  <h2 style="margin-top:18px">Triggers</h2>
  <input id="mainRGB" type="hidden" value="230,236,254"><input id="shadowRGB" type="hidden" value="57,59,63">
  <div id="mainTrigger"></div><div id="shadowTrigger"></div>
- <h2 style="margin-top:18px" data-en="Save / Share" data-nl="Opslaan / Delen">Save / Share</h2>
- <div class="notice" data-en="Your current design is saved automatically in this browser. Use export/import to share or back up presets." data-nl="Je huidige ontwerp wordt automatisch opgeslagen in deze browser. Gebruik export/import om presets te delen of te back-uppen.">Your current design is saved automatically in this browser. Use export/import to share or back up presets.</div>
- <div class="actions">
-  <button id="saveNow" class="primary" data-en="Save now" data-nl="Nu opslaan">Save now</button>
-  <button id="exportJson" data-en="Export JSON" data-nl="JSON exporteren">Export JSON</button>
-  <button id="importJson" data-en="Import JSON" data-nl="JSON importeren">Import JSON</button>
-  <button id="resetSaved" class="danger" data-en="Reset saved" data-nl="Opgeslagen resetten">Reset saved</button>
- </div>
- <input id="importFile" class="fileInput" type="file" accept="application/json,.json">
- <div id="saveStatus" class="status"></div>
 </section>
 <section>
  <div class="card">
@@ -51,7 +41,20 @@
   <div class="card"><h2>FSH: main() shader block</h2><textarea id="fullCode" readonly></textarea><div class="actions"><button id="copyFull" class="primary">Copy FSH block</button></div></div>
   <div class="card"><h2>FSH: declarations / helpers</h2><textarea id="helperCode" readonly></textarea><div class="actions"><button id="copyHelper" class="primary">Copy FSH helper</button></div></div>
  </div>
- <div class="card" style="margin-top:18px"><h2>VSH: vertex shader code</h2><textarea id="vshCode" readonly></textarea><div class="actions"><button id="copyVsh" class="primary">Copy VSH code</button></div><p class="small">For VSH-required effects, paste this into <code>rendertype_text.vsh</code>. Exact placement depends on your VSH file, so the snippet includes placement comments.</p></div>
+ <div class="card" style="margin-top:18px"><h2>VSH: vertex shader code</h2><textarea id="vshCode" readonly></textarea><div class="actions"><button id="copyVsh" class="primary">Copy VSH code</button></div><p class="small">For VSH-required effects, this panel shows the exact generated VSH logic. The test-pack builder also writes a full <code>rendertype_text.vsh</code> file.</p></div>
+ 
+ <div class="card" style="margin-top:18px">
+  <h2>Build test resource pack</h2>
+  <p class="small">Creates a local .zip you can put in Minecraft's resourcepacks folder. The builder now generates both rendertype_text.fsh and rendertype_text.vsh for testing, based on the uploaded Text_Effects pack approach.</p>
+  <div class="row">
+   <div><label>Pack name</label><input id="packName" type="text" value="Text Shader Test Pack"></div>
+   <div><label>Pack format</label><input id="packFormat" type="number" value="34" min="1"></div>
+  </div>
+  <div class="actions">
+   <button id="buildPack" class="primary">Build test texturepack .zip</button>
+  </div>
+  <textarea id="packLog" readonly style="min-height:90px;margin-top:10px"></textarea>
+ </div>
  <div class="card" style="margin-top:18px">
   <div class="tabbar"><button id="tabLibrary" class="active">Effect library</button><button id="tabNotes">Notes</button></div>
   <div id="library" class="effectGrid"></div>
@@ -123,17 +126,254 @@ return '// No VSH snippet available for this mode.';
 function renderLibrary(){let lib=$('library');lib.innerHTML='';Object.entries(EFFECTS).forEach(([k,e])=>{let d=document.createElement('div');d.className='effectCard '+($('mode').value===k?'active':'');let cls=e.scope==='fsh'?'ok':e.scope==='vsh'?'warn':'bad';d.innerHTML=`<h3>${e.name}</h3><span class="pill ${cls}">${e.badge}</span><div class="req"><b>Needs:</b> ${e.needs}<br><b>Imports:</b> ${e.imports.join(', ')}<br>${e.desc}</div><div class="actions"><button>Select</button></div>`;d.querySelector('button').onclick=()=>{$('mode').value=k;update()};lib.appendChild(d)})}
 function applyPreset(k){let p=PRESETS[k];if(!p)return;$('mode').value=p.mode;colors=[...p.colors];$('speed').value=p.speed;$('spacing').value=p.spacing;$('mainRGB').value=p.main;$('shadowRGB').value=p.shadow;setupTrigger('main','mainRGB');setupTrigger('shadow','shadowRGB');renderStops();update()}
 function update(rebuild=true){if(rebuild)renderSettings();$('requirements').innerHTML=requirementsHtml();$('helperCode').value=helper();$('fullCode').value=fullBlock();$('vshCode').value=vshSnippet();renderLibrary()}
-Object.entries(EFFECTS).forEach(([k,e])=>{let o=document.createElement('option');o.value=k;o.textContent=e.name;$('mode').appendChild(o)});Object.keys(PRESETS).forEach(k=>{let o=document.createElement('option');o.value=k;o.textContent=k;$('preset').appendChild(o)});$('mainTrigger').innerHTML=triggerEditor('main','Main RGB menu');$('shadowTrigger').innerHTML=triggerEditor('shadow','Shadow RGB menu');$('preset').onchange=e=>applyPreset(e.target.value);$('addColor').onclick=()=>{colors.push('#ffffff');renderStops();update(false)};$('mode').onchange=update;['effectName','previewText','speed','spacing','shadowFactor','wavePreview','mainRGB','shadowRGB'].forEach(id=>$(id).addEventListener('input',()=>update(false)));$('copyFull').onclick=()=>navigator.clipboard.writeText($('fullCode').value);$('copyHelper').onclick=()=>navigator.clipboard.writeText($('helperCode').value);$('copyVsh').onclick=()=>navigator.clipboard.writeText($('vshCode').value);$('tabLibrary').onclick=()=>{$('library').classList.remove('hidden');$('notes').classList.add('hidden');$('tabLibrary').classList.add('active');$('tabNotes').classList.remove('active')};$('tabNotes').onclick=()=>{$('library').classList.add('hidden');$('notes').classList.remove('hidden');$('tabLibrary').classList.remove('active');$('tabNotes').classList.add('active')};$('langEn').onclick=()=>setLang('en');$('langNl').onclick=()=>setLang('nl');
-const STORAGE_KEY='minecraftTextShaderDesigner.v1';
-function collectState(){return{version:1,savedAt:new Date().toISOString(),lang,effectName:$('effectName').value,mode:$('mode').value,preset:$('preset').value,previewText:$('previewText').value,speed:$('speed').value,spacing:$('spacing').value,shadowFactor:$('shadowFactor').value,wavePreview:$('wavePreview').checked,mainRGB:$('mainRGB').value,shadowRGB:$('shadowRGB').value,colors:[...colors],settings:{...settings}}}
-function applyState(state){if(!state||typeof state!=='object')return false;try{if(state.effectName!=null)$('effectName').value=state.effectName;if(state.mode&&EFFECTS[state.mode])$('mode').value=state.mode;if(state.preset!=null)$('preset').value=state.preset;if(state.previewText!=null)$('previewText').value=state.previewText;if(state.speed!=null)$('speed').value=state.speed;if(state.spacing!=null)$('spacing').value=state.spacing;if(state.shadowFactor!=null)$('shadowFactor').value=state.shadowFactor;if(state.wavePreview!=null)$('wavePreview').checked=!!state.wavePreview;if(state.mainRGB)$('mainRGB').value=state.mainRGB;if(state.shadowRGB)$('shadowRGB').value=state.shadowRGB;if(Array.isArray(state.colors)&&state.colors.length)colors=[...state.colors];if(state.settings&&typeof state.settings==='object')settings={...settings,...state.settings};setupTrigger('main','mainRGB');setupTrigger('shadow','shadowRGB');renderStops();renderSettings();setLang(state.lang==='nl'?'nl':'en');update(false);setStatus(lang==='nl'?'Preset geladen.':'Preset loaded.');return true}catch(e){console.error(e);return false}}
-function saveState(){try{localStorage.setItem(STORAGE_KEY,JSON.stringify(collectState()));setStatus(lang==='nl'?'Automatisch opgeslagen.':'Auto-saved.')}catch(e){setStatus(lang==='nl'?'Opslaan mislukt.':'Save failed.')}}
-function loadState(){try{const raw=localStorage.getItem(STORAGE_KEY);if(!raw)return false;return applyState(JSON.parse(raw))}catch(e){console.error(e);return false}}
-function setStatus(msg){const el=$('saveStatus');if(!el)return;el.textContent=msg}
-function downloadJson(){const state=collectState();const safe=(state.effectName||'minecraft-text-effect').replace(/[^a-z0-9_-]+/gi,'_').replace(/^_+|_+$/g,'')||'minecraft-text-effect';const blob=new Blob([JSON.stringify(state,null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=safe+'.json';document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},0);setStatus(lang==='nl'?'JSON geëxporteerd.':'JSON exported.')}
-function importJsonFile(file){const reader=new FileReader();reader.onload=()=>{try{const state=JSON.parse(reader.result);if(applyState(state)){saveState();setStatus(lang==='nl'?'JSON geïmporteerd en opgeslagen.':'JSON imported and saved.')}else setStatus(lang==='nl'?'Ongeldig JSON-bestand.':'Invalid JSON file.')}catch(e){setStatus(lang==='nl'?'Kon JSON niet lezen.':'Could not read JSON.')}};reader.readAsText(file)}
 
-renderStops();setupTrigger('main','mainRGB');setupTrigger('shadow','shadowRGB');if(!loadState())setLang('en');requestAnimationFrame(drawPreview);const _oldUpdate=update;update=function(rebuild=true){_oldUpdate(rebuild);saveState()};$('saveNow').onclick=saveState;$('exportJson').onclick=downloadJson;$('importJson').onclick=()=>$('importFile').click();$('importFile').onchange=e=>{const f=e.target.files&&e.target.files[0];if(f)importJsonFile(f);e.target.value=''};$('resetSaved').onclick=()=>{localStorage.removeItem(STORAGE_KEY);setStatus(lang==='nl'?'Opgeslagen data verwijderd.':'Saved data cleared.')};
+function sanitizeFileName(name){return String(name||'text-shader-test-pack').trim().replace(/[^a-z0-9._-]+/gi,'-').replace(/-+/g,'-').replace(/^-|-$/g,'') || 'text-shader-test-pack'}
+function fshBlockForStandalone(){
+  let b=fullBlock().trim();
+  if(b.startsWith('} else if')) b=b.replace(/^}\s*else\s+if/,'if');
+  return b;
+}
+function generatedFullFsh(){
+  const mode=$('mode').value;
+  const diagonalInput = mode==='diagonal' ? `\n// Required only for true VSH diagonal mode.\nin float ${glslName()}CornerT;\n` : '';
+  const helperText = helper().split('\n').filter(line=>!line.trim().startsWith('#moj_import')).join('\n');
+  return `#version 150
+
+#moj_import <minecraft:fog.glsl>
+#moj_import <minecraft:dynamictransforms.glsl>
+#moj_import <minecraft:globals.glsl>
+
+uniform sampler2D Sampler0;
+uniform float FogStart;
+uniform float FogEnd;
+
+in float sphericalVertexDistance;
+in float cylindricalVertexDistance;
+in vec4 vertexColor;
+in vec2 texCoord0;
+in float charIndex;
+in float animTime;${diagonalInput}
+
+out vec4 fragColor;
+
+vec3 hsvToRgb(vec3 c) {
+    vec4 K = vec4(1.0, 2.0 / 3.0, 1.0 / 3.0, 3.0);
+    vec3 p = abs(fract(c.xxx + K.xyz) * 6.0 - K.www);
+    return c.z * mix(K.xxx, clamp(p - K.xxx, 0.0, 1.0), c.y);
+}
+
+vec3 gradient3(vec3 c1, vec3 c2, vec3 c3, float t) {
+    float phase = fract(t) * 3.0;
+    if (phase < 1.0) return mix(c1, c2, phase);
+    if (phase < 2.0) return mix(c2, c3, phase - 1.0);
+    return mix(c3, c1, phase - 2.0);
+}
+
+bool colorMatch(vec4 col, float r, float g, float b) {
+    return abs(col.r * 255.0 - r) < 1.0
+        && abs(col.g * 255.0 - g) < 1.0
+        && abs(col.b * 255.0 - b) < 1.0;
+}
+
+${helperText}
+
+void main() {
+    vec4 color = texture(Sampler0, texCoord0) * vertexColor * ColorModulator;
+    if (color.a < 0.1) discard;
+
+    float texAlpha = texture(Sampler0, texCoord0).a;
+
+    ${fshBlockForStandalone().replace(/\n/g,'\n    ')}
+
+    fragColor = apply_fog(color, sphericalVertexDistance, cylindricalVertexDistance,
+                         FogEnvironmentalStart, FogEnvironmentalEnd,
+                         FogRenderDistanceStart, FogRenderDistanceEnd, FogColor);
+}
+`;
+}
+
+function generatedFullVsh(){
+  const mode=$('mode').value;
+  const n=glslName();
+  const main=rgbArgs('mainRGB');
+  const shadow=rgbArgs('shadowRGB');
+  const diagonalOut = mode==='diagonal' ? `\nout float ${n}CornerT;` : '';
+  const diagonalInit = mode==='diagonal' ? `\n    ${n}CornerT = 0.0;` : '';
+  const activeBlock = `bool ${n}Active = vshColorMatch(Color, ${main}) || vshColorMatch(Color, ${shadow});`;
+  let effectCode='';
+  if(mode==='diagonal'){
+    effectCode = `
+    if (${n}Active) {
+        float ${n}Vid = mod(float(gl_VertexID), 4.0);
+        float ${n}X = (${n}Vid == 2.0 || ${n}Vid == 3.0) ? 1.0 : 0.0;
+        float ${n}Y = (${n}Vid == 1.0 || ${n}Vid == 2.0) ? 1.0 : 0.0;
+        ${n}CornerT = (${n}X + ${n}Y * ${settings.verticalInfluence.toFixed(2)}) * 0.5;
+    }`;
+  } else if(mode==='wavy'){
+    effectCode = `
+    if (${n}Active) {
+        pos.y += sin(animTime * 1200.0 * ${settings.waveSpeed.toFixed(2)} + charIndex * ${settings.waveFrequency.toFixed(2)}) * ${settings.waveAmplitude.toFixed(2)};
+    }`;
+  } else if(mode==='bounce'){
+    effectCode = `
+    if (${n}Active) {
+        float ${n}Bounce = max(0.0, sin(animTime * 1200.0 * ${settings.bounceSpeed.toFixed(2)} + charIndex * 0.45)) * ${settings.bounceHeight.toFixed(2)};
+        pos.y += ${n}Bounce;
+    }`;
+  } else if(mode==='shake'){
+    effectCode = `
+    if (${n}Active) {
+        float ${n}Time = floor(animTime * 1200.0 * ${settings.shakeSpeed.toFixed(2)});
+        float ${n}RandX = fract(sin(charIndex * 12.9898 + ${n}Time) * 43758.5453) - 0.5;
+        float ${n}RandY = fract(sin(charIndex * 78.233 - ${n}Time) * 24634.6345) - 0.5;
+        pos.xy += vec2(${n}RandX, ${n}RandY) * ${settings.shakeIntensity.toFixed(2)};
+    }`;
+  } else if(mode==='scale'){
+    effectCode = `
+    if (${n}Active) {
+        float ${n}Vid = mod(float(gl_VertexID), 4.0);
+        vec2 ${n}Dir = (${n}Vid < 0.5) ? vec2(-1.0, -1.0) : (${n}Vid < 1.5) ? vec2(-1.0, 1.0) : (${n}Vid < 2.5) ? vec2(1.0, 1.0) : vec2(1.0, -1.0);
+        float ${n}Pulse = 0.5 + 0.5 * sin(animTime * 1200.0 * ${settings.scaleSpeed.toFixed(2)});
+        pos.xy += ${n}Dir * (${settings.scaleAmount.toFixed(3)} * 4.0 * ${n}Pulse);
+    }`;
+  } else if(mode==='glitch'){
+    effectCode = `
+    if (${n}Active) {
+        float ${n}Time = floor(animTime * 1200.0 * ${settings.glitchSpeed.toFixed(2)});
+        float ${n}Trigger = fract(sin(${n}Time * 3.17) * 43758.5453);
+        if (${n}Trigger > 0.70) {
+            float ${n}OffX = fract(sin(charIndex + ${n}Time) * 43758.5453) - 0.5;
+            float ${n}OffY = fract(sin(charIndex - ${n}Time) * 24634.6345) - 0.5;
+            pos.xy += vec2(${n}OffX * ${settings.glitchIntensity.toFixed(2)} * 4.0, ${n}OffY * ${settings.glitchIntensity.toFixed(2)});
+        }
+    }`;
+  } else if(mode==='spin'){
+    effectCode = `
+    if (${n}Active) {
+        float ${n}Vid = mod(float(gl_VertexID), 4.0);
+        vec2 ${n}Dir = (${n}Vid < 0.5) ? vec2(-1.0, -1.0) : (${n}Vid < 1.5) ? vec2(-1.0, 1.0) : (${n}Vid < 2.5) ? vec2(1.0, 1.0) : vec2(1.0, -1.0);
+        float ${n}A = animTime * ${settings.spinSpeed.toFixed(2)};
+        mat2 ${n}Rot = mat2(cos(${n}A), -sin(${n}A), sin(${n}A), cos(${n}A));
+        pos.xy += (${n}Rot * ${n}Dir - ${n}Dir) * ${settings.spinScale.toFixed(2)};
+    }`;
+  } else {
+    effectCode = `
+    // ${n} is FSH-only. No vertex movement is needed.`;
+  }
+  return `#version 150
+
+#moj_import <minecraft:fog.glsl>
+#moj_import <minecraft:dynamictransforms.glsl>
+#moj_import <minecraft:globals.glsl>
+
+uniform sampler2D Sampler2;
+
+in vec3 Position;
+in vec4 Color;
+in vec2 UV0;
+in ivec2 UV2;
+
+out float sphericalVertexDistance;
+out float cylindricalVertexDistance;
+out vec4 vertexColor;
+out vec2 texCoord0;
+out float charIndex;
+out float animTime;${diagonalOut}
+
+bool vshColorMatch(vec4 col, float r, float g, float b) {
+    return abs(col.r * 255.0 - r) < 1.0
+        && abs(col.g * 255.0 - g) < 1.0
+        && abs(col.b * 255.0 - b) < 1.0;
+}
+
+void main() {
+    vec3 pos = Position;
+
+    charIndex = floor(float(gl_VertexID) / 4.0);
+    animTime = GameTime;${diagonalInit}
+
+    ${activeBlock}${effectCode}
+
+    gl_Position = ProjMat * ModelViewMat * vec4(pos, 1.0);
+
+    sphericalVertexDistance = fog_spherical_distance(pos);
+    cylindricalVertexDistance = fog_cylindrical_distance(pos);
+    vertexColor = Color * texelFetch(Sampler2, UV2 / 16, 0);
+    texCoord0 = UV0;
+}
+`;
+}
+
+function packMcmeta(){
+  const fmt = Math.max(1, parseInt(($('packFormat')&&$('packFormat').value)||'34',10)||34);
+  const desc = (($('packName')&&$('packName').value)||'Text Shader Test Pack') + ' - generated by Minecraft Text Shader Designer';
+  return JSON.stringify({pack:{pack_format:fmt,description:desc}},null,2);
+}
+function testingReadme(){
+  const mainRgb=$('mainRGB').value, shadowRgb=$('shadowRGB').value, mode=$('mode').value;
+  return `# ${$('packName').value || 'Text Shader Test Pack'}
+
+Generated by Minecraft Text Shader Designer.
+
+## Install
+1. Put this zip in your Minecraft resourcepacks folder.
+2. Enable it in Options > Resource Packs.
+3. Reload resources with F3+T.
+
+## Test trigger colors
+Main trigger RGB: ${mainRgb}
+Shadow trigger RGB: ${shadowRgb}
+Effect: ${glslName()} (${EFFECTS[mode].name})
+
+Use text colored exactly with the main trigger color to activate the effect.
+
+## Files
+- assets/minecraft/shaders/core/rendertype_text.fsh
+- assets/minecraft/shaders/core/rendertype_text.vsh
+- generated/rendertype_text_vsh_snippet.glsl
+
+## VSH note
+${['diagonal','wavy','bounce','shake','spin','scale','glitch'].includes(mode) ? 'This selected effect needs rendertype_text.vsh for the full effect. This zip now includes a generated rendertype_text.vsh for testing, plus a separate VSH snippet for manual merging into your own pack.' : 'This selected effect is FSH-only and should be testable with the included rendertype_text.fsh.'}
+`;
+}
+function crc32Table(){let c,t=[];for(let n=0;n<256;n++){c=n;for(let k=0;k<8;k++)c=((c&1)?(0xedb88320^(c>>>1)):(c>>>1));t[n]=c>>>0}return t}
+const CRC_TABLE=crc32Table();
+function crc32(bytes){let c=0xffffffff;for(let i=0;i<bytes.length;i++)c=CRC_TABLE[(c^bytes[i])&255]^(c>>>8);return (c^0xffffffff)>>>0}
+function u16(n){return [n&255,(n>>>8)&255]}
+function u32(n){return [n&255,(n>>>8)&255,(n>>>16)&255,(n>>>24)&255]}
+function dosDateTime(date){let y=date.getFullYear();if(y<1980)y=1980;return {time:((date.getHours()<<11)|(date.getMinutes()<<5)|(Math.floor(date.getSeconds()/2)))&0xffff,date:(((y-1980)<<9)|((date.getMonth()+1)<<5)|date.getDate())&0xffff}}
+function makeZip(files){
+  const enc=new TextEncoder();let chunks=[],central=[],offset=0;const now=dosDateTime(new Date());
+  for(const f of files){
+    const nameBytes=enc.encode(f.name), data=enc.encode(f.content), crc=crc32(data);
+    const local=new Uint8Array([0x50,0x4b,0x03,0x04, ...u16(20), ...u16(0), ...u16(0), ...u16(now.time), ...u16(now.date), ...u32(crc), ...u32(data.length), ...u32(data.length), ...u16(nameBytes.length), ...u16(0)]);
+    chunks.push(local,nameBytes,data);
+    const cent=new Uint8Array([0x50,0x4b,0x01,0x02, ...u16(20), ...u16(20), ...u16(0), ...u16(0), ...u16(now.time), ...u16(now.date), ...u32(crc), ...u32(data.length), ...u32(data.length), ...u16(nameBytes.length), ...u16(0), ...u16(0), ...u16(0), ...u16(0), ...u32(0), ...u32(offset)]);
+    central.push(cent,nameBytes);
+    offset += local.length + nameBytes.length + data.length;
+  }
+  const centralSize=central.reduce((a,c)=>a+c.length,0), centralOffset=offset;
+  const end=new Uint8Array([0x50,0x4b,0x05,0x06, ...u16(0), ...u16(0), ...u16(files.length), ...u16(files.length), ...u32(centralSize), ...u32(centralOffset), ...u16(0)]);
+  return new Blob([...chunks,...central,end],{type:'application/zip'});
+}
+function buildResourcePack(){
+  const name=sanitizeFileName(($('packName')&&$('packName').value)||'Text Shader Test Pack');
+  const files=[
+    {name:'pack.mcmeta',content:packMcmeta()},
+    {name:'README_TESTING.md',content:testingReadme()},
+    {name:'assets/minecraft/shaders/core/rendertype_text.fsh',content:generatedFullFsh()},
+    {name:'assets/minecraft/shaders/core/rendertype_text.vsh',content:generatedFullVsh()},
+    {name:'generated/rendertype_text_vsh_snippet.glsl',content:vshSnippet()},
+    {name:'generated/rendertype_text_full.vsh',content:generatedFullVsh()},
+    {name:'generated/fsh_helper.glsl',content:helper()},
+    {name:'generated/fsh_block.glsl',content:fullBlock()}
+  ];
+  const blob=makeZip(files); const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');a.href=url;a.download=name+'.zip';document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),2000);
+  if($('packLog')) $('packLog').value=`Built ${name}.zip\nFiles:\n`+files.map(f=>' - '+f.name).join('\n')+`\n\nPut the zip in your Minecraft resourcepacks folder and enable it.`;
+}
+
+Object.entries(EFFECTS).forEach(([k,e])=>{let o=document.createElement('option');o.value=k;o.textContent=e.name;$('mode').appendChild(o)});Object.keys(PRESETS).forEach(k=>{let o=document.createElement('option');o.value=k;o.textContent=k;$('preset').appendChild(o)});$('mainTrigger').innerHTML=triggerEditor('main','Main RGB menu');$('shadowTrigger').innerHTML=triggerEditor('shadow','Shadow RGB menu');$('preset').onchange=e=>applyPreset(e.target.value);$('addColor').onclick=()=>{colors.push('#ffffff');renderStops();update(false)};$('mode').onchange=update;['effectName','previewText','speed','spacing','shadowFactor','wavePreview','mainRGB','shadowRGB'].forEach(id=>$(id).addEventListener('input',()=>update(false)));$('copyFull').onclick=()=>navigator.clipboard.writeText($('fullCode').value);$('copyHelper').onclick=()=>navigator.clipboard.writeText($('helperCode').value);$('copyVsh').onclick=()=>navigator.clipboard.writeText($('vshCode').value);if($('buildPack'))$('buildPack').onclick=buildResourcePack;$('tabLibrary').onclick=()=>{$('library').classList.remove('hidden');$('notes').classList.add('hidden');$('tabLibrary').classList.add('active');$('tabNotes').classList.remove('active')};$('tabNotes').onclick=()=>{$('library').classList.add('hidden');$('notes').classList.remove('hidden');$('tabLibrary').classList.remove('active');$('tabNotes').classList.add('active')};$('langEn').onclick=()=>setLang('en');$('langNl').onclick=()=>setLang('nl');renderStops();setupTrigger('main','mainRGB');setupTrigger('shadow','shadowRGB');setLang('en');requestAnimationFrame(drawPreview);
 </script>
 </body>
 </html>
