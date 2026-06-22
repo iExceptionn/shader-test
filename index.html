@@ -1,193 +1,120 @@
 <!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>Minecraft Text Shader Designer</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 <style>
-:root{--bg:#07111f;--panel:#111a2e;--panel2:#0b1324;--text:#eef6ff;--muted:#94a7c4;--line:#263858;--accent:#70d7ff;--ok:#75f0a0;--bad:#ff6b86}
-*{box-sizing:border-box}body{margin:0;background:linear-gradient(135deg,#07111f,#151b33 45%,#07111f);color:var(--text);font-family:Inter,Segoe UI,Arial,sans-serif}
-header{padding:22px 28px;border-bottom:1px solid var(--line)}h1{margin:0;font-size:24px}.sub{color:var(--muted);margin-top:6px}
-.grid{display:grid;grid-template-columns:420px 1fr;gap:16px;padding:16px}.card{background:rgba(17,26,46,.94);border:1px solid var(--line);border-radius:16px;padding:16px;box-shadow:0 10px 30px rgba(0,0,0,.25)}
-label{display:block;font-weight:700;margin:12px 0 6px}.small{font-size:12px;color:var(--muted)}input,select,textarea,button{font:inherit}
-input,select,textarea{width:100%;background:var(--panel2);color:var(--text);border:1px solid var(--line);border-radius:10px;padding:9px}
-textarea{height:180px;font-family:Consolas,monospace;font-size:12px}button{background:#20304f;color:var(--text);border:1px solid #36527c;border-radius:10px;padding:9px 11px;cursor:pointer;margin:3px}
-button:hover{border-color:var(--accent)}button.primary{background:#0e6f9b;border-color:#20b9ef}.danger{background:#4c1d2a;border-color:#8b3148}
-.row{display:grid;grid-template-columns:1fr 1fr;gap:10px}.actions{display:flex;gap:6px;flex-wrap:wrap;align-items:center}.check{display:flex;gap:8px;align-items:center;font-weight:500}.check input{width:auto}
-.previewWrap{height:230px;background:radial-gradient(circle at top,#20385d,#0b1020);border:1px solid var(--line);border-radius:16px;overflow:hidden}canvas{width:100%;height:100%;display:block}
-.stop{display:grid;grid-template-columns:44px 1fr auto auto;gap:8px;align-items:center;margin:7px 0}.sw{width:34px;height:34px;border-radius:8px;border:1px solid var(--line)}
-.rgbGrid{display:grid;grid-template-columns:18px 1fr 70px;gap:6px;align-items:center}.pill{display:inline-block;background:#09101f;border:1px solid var(--line);border-radius:8px;padding:5px 7px;margin:3px;font-family:Consolas,monospace}
-.library{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:8px;margin-top:8px}.library button{text-align:left;min-height:68px}
-.notice{background:#081427;border:1px solid var(--line);border-radius:12px;padding:10px;color:var(--muted);margin-top:10px}
-@media(max-width:950px){.grid{grid-template-columns:1fr}.row{grid-template-columns:1fr}}
+:root{--bg:#0f1220;--panel:#171b2e;--panel2:#20253d;--text:#f5f7ff;--muted:#aeb6d9;--line:#333a5c;--accent:#7aa7ff;--bad:#ff6d7a;--good:#55d68a}
+*{box-sizing:border-box}body{margin:0;background:linear-gradient(135deg,#090b13,#151931);color:var(--text);font-family:Inter,Segoe UI,Arial,sans-serif}header{padding:22px 28px;border-bottom:1px solid var(--line);background:#0d1020;position:sticky;top:0;z-index:2}h1{margin:0;font-size:22px}.wrap{display:grid;grid-template-columns:390px 1fr;gap:18px;padding:18px}.panel{background:rgba(23,27,46,.96);border:1px solid var(--line);border-radius:14px;padding:16px;margin-bottom:14px}.panel h2{font-size:15px;margin:0 0 12px;color:#dce4ff}.row{display:grid;grid-template-columns:1fr 1fr;gap:10px}.row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}label{display:block;font-size:12px;color:var(--muted);margin:9px 0 4px}input,select,button,textarea{width:100%;border-radius:10px;border:1px solid var(--line);background:#11162a;color:var(--text);padding:9px;font:inherit}input[type=color]{height:42px;padding:4px}button{cursor:pointer;background:#24335e;border-color:#3d5492}button:hover{background:#2d4177}.btns{display:grid;grid-template-columns:1fr 1fr;gap:8px}.small{font-size:12px;color:var(--muted)}.pill{display:inline-flex;padding:4px 8px;border-radius:999px;background:#10162a;border:1px solid var(--line);font-size:12px;margin:3px}.shortcut-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}.shortcut{font-size:12px;text-align:left}.previewBox{min-height:190px;display:flex;align-items:center;justify-content:center;background:radial-gradient(circle at center,#1b2140,#0b0e18);border-radius:14px;border:1px solid var(--line);overflow:hidden}.previewText{font-family:Georgia,serif;font-weight:900;font-size:54px;line-height:1.05;text-align:center;letter-spacing:.5px;text-shadow:3px 3px 0 rgba(0,0,0,.55);white-space:pre-wrap}.swatches{display:flex;gap:8px;flex-wrap:wrap}.sw{display:grid;grid-template-columns:42px 1fr 34px;gap:7px;align-items:center;width:100%}.code{width:100%;min-height:160px;font-family:ui-monospace,SFMono-Regular,Consolas,monospace;font-size:12px;white-space:pre;overflow:auto}.status{padding:10px;border-radius:10px;background:#12182d;border:1px solid var(--line);font-size:12px}.ok{color:var(--good)}.bad{color:var(--bad)}@media(max-width:900px){.wrap{grid-template-columns:1fr}.previewText{font-size:38px}}
 </style>
 </head>
 <body>
-<header><h1>Minecraft Text Shader Designer</h1><div class="sub">Stable rebuild: working preview, shortcuts and resource-pack builder.</div></header>
-<div class="grid">
-<section class="card">
-<label>Effect name</label><input id="effectName" value="EternalChroma">
-<div class="row">
-<div><label>Base effect</label><select id="mode"><option value="gradient">Gradient</option><option value="diagonal">Diagonal Gradient</option><option value="rainbow">Rainbow</option><option value="chroma">Screenshot Chroma</option><option value="solid">Solid Color</option></select></div>
-<div><label>Preview text</label><input id="previewText" value="Eternal Network"></div>
-</div>
-<div class="row">
-<div><label>Speed</label><input id="speed" type="number" step="1" value="300"><div class="small">Same value is used in GLSL. 300 = your known working speed.</div></div>
-<div><label>Char spacing</label><input id="spacing" type="number" step="0.001" value="0.005"></div>
-</div>
-<div class="row">
-<div><label>Shadow factor</label><input id="shadowFactor" type="number" step="0.01" value="0.25"></div>
-<div><label>Pack name</label><input id="packName" value="Text-Shader-Test-Pack"></div>
-</div>
-<h3>Color stops</h3><div id="stops"></div><button id="addColor">+ Add color</button>
-<h3>Combined add-ons</h3>
-<label class="check"><input id="addShimmer" type="checkbox"> Shimmer / glint</label>
-<label class="check"><input id="addPulse" type="checkbox"> Pulse brightness</label>
-<label class="check"><input id="addSparkle" type="checkbox"> Sparkle</label>
-<label class="check"><input id="addNeon" type="checkbox"> Neon boost</label>
-<div id="modeSettings"></div>
-<h3>Trigger colors</h3>
-<div class="row"><div id="mainTrig"></div><div id="shadowTrig"></div></div>
-<div class="notice">Chat test: <code id="chatTest">&lt;#e6ecfe&gt;Eternal Network</code></div>
-<h3>Project</h3>
-<div class="actions"><button id="saveNow">Save now</button><button id="exportJson">Export JSON</button><button id="importJson">Import JSON</button><button id="resetSaved" class="danger">Reset saved data</button><input id="importFile" type="file" accept="application/json" style="display:none"></div>
-<textarea id="log" readonly></textarea>
-</section>
-<section class="card">
-<div class="previewWrap"><canvas id="preview"></canvas></div>
-<div class="actions" style="margin-top:12px"><button id="buildPack" class="primary">Build test resource pack .zip</button><button id="copyChat">Copy chat test</button></div>
-<h3>Shortcuts / examples</h3><div id="library" class="library"></div>
-<div class="notice">These shortcuts are inspired by common text-effect packs. VSH-heavy movement is approximated here; color/shimmer/gradient effects export directly.</div>
-<h3>Generated FSH</h3><textarea id="fshBlock" readonly></textarea>
-<h3>Generated VSH</h3><textarea id="vshBlock" readonly></textarea>
-</section>
+<header><h1>Minecraft Text Shader Designer <span class="pill">Master JSZip Build</span></h1></header>
+<div class="wrap">
+<aside>
+ <div class="panel">
+  <h2>Project</h2>
+  <label>Effect name</label><input id="effectName" value="EternalEffect">
+  <label>Preview text</label><input id="previewTextInput" value="Eternal Network">
+  <div class="row"><div><label>Main trigger HEX</label><input id="mainHex" value="#e6ecfe"></div><div><label>Shadow trigger HEX</label><input id="shadowHex" value="#573b63"></div></div>
+  <div class="row"><button id="copyMain">Copy main HEX</button><button id="copyShadow">Copy shadow HEX</button></div>
+  <div class="small" id="triggerInfo"></div>
+ </div>
+ <div class="panel">
+  <h2>Effect</h2>
+  <label>Base effect</label><select id="baseEffect"><option>Gradient</option><option>Rainbow</option><option>Solid</option><option>Fire</option><option>Aurora</option><option>Ocean</option><option>Venom</option><option>Galaxy</option><option>Starlight</option></select>
+  <div class="row"><div><label>Speed</label><input id="speed" type="number" value="300" step="10"></div><div><label>Spacing</label><input id="spacing" type="number" value="0.005" step="0.001"></div></div>
+  <label>Colors</label><div id="colorStops" class="swatches"></div><button id="addColor">Add color</button>
+ </div>
+ <div class="panel">
+  <h2>Add-ons</h2>
+  <label><input id="addonDiagonal" type="checkbox"> Diagonal / corner interpolation</label>
+  <label><input id="addonShimmer" type="checkbox"> Shimmer / glint</label>
+  <label><input id="addonPulse" type="checkbox"> Pulse brightness</label>
+  <label><input id="addonSparkle" type="checkbox"> Sparkle</label>
+  <label><input id="addonNeon" type="checkbox"> Neon boost</label>
+  <div class="row"><div><label>Shimmer color</label><input id="shimmerColor" type="color" value="#fff4c8"></div><div><label>Shimmer strength</label><input id="shimmerStrength" type="number" value="0.8" step="0.05"></div></div>
+  <div class="row"><div><label>Shimmer width</label><input id="shimmerWidth" type="number" value="0.08" step="0.01"></div><div><label>Pulse strength</label><input id="pulseStrength" type="number" value="0.25" step="0.05"></div></div>
+ </div>
+ <div class="panel">
+  <h2>Shortcuts</h2>
+  <div id="shortcuts" class="shortcut-grid"></div>
+ </div>
+ <div class="panel">
+  <h2>Save / Import / Export</h2>
+  <div class="btns"><button id="saveNow">Save now</button><button id="resetSave">Reset saved data</button><button id="exportJson">Export JSON</button><button id="importJsonBtn">Import JSON</button></div>
+  <input id="importJson" type="file" accept="application/json" style="display:none">
+ </div>
+</aside>
+<main>
+ <div class="panel">
+  <h2>Preview</h2>
+  <div class="previewBox"><div id="preview" class="previewText">Eternal Network</div></div>
+  <p class="small">Preview uses the same time/spacing formula as generated GLSL as closely as browser text rendering allows.</p>
+ </div>
+ <div class="panel">
+  <h2>Build / Validate</h2>
+  <div class="row"><button id="validateBtn">Validate Pack</button><button id="buildPack">Build test resource pack .zip</button></div>
+  <div id="validateStatus" class="status">Ready.</div>
+ </div>
+ <div class="panel">
+  <h2>Generated FSH block</h2><textarea id="fshOut" class="code"></textarea>
+ </div>
+ <div class="panel">
+  <h2>Chat test</h2><textarea id="chatOut" class="code"></textarea>
+ </div>
+</main>
 </div>
 <script>
 'use strict';
 const $=id=>document.getElementById(id);
-const STORAGE='mc_text_shader_designer_v3_stable';
-let colors=['#00ccff','#005c8a','#00ccff'];
-let settings={glintColor:'#fff1a8',glintStrength:.75,glintWidth:.10,pulseMin:.70,pulseMax:1.25,sparkleColor:'#ffffff',sparkleAmount:.55,sparkleSpeed:80,neonStrength:.25,diagonalStrength:1};
-const presets={
- 'TE Rainbow':{mode:'rainbow',colors:['#ff4040','#ffff40','#40ff80','#40ccff','#aa60ff'],speed:300,addons:[],trigger:'#e6fffe'},
- 'TE Lava':{mode:'gradient',colors:['#5b0000','#ff3300','#ffd24d','#ff6600'],speed:260,addons:['shimmer'],settings:{glintColor:'#fff2a0',glintStrength:.45,glintWidth:.12},trigger:'#e6cefe'},
- 'TE Aurora':{mode:'diagonal',colors:['#00ff99','#00d9ff','#8a4dff','#00ffcc'],speed:220,addons:['shimmer'],settings:{glintColor:'#dfffff',glintStrength:.30,glintWidth:.18},trigger:'#e6eafe'},
- 'TE Neon Cyan':{mode:'gradient',colors:['#003344','#00e5ff','#ccffff'],speed:180,addons:['neon','shimmer'],settings:{glintColor:'#ffffff',glintStrength:.28,glintWidth:.18,neonStrength:.45},trigger:'#e6ecfe'},
- 'TE Water':{mode:'diagonal',colors:['#003a8c','#00a6ff','#8fffff'],speed:190,addons:['pulse'],settings:{pulseMin:.82,pulseMax:1.15},trigger:'#e6dcfe'},
- 'TE Dynamic Red Blue':{mode:'gradient',colors:['#ff1e3c','#7a2cff','#2ccfff'],speed:280,addons:['sparkle'],settings:{sparkleColor:'#ffffff',sparkleAmount:.25},trigger:'#e6d8fe'},
- 'TE Green Yellow':{mode:'gradient',colors:['#24ff66','#d4ff00','#00ffa6'],speed:240,addons:['neon'],trigger:'#e6e0fe'},
- 'TE Chroma':{mode:'chroma',colors:['#ff315a','#ffd84d','#35ff75','#35d7ff','#b45cff'],speed:300,addons:['shimmer'],trigger:'#e6f2fe'},
- 'Fire Gold':{mode:'gradient',colors:['#7a0000','#ff5a00','#ffd36a','#fff1a8'],speed:260,addons:['shimmer','pulse'],settings:{glintColor:'#fff0a0',glintStrength:.55,glintWidth:.10,pulseMin:.85,pulseMax:1.18},trigger:'#e6ccfe'}
-};
-function clamp(x,a=0,b=1){return Math.max(a,Math.min(b,x))}
-function val(id,d){let n=parseFloat($(id)?.value);return Number.isFinite(n)?n:d}
-function hexToRgb(h){h=(h||'#000000').replace('#','');return [parseInt(h.slice(0,2),16)||0,parseInt(h.slice(2,4),16)||0,parseInt(h.slice(4,6),16)||0]}
-function rgbToHex(a){return '#'+a.map(v=>Math.round(clamp(v,0,255)).toString(16).padStart(2,'0')).join('')}
-function rgbCss(a){return `rgb(${a.map(v=>Math.round(clamp(v,0,255))).join(',')})`}
+const DEFAULT_COLORS=['#7f5cff','#21ffc0','#a461ff'];
+const STORAGE='mcTextShaderDesignerMasterV1';
+const shortcuts=[
+ {n:'TE Rainbow',base:'Rainbow',c:['#ff5050','#50ff80','#5080ff'],a:{}},
+ {n:'TE Lava',base:'Fire',c:['#7a0000','#ff5a00','#ffe45c'],a:{shimmer:true,neon:true}},
+ {n:'TE Aurora',base:'Aurora',c:['#00ff99','#00d9ff','#aa55ff'],a:{diagonal:true}},
+ {n:'TE Neon Cyan',base:'Ocean',c:['#00f0ff','#7affff','#0077ff'],a:{neon:true,shimmer:true}},
+ {n:'TE Water',base:'Ocean',c:['#003bff','#00b7ff','#9af7ff'],a:{diagonal:true}},
+ {n:'Dynamic Red/Blue',base:'Gradient',c:['#ff2a4f','#7a4cff','#2ad8ff'],a:{pulse:true}},
+ {n:'Dynamic Green/Yellow',base:'Gradient',c:['#00ff55','#c8ff00','#fff070'],a:{shimmer:true}},
+ {n:'Noise/Sparkle',base:'Galaxy',c:['#17114d','#7c3dff','#e9e2ff'],a:{sparkle:true}},
+ {n:'Chromatic',base:'Gradient',c:['#ff004c','#00ffe1','#5555ff'],a:{diagonal:true,neon:true}},
+ {n:'Fire Gold',base:'Fire',c:['#cc1b00','#ff8a00','#fff0a8'],a:{shimmer:true}}
+];
+function hexToRgb(hex){hex=(hex||'#000000').replace('#','');return [parseInt(hex.slice(0,2),16)||0,parseInt(hex.slice(2,4),16)||0,parseInt(hex.slice(4,6),16)||0]}
+function rgbToHex(r,g,b){return '#'+[r,g,b].map(v=>Math.max(0,Math.min(255,Math.round(v))).toString(16).padStart(2,'0')).join('')}
+function rgb01(hex){return hexToRgb(hex).map(v=>(v/255).toFixed(3))}
 function mix(a,b,t){return a.map((v,i)=>v+(b[i]-v)*t)}
-function fract(x){return x-Math.floor(x)}
-function hsvToRgb(h,s,v){let i=Math.floor(h*6),f=h*6-i,p=v*(1-s),q=v*(1-f*s),t=v*(1-(1-f)*s);let m=[[v,t,p],[q,v,p],[p,v,t],[p,q,v],[t,p,v],[v,p,q]][i%6];return m.map(x=>x*255)}
-function smooth(a,b,x){let t=clamp((x-a)/(b-a));return t*t*(3-2*t)}
-function grad(t){let arr=colors.map(hexToRgb);if(arr.length===1)return arr[0];let n=arr.length;let p=fract(t)*n;let i=Math.floor(p)%n;return mix(arr[i],arr[(i+1)%n],p-i)}
-function addons(){return ['Shimmer','Pulse','Sparkle','Neon'].filter(x=>$('add'+x).checked).map(x=>x.toLowerCase())}
-function currentTime(){return performance.now()/1000}
-function effectAt(i,corner,time,shadow){let mode=$('mode').value, speed=val('speed',300), spacing=val('spacing',.005);let t=corner + i*spacing - time*speed*.004;let c;
- if(mode==='rainbow') c=hsvToRgb(fract(t),.72,1);
- else if(mode==='solid') c=hexToRgb(colors[0]||'#ffffff');
- else c=grad(t);
- if(mode==='chroma') {let wave=.5+.5*Math.sin((i*.45)-time*speed*.018); c=mix(c,hsvToRgb(fract(t+.35),.8,1),wave*.45)}
- for(const a of addons()){
-   if(a==='shimmer'){let pos=fract(i*.06),sw=fract(time*speed*.014),d=Math.abs(pos-sw);d=Math.min(d,1-d);let g=1-smooth(0,settings.glintWidth,d);c=mix(c,hexToRgb(settings.glintColor),g*settings.glintStrength)}
-   if(a==='pulse'){let p=.5+.5*Math.sin(time*speed*.04+i*.25);let b=settings.pulseMin+(settings.pulseMax-settings.pulseMin)*p;c=c.map(x=>x*b)}
-   if(a==='sparkle'){let n=fract(Math.sin(i*12.9898+Math.floor(time*settings.sparkleSpeed))*43758.5453);if(n>1-settings.sparkleAmount*.08)c=mix(c,hexToRgb(settings.sparkleColor),.75)}
-   if(a==='neon') c=c.map(x=>x*(1+settings.neonStrength))
- }
- if(shadow)c=c.map(x=>x*val('shadowFactor',.25));return c.map(x=>clamp(x,0,255))}
-function draw(){let canvas=$('preview'),dpr=window.devicePixelRatio||1,w=canvas.clientWidth,h=canvas.clientHeight;if(canvas.width!==w*dpr||canvas.height!==h*dpr){canvas.width=w*dpr;canvas.height=h*dpr}let ctx=canvas.getContext('2d');ctx.setTransform(dpr,0,0,dpr,0,0);ctx.clearRect(0,0,w,h);ctx.fillStyle='#081121';ctx.fillRect(0,0,w,h);let text=$('previewText').value||'Eternal Network';let fs=Math.max(36,Math.min(72,w/(text.length*.55)));drawText(ctx,text,w/2+3,h/2+30,fs*.62,true);drawText(ctx,text,w/2,h/2,fs,false);requestAnimationFrame(draw)}
-function drawText(ctx,text,cx,cy,fs,shadow){ctx.font=`900 ${fs}px Trebuchet MS,Arial`;ctx.textAlign='left';ctx.textBaseline='middle';let tw=ctx.measureText(text).width,x=cx-tw/2;for(let i=0;i<text.length;i++){let ch=text[i],cw=ctx.measureText(ch).width;let corner=($('mode').value==='diagonal'||$('mode').value==='chroma') ? ((i%2)*.25+.25) : 0;let col=effectAt(i,corner,currentTime(),shadow);ctx.fillStyle=rgbCss(col);ctx.shadowColor=shadow?'rgba(0,0,0,.85)':rgbCss(col);ctx.shadowBlur=shadow?2:8;ctx.fillText(ch,x,cy);x+=cw}}
-function renderStops(){let box=$('stops');box.innerHTML='';colors.forEach((c,i)=>{let d=document.createElement('div');d.className='stop';d.innerHTML=`<div class="sw" style="background:${c}"></div><input type="color" value="${c}" data-i="${i}"><button data-up="${i}">↑</button><button data-del="${i}">✕</button>`;box.appendChild(d)});box.querySelectorAll('input').forEach(inp=>inp.oninput=e=>{colors[+e.target.dataset.i]=e.target.value;update()});box.querySelectorAll('[data-up]').forEach(b=>b.onclick=()=>{let i=+b.dataset.up;if(i>0){[colors[i-1],colors[i]]=[colors[i],colors[i-1]];renderStops();update()}});box.querySelectorAll('[data-del]').forEach(b=>b.onclick=()=>{if(colors.length>1){colors.splice(+b.dataset.del,1);renderStops();update()}})}
-function settingHtml(){return `<h3>Mode/add-on settings</h3>
-<label>Glint color</label><input id="glintColor" type="color" value="${settings.glintColor}">
-<label>Glint strength</label><input id="glintStrength" type="number" step="0.01" value="${settings.glintStrength}">
-<label>Glint width</label><input id="glintWidth" type="number" step="0.01" value="${settings.glintWidth}">
-<label>Pulse min / max</label><div class="row"><input id="pulseMin" type="number" step="0.01" value="${settings.pulseMin}"><input id="pulseMax" type="number" step="0.01" value="${settings.pulseMax}"></div>
-<label>Sparkle color / amount</label><div class="row"><input id="sparkleColor" type="color" value="${settings.sparkleColor}"><input id="sparkleAmount" type="number" step="0.01" value="${settings.sparkleAmount}"></div>
-<label>Neon strength</label><input id="neonStrength" type="number" step="0.01" value="${settings.neonStrength}">`}
-function renderSettings(){let box=$('modeSettings');box.innerHTML=settingHtml();Object.keys(settings).forEach(k=>{let el=$(k);if(el)el.oninput=()=>{settings[k]=el.type==='color'?el.value:parseFloat(el.value);update()}})}
-function rgbEditor(kind,label,def){let box=$(kind+'Trig');box.innerHTML=`<label>${label}</label><input id="${kind}RGB" type="color" value="${def}"><div class="rgbGrid"><span>R</span><input id="${kind}R" type="range" min="0" max="255"><input id="${kind}Rn" type="number" min="0" max="255"></div><div class="rgbGrid"><span>G</span><input id="${kind}G" type="range" min="0" max="255"><input id="${kind}Gn" type="number" min="0" max="255"></div><div class="rgbGrid"><span>B</span><input id="${kind}B" type="range" min="0" max="255"><input id="${kind}Bn" type="number" min="0" max="255"></div><div><code id="${kind}Hex" class="pill"></code><code id="${kind}Txt" class="pill"></code><button id="${kind}Copy">Copy HEX</button></div>`;syncRgb(kind,hexToRgb(def),true);['R','G','B'].forEach(ch=>{$(kind+ch).oninput=()=>syncRgb(kind,[+$(kind+'R').value,+$(kind+'G').value,+$(kind+'B').value]);$(kind+ch+'n').oninput=()=>syncRgb(kind,[+$(kind+'Rn').value,+$(kind+'Gn').value,+$(kind+'Bn').value])});$(kind+'RGB').oninput=()=>syncRgb(kind,hexToRgb($(kind+'RGB').value));$(kind+'Copy').onclick=()=>navigator.clipboard.writeText($(kind+'Hex').textContent)}
-function syncRgb(kind,a,skipUpdate=false){a=a.map(v=>Math.round(clamp(v,0,255)));['R','G','B'].forEach((ch,i)=>{if($(kind+ch))$(kind+ch).value=a[i];if($(kind+ch+'n'))$(kind+ch+'n').value=a[i]});let hx=rgbToHex(a);$(kind+'RGB').value=hx;$(kind+'Hex').textContent=hx;$(kind+'Txt').textContent=a.join(', ');if(!skipUpdate)update(false)}
-function mainRgb(){return hexToRgb(($('mainRGB')&&$('mainRGB').value)||'#e6ecfe')}function shadowRgb(){return hexToRgb(($('shadowRGB')&&$('shadowRGB').value)||'#393b3f')}function rgbArgs(a){return a.map(x=>Number(x).toFixed(1)).join(', ')}function v3(h){let a=hexToRgb(h).map(x=>(x/255).toFixed(3));return `vec3(${a.join(', ')})`}
-function safeName(){return ($('effectName').value||'CustomEffect').replace(/[^a-zA-Z0-9_]/g,'')||'CustomEffect'}
-function glslGradient(){let n=safeName();let arr=colors;let s=`vec3 ${n}Gradient(float t) {\n`;if(arr.length===1)return s+`    return ${v3(arr[0])};\n}\n`;s+=`    float phase = fract(t) * ${arr.length.toFixed(1)};\n`;arr.forEach((c,i)=>{let next=arr[(i+1)%arr.length];s+=`    ${i?'else ':''}if (phase < ${i+1}.0) return mix(${v3(c)}, ${v3(next)}, smoothstep(0.0, 1.0, phase - ${i}.0));\n`});return s+`    return ${v3(arr[0])};\n}\n`}
-function baseExpr(timeVar,shadow){let n=safeName(),mode=$('mode').value,speed=val('speed',300).toFixed(3),spacing=val('spacing',.005).toFixed(6);let corner=(mode==='diagonal'||mode==='chroma')?`${n}CornerT + `:'';let t=`${corner}charIndex * ${spacing} - ${timeVar} * ${speed}`;if(mode==='rainbow')return `hsvToRgb(vec3(${t}, 0.72, 1.0))`;if(mode==='solid')return v3(colors[0]||'#fff');return `${n}Gradient(${t})`}
-function addonGlsl(shadow){let n=safeName(),speed=val('speed',300).toFixed(3);let s='';let ad=addons();if(ad.includes('shimmer'))s+=`    float sweep = fract(animTime * ${speed} * 0.014);\n    float pos = fract(charIndex * 0.06);\n    float d = abs(pos - sweep); d = min(d, 1.0 - d);\n    float glint = 1.0 - smoothstep(0.0, ${Number(settings.glintWidth).toFixed(3)}, d);\n    rgb = mix(rgb, ${v3(settings.glintColor)}, glint * ${Number(settings.glintStrength).toFixed(3)});\n`;if(ad.includes('pulse'))s+=`    float pulse = ${Number(settings.pulseMin).toFixed(3)} + (${Number(settings.pulseMax).toFixed(3)} - ${Number(settings.pulseMin).toFixed(3)}) * (0.5 + 0.5 * sin(animTime * ${speed} * 0.04 + charIndex * 0.25));\n    rgb *= pulse;\n`;if(ad.includes('sparkle'))s+=`    float noise = fract(sin(charIndex * 12.9898 + floor(animTime * ${Number(settings.sparkleSpeed).toFixed(3)})) * 43758.5453);\n    if (noise > ${Number(1-settings.sparkleAmount*.08).toFixed(3)}) rgb = mix(rgb, ${v3(settings.sparkleColor)}, 0.75);\n`;if(ad.includes('neon'))s+=`    rgb *= ${Number(1+settings.neonStrength).toFixed(3)};\n`;if(shadow)s+=`    rgb *= ${val('shadowFactor',.25).toFixed(3)};\n`;return s}
-function fsh(){let n=safeName(),m=mainRgb(),sh=shadowRgb();let needsCorner=$('mode').value==='diagonal'||$('mode').value==='chroma';return `#version 150\n\n#moj_import <minecraft:fog.glsl>\n#moj_import <minecraft:dynamictransforms.glsl>\n#moj_import <minecraft:globals.glsl>\n\nuniform sampler2D Sampler0;\nuniform float FogStart;\nuniform float FogEnd;\n\nin float sphericalVertexDistance;\nin float cylindricalVertexDistance;\nin vec4 vertexColor;\nin vec2 texCoord0;\nin float charIndex;\nin float animTime;\n${needsCorner?'in float '+n+'CornerT;\\n':''}\nout vec4 fragColor;\n\nvec3 hsvToRgb(vec3 c){vec4 K=vec4(1.0,2.0/3.0,1.0/3.0,3.0);vec3 p=abs(fract(c.xxx+K.xyz)*6.0-K.www);return c.z*mix(K.xxx,clamp(p-K.xxx,0.0,1.0),c.y);}\nbool colorMatch(vec4 col,float r,float g,float b){return abs(col.r*255.0-r)<1.0&&abs(col.g*255.0-g)<1.0&&abs(col.b*255.0-b)<1.0;}\n${($('mode').value==='rainbow'||$('mode').value==='solid')?'':glslGradient()}\nvoid main(){\n    vec4 color=texture(Sampler0,texCoord0)*vertexColor*ColorModulator;\n    if(color.a<0.1) discard;\n    float texAlpha=texture(Sampler0,texCoord0).a;\n    if(colorMatch(vertexColor, ${rgbArgs(m)})){\n        vec3 rgb=${baseExpr('animTime',false)};\n${addonGlsl(false)}        color=vec4(clamp(rgb,0.0,1.0)*texAlpha,texAlpha)*ColorModulator;\n    } else if(colorMatch(vertexColor, ${rgbArgs(sh)})){\n        vec3 rgb=${baseExpr('animTime',true)};\n${addonGlsl(true)}        color=vec4(clamp(rgb,0.0,1.0)*texAlpha,texAlpha)*ColorModulator;\n    }\n    fragColor=apply_fog(color,sphericalVertexDistance,cylindricalVertexDistance,FogEnvironmentalStart,FogEnvironmentalEnd,FogRenderDistanceStart,FogRenderDistanceEnd,FogColor);\n}\n`;}
-function vsh(){let n=safeName(),m=mainRgb(),sh=shadowRgb();let needsCorner=$('mode').value==='diagonal'||$('mode').value==='chroma';return `#version 150\n\n#moj_import <minecraft:fog.glsl>\n#moj_import <minecraft:dynamictransforms.glsl>\n#moj_import <minecraft:projection.glsl>\n#moj_import <minecraft:globals.glsl>\n\nin vec3 Position;\nin vec4 Color;\nin vec2 UV0;\nin ivec2 UV2;\nuniform sampler2D Sampler2;\nout float sphericalVertexDistance;\nout float cylindricalVertexDistance;\nout vec4 vertexColor;\nout vec2 texCoord0;\nout float charIndex;\nout float animTime;\n${needsCorner?'out float '+n+'CornerT;\\n':''}void main(){\n    vec3 pos=Position;\n${needsCorner?'    '+n+'CornerT=0.0;\\n':''}    ivec3 ic=ivec3(Color.rgb*255.0+0.5);\n    bool active=((ic.r==${Math.round(m[0])})&&(ic.g==${Math.round(m[1])})&&(ic.b==${Math.round(m[2])}))||((ic.r==${Math.round(sh[0])})&&(ic.g==${Math.round(sh[1])})&&(ic.b==${Math.round(sh[2])}));\n${needsCorner?'    if(active){float vid=mod(float(gl_VertexID),4.0);float x=(vid==2.0||vid==3.0)?1.0:0.0;float y=(vid==1.0||vid==2.0)?1.0:0.0;'+n+'CornerT=(x+y)*0.5;}\\n':''}    gl_Position=ProjMat*ModelViewMat*vec4(pos,1.0);\n    sphericalVertexDistance=fog_spherical_distance(Position);\n    cylindricalVertexDistance=fog_cylindrical_distance(Position);\n    charIndex=pos.x;\n    vertexColor=Color;\n    texCoord0=UV0;\n    animTime=GameTime;\n}\n`;}
-function shaderJson(core=false){return JSON.stringify({blend:{func:'add',srcrgb:'srcalpha',dstrgb:'1-srcalpha'},vertex:core?'core/rendertype_text':'rendertype_text',fragment:core?'core/rendertype_text':'rendertype_text',attributes:['Position','Color','UV0','UV2'],samplers:[{name:'Sampler0'},{name:'Sampler2'}]},null,2)}
-function mcmeta(){return `{
-    "pack": {
-        "pack_format": 46,
-        "description": "Eternal Network - Animated Text Effects",
-        "supported_formats": { "min_inclusive": 7, "max_inclusive": 100 },
-        "min_format": 7,
-        "max_format": 100
-    },
-    "overlays": {
-        "entries": [
-            {
-                "directory": "overlay_1_20_5",
-                "formats": [32, 41],
-                "min_format": 32,
-                "max_format": 41
-            },
-            {
-                "directory": "overlay_1_21_2",
-                "formats": [42, 100],
-                "min_format": 42,
-                "max_format": 100
-            },
-            {
-                "directory": "overlay_1_21_5",
-                "formats": [55, 63],
-                "min_format": 55,
-                "max_format": 63
-            },
-            {
-                "directory": "overlay_1_21_7",
-                "formats": [64, 68],
-                "min_format": 64,
-                "max_format": 68
-            },
-            {
-                "directory": "overlay_1_21_9",
-                "formats": [69, 75],
-                "min_format": 69,
-                "max_format": 75
-            },
-            {
-                "directory": "overlay_26_1",
-                "formats": [84, 100],
-                "min_format": 84,
-                "max_format": 100
-            }
-        ]
-    }
-}
-`;}
-function readme(){return `Test with: <#${$('mainRGB').value.replace('#','')}>${$('previewText').value}\nMain trigger: ${$('mainRGB').value}\nShadow trigger: ${$('shadowRGB').value}\n`;}
-function update(doSave=true){$('fshBlock').value=fsh();$('vshBlock').value=vsh();$('chatTest').textContent='<'+$('mainRGB').value+'>'+($('previewText').value||'TEST');if(doSave)save(false)}
-function project(){return {effectName:$('effectName').value,mode:$('mode').value,previewText:$('previewText').value,speed:$('speed').value,spacing:$('spacing').value,shadowFactor:$('shadowFactor').value,packName:$('packName').value,colors,settings,addons:addons(),main:$('mainRGB')?.value||'#e6ecfe',shadow:$('shadowRGB')?.value||'#393b3f'}}
-function applyProject(p){if(!p)return;['effectName','mode','previewText','speed','spacing','shadowFactor','packName'].forEach(id=>{if(p[id]!==undefined)$(id).value=p[id]});colors=p.colors||colors;settings={...settings,...(p.settings||{})};['Shimmer','Pulse','Sparkle','Neon'].forEach(x=>$('add'+x).checked=(p.addons||[]).includes(x.toLowerCase()));renderStops();renderSettings();if(p.main)syncRgb('main',hexToRgb(p.main));if(p.shadow)syncRgb('shadow',hexToRgb(p.shadow));update(false)}
-function save(show){localStorage.setItem(STORAGE,JSON.stringify(project()));if(show)$('log').value='Saved.'}
-function load(){try{let p=JSON.parse(localStorage.getItem(STORAGE)||'null');if(p)applyProject(p)}catch(e){console.warn(e)}}
-function exportJson(){let blob=new Blob([JSON.stringify(project(),null,2)],{type:'application/json'});let a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=($('effectName').value||'shader-project')+'.json';a.click()}
-function importJson(file){let r=new FileReader();r.onload=()=>{try{applyProject(JSON.parse(r.result));save(true)}catch(e){$('log').value='Import failed: '+e.message}};r.readAsText(file)}
-function makeZip(files){let enc=new TextEncoder(),names=Object.keys(files),locals=[],centrals=[],offset=0;function u16(n){return [n&255,n>>8&255]}function u32(n){return [n&255,n>>8&255,n>>16&255,n>>24&255]}function crc32(bytes){let c=~0;for(let b of bytes){c^=b;for(let k=0;k<8;k++)c=(c>>>1)^(0xedb88320&-(c&1))}return ~c>>>0}for(let name of names){let data=enc.encode(files[name]),nb=enc.encode(name),crc=crc32(data);let local=new Uint8Array([...u32(0x04034b50),...u16(20),0,0,0,0,0,0,0,0,...u32(crc),...u32(data.length),...u32(data.length),...u16(nb.length),0,0,...nb,...data]);locals.push(local);let central=new Uint8Array([...u32(0x02014b50),20,0,20,0,0,0,0,0,0,0,...u32(crc),...u32(data.length),...u32(data.length),...u16(nb.length),0,0,0,0,0,0,0,0,0,0,...u32(offset),...nb]);centrals.push(central);offset+=local.length}let cs=centrals.reduce((a,b)=>a+b.length,0),total=offset+cs+22,out=new Uint8Array(total),p=0;for(let l of locals){out.set(l,p);p+=l.length}let cdStart=p;for(let c of centrals){out.set(c,p);p+=c.length}out.set(new Uint8Array([...u32(0x06054b50),0,0,0,0,...u16(names.length),...u16(names.length),...u32(cs),...u32(cdStart),0,0]),p);return new Blob([out],{type:'application/zip'})}
-function buildPack(){try{let files={'pack.mcmeta':mcmeta(),'README_TESTING.md':readme(),'assets/minecraft/shaders/core/rendertype_text.json':shaderJson(false),'assets/minecraft/shaders/core/rendertype_text.vsh':vsh(),'assets/minecraft/shaders/core/rendertype_text.fsh':fsh(),'overlay_1_20_5/assets/minecraft/shaders/core/rendertype_text.json':shaderJson(false),'overlay_1_20_5/assets/minecraft/shaders/core/rendertype_text.vsh':vsh(),'overlay_1_21_2/assets/minecraft/shaders/core/rendertype_text.json':shaderJson(true),'overlay_1_21_5/assets/minecraft/shaders/core/rendertype_text.vsh':vsh(),'overlay_1_21_5/assets/minecraft/shaders/core/rendertype_text.fsh':fsh(),'overlay_1_21_7/assets/minecraft/shaders/core/rendertype_text.vsh':vsh(),'overlay_1_21_7/assets/minecraft/shaders/core/rendertype_text.fsh':fsh(),'overlay_1_21_9/assets/minecraft/shaders/core/rendertype_text.vsh':vsh(),'overlay_1_21_9/assets/minecraft/shaders/core/rendertype_text.fsh':fsh(),'overlay_26_1/assets/minecraft/shaders/core/rendertype_text.vsh':vsh(),'overlay_26_1/assets/minecraft/shaders/core/rendertype_text.fsh':fsh(),'shader-project.json':JSON.stringify(project(),null,2)};let blob=makeZip(files);let a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=($('packName').value||'Text-Shader-Test-Pack').replace(/[^a-z0-9._-]+/gi,'-')+'.zip';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000);$('log').value='Resource pack built: '+a.download+'\\nFiles: '+Object.keys(files).length}catch(e){$('log').value='Build failed: '+e.message;console.error(e)}}
-function renderLibrary(){let box=$('library');box.innerHTML='';Object.entries(presets).forEach(([name,p])=>{let b=document.createElement('button');b.innerHTML=`<b>${name}</b><br><span class="small">${p.mode}${p.addons?.length?' + '+p.addons.join(', '):''}<br>${p.trigger||''}</span>`;b.onclick=()=>{ $('effectName').value=name.replace(/[^a-zA-Z0-9_]/g,'');$('mode').value=p.mode;colors=[...p.colors];$('speed').value=p.speed||300;if(p.settings)settings={...settings,...p.settings};['Shimmer','Pulse','Sparkle','Neon'].forEach(x=>$('add'+x).checked=false);(p.addons||[]).forEach(x=>{let id='add'+x[0].toUpperCase()+x.slice(1);if($(id))$(id).checked=true});if(p.trigger)syncRgb('main',hexToRgb(p.trigger));renderStops();renderSettings();update()};box.appendChild(b)})}
-['effectName','mode','previewText','speed','spacing','shadowFactor','packName','addShimmer','addPulse','addSparkle','addNeon'].forEach(id=>$(id).addEventListener('input',()=>{renderSettings();update()}));
-$('addColor').onclick=()=>{colors.push('#ffffff');renderStops();update()};$('saveNow').onclick=()=>save(true);$('exportJson').onclick=exportJson;$('importJson').onclick=()=>$('importFile').click();$('importFile').onchange=e=>{if(e.target.files[0])importJson(e.target.files[0])};$('resetSaved').onclick=()=>{localStorage.removeItem(STORAGE);$('log').value='Saved data reset'};$('buildPack').onclick=buildPack;$('copyChat').onclick=()=>navigator.clipboard.writeText($('chatTest').textContent);
-rgbEditor('main','Main trigger','#e6ecfe');rgbEditor('shadow','Shadow trigger','#393b3f');renderStops();renderSettings();renderLibrary();load();update(false);requestAnimationFrame(draw);
+function gradient(colors,t){let n=colors.length;if(n<1)return [1,1,1];if(n===1)return hexToRgb(colors[0]).map(v=>v/255);let phase=((t%n)+n)%n;let i=Math.floor(phase);let j=(i+1)%n;return mix(hexToRgb(colors[i]).map(v=>v/255),hexToRgb(colors[j]).map(v=>v/255),phase-i)}
+function hsv(h,s,v){h=((h%1)+1)%1;let i=Math.floor(h*6),f=h*6-i,p=v*(1-s),q=v*(1-f*s),t=v*(1-(1-f)*s);let m=[[v,t,p],[q,v,p],[p,v,t],[p,q,v],[t,p,v],[v,p,q]][i%6];return m}
+let colors=[...DEFAULT_COLORS];
+function state(){return {effectName:$('effectName').value||'CustomEffect',preview:$('previewTextInput').value||'Eternal Network',mainHex:$('mainHex').value||'#e6ecfe',shadowHex:$('shadowHex').value||'#573b63',base:$('baseEffect').value,speed:+$('speed').value||300,spacing:+$('spacing').value||0.005,colors,addons:{diagonal:$('addonDiagonal').checked,shimmer:$('addonShimmer').checked,pulse:$('addonPulse').checked,sparkle:$('addonSparkle').checked,neon:$('addonNeon').checked},shimmerColor:$('shimmerColor').value,shimmerStrength:+$('shimmerStrength').value||0.8,shimmerWidth:+$('shimmerWidth').value||0.08,pulseStrength:+$('pulseStrength').value||0.25}}
+function setState(s){if(!s)return;colors=s.colors&&s.colors.length?s.colors:[...DEFAULT_COLORS];$('effectName').value=s.effectName||'CustomEffect';$('previewTextInput').value=s.preview||'Eternal Network';$('mainHex').value=s.mainHex||'#e6ecfe';$('shadowHex').value=s.shadowHex||'#573b63';$('baseEffect').value=s.base||'Gradient';$('speed').value=s.speed??300;$('spacing').value=s.spacing??0.005;for(const k of ['diagonal','shimmer','pulse','sparkle','neon'])$('addon'+k[0].toUpperCase()+k.slice(1)).checked=!!(s.addons&&s.addons[k]);$('shimmerColor').value=s.shimmerColor||'#fff4c8';$('shimmerStrength').value=s.shimmerStrength??0.8;$('shimmerWidth').value=s.shimmerWidth??0.08;$('pulseStrength').value=s.pulseStrength??0.25;renderColors();update()}
+function renderColors(){const box=$('colorStops');box.innerHTML='';colors.forEach((c,i)=>{const d=document.createElement('div');d.className='sw';d.innerHTML=`<input type="color" value="${c}"><input value="${c}"><button>×</button>`;const [pick,text,del]=d.children;pick.oninput=()=>{colors[i]=pick.value;text.value=pick.value;update()};text.onchange=()=>{if(/^#[0-9a-fA-F]{6}$/.test(text.value)){colors[i]=text.value;pick.value=text.value;update()}};del.onclick=()=>{if(colors.length>1){colors.splice(i,1);renderColors();update()}};box.appendChild(d)})}
+function applyShortcut(sc){colors=[...sc.c];$('baseEffect').value=sc.base;for(const k of ['diagonal','shimmer','pulse','sparkle','neon'])$('addon'+k[0].toUpperCase()+k.slice(1)).checked=!!sc.a[k];renderColors();update()}
+function renderShortcuts(){const box=$('shortcuts');box.innerHTML='';shortcuts.forEach(sc=>{const b=document.createElement('button');b.className='shortcut';b.textContent=sc.n;b.onclick=()=>applyShortcut(sc);box.appendChild(b)})}
+function previewFrame(){const s=state(), el=$('preview');el.textContent=s.preview;let t=performance.now()/1000;let chars=[...s.preview];let html='';chars.forEach((ch,i)=>{let corner=s.addons.diagonal?((i%2)*0.5+0.25):0;let p=corner+i*s.spacing-t*(s.speed/60);let rgb=s.base==='Rainbow'?hsv(p,0.7,1):gradient(s.colors,p);if(s.base==='Solid')rgb=hexToRgb(s.colors[0]).map(v=>v/255);if(s.addons.shimmer){let pos=((i*0.06-t*(s.speed/120))%1+1)%1;let d=Math.abs(pos-0.5);let g=Math.max(0,1-d/(s.shimmerWidth||0.08))*s.shimmerStrength;let sc=hexToRgb(s.shimmerColor).map(v=>v/255);rgb=mix(rgb,sc,Math.min(1,g))}if(s.addons.pulse){let pulse=1-s.pulseStrength/2 + Math.sin(t*(s.speed/25)+i*.35)*s.pulseStrength/2;rgb=rgb.map(v=>v*pulse)}if(s.addons.sparkle){let spark=(Math.sin(i*12.9898+t*s.speed*.4)*43758.5453)%1;if(spark>.82)rgb=mix(rgb,[1,1,1],.55)}if(s.addons.neon)rgb=rgb.map(v=>Math.min(1,v*1.35));let col=rgbToHex(rgb[0]*255,rgb[1]*255,rgb[2]*255);html+=`<span style="color:${col}">${ch===' '?'&nbsp;':ch.replace(/[&<>]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[m]))}</span>`});el.innerHTML=html;requestAnimationFrame(previewFrame)}
+function vec(hex){return `vec3(${rgb01(hex).join(', ')})`}
+function helperName(){return (state().effectName||'CustomEffect').replace(/[^A-Za-z0-9_]/g,'')||'CustomEffect'}
+function gradientFunc(){const s=state(), name=helperName();let stops=s.colors.map(vec);return `vec3 ${name}Gradient(float t) {\n    float phase = fract(t) * ${stops.length.toFixed(1)};\n${stops.map((v,i)=>`    if (phase < ${(i+1).toFixed(1)}) return mix(${v}, ${stops[(i+1)%stops.length]}, phase - ${i.toFixed(1)});`).join('\n')}\n    return ${stops[0]};\n}`}
+function effectExpr(mult){const s=state(), name=helperName();let base=s.base==='Rainbow'?`hsvToRgb(vec3(effectT, 0.7, 1.0))`:`${name}Gradient(effectT)`;if(s.base==='Solid')base=vec(s.colors[0]);let code=`vec3 rgb = ${base};\n`;if(s.addons.shimmer){code+=`        float glintPos = fract(charIndex * 0.06 - animTime * ${(s.speed/1.5).toFixed(3)});\n        float glintD = abs(glintPos - 0.5);\n        float glint = max(0.0, 1.0 - glintD / ${s.shimmerWidth.toFixed(3)}) * ${s.shimmerStrength.toFixed(3)};\n        rgb = mix(rgb, ${vec(s.shimmerColor)}, glint);\n`}
+if(s.addons.pulse)code+=`        rgb *= 1.0 - ${s.pulseStrength.toFixed(3)} * 0.5 + sin(animTime * ${(s.speed/10).toFixed(3)} + charIndex * 0.35) * ${s.pulseStrength.toFixed(3)} * 0.5;\n`;
+if(s.addons.sparkle)code+=`        float spark = fract(sin(charIndex * 12.9898 + animTime * ${(s.speed*2).toFixed(3)}) * 43758.5453);\n        rgb = mix(rgb, vec3(1.0), step(0.82, spark) * 0.55);\n`;
+if(s.addons.neon)code+=`        rgb = min(rgb * 1.35, vec3(1.0));\n`;
+if(mult!==1)code+=`        rgb *= ${mult.toFixed(2)};\n`;return code}
+function fsh(){const s=state(), main=hexToRgb(s.mainHex), sh=hexToRgb(s.shadowHex), name=helperName();return `#version 150\n\n#moj_import <minecraft:fog.glsl>\n#moj_import <minecraft:dynamictransforms.glsl>\n#moj_import <minecraft:globals.glsl>\n\nuniform sampler2D Sampler0;\nuniform float FogStart;\nuniform float FogEnd;\n\nin float sphericalVertexDistance;\nin float cylindricalVertexDistance;\nin vec4 vertexColor;\nin vec2 texCoord0;\nin float charIndex;\nin float animTime;\nin float CustomEffectCornerT;\n\nout vec4 fragColor;\n\nvec3 hsvToRgb(vec3 c) {\n    vec4 K = vec4(1.0, 2.0 / 3.0, 1.0 / 3.0, 3.0);\n    vec3 p = abs(fract(c.xxx + K.xyz) * 6.0 - K.www);\n    return c.z * mix(K.xxx, clamp(p - K.xxx, 0.0, 1.0), c.y);\n}\n\nbool colorMatch(vec4 col, float r, float g, float b) {\n    return abs(col.r * 255.0 - r) < 1.0 && abs(col.g * 255.0 - g) < 1.0 && abs(col.b * 255.0 - b) < 1.0;\n}\n\n${gradientFunc()}\n\nvoid main() {\n    vec4 color = texture(Sampler0, texCoord0) * vertexColor * ColorModulator;\n    if (color.a < 0.1) discard;\n    float texAlpha = texture(Sampler0, texCoord0).a;\n    float effectT = ${(s.addons.diagonal?'CustomEffectCornerT + ':'')}charIndex * ${s.spacing.toFixed(6)} - animTime * ${s.speed.toFixed(3)};\n\n    if (colorMatch(vertexColor, ${main[0].toFixed(1)}, ${main[1].toFixed(1)}, ${main[2].toFixed(1)})) {\n        // ${s.effectName}: ${s.mainHex}\n        ${effectExpr(1)}        color = vec4(rgb * texAlpha, texAlpha) * ColorModulator;\n\n    } else if (colorMatch(vertexColor, ${sh[0].toFixed(1)}, ${sh[1].toFixed(1)}, ${sh[2].toFixed(1)})) {\n        // ${s.effectName} shadow: ${s.shadowHex}\n        ${effectExpr(0.25)}        color = vec4(rgb * texAlpha, texAlpha) * ColorModulator;\n    }\n\n    fragColor = apply_fog(color, sphericalVertexDistance, cylindricalVertexDistance, FogEnvironmentalStart, FogEnvironmentalEnd, FogRenderDistanceStart, FogRenderDistanceEnd, FogColor);\n}\n`}
+function vsh(){return `#version 150\n\n#moj_import <minecraft:dynamictransforms.glsl>\n#moj_import <minecraft:projection.glsl>\n\nin vec3 Position;\nin vec4 Color;\nin vec2 UV0;\nin ivec2 UV2;\n\nout float sphericalVertexDistance;\nout float cylindricalVertexDistance;\nout vec4 vertexColor;\nout vec2 texCoord0;\nout float charIndex;\nout float animTime;\nout float CustomEffectCornerT;\n\nvoid main() {\n    gl_Position = ProjMat * ModelViewMat * vec4(Position, 1.0);\n    sphericalVertexDistance = length((ModelViewMat * vec4(Position, 1.0)).xyz);\n    cylindricalVertexDistance = length((ModelViewMat * vec4(Position.x, 0.0, Position.z, 1.0)).xyz);\n    vertexColor = Color;\n    texCoord0 = UV0;\n    charIndex = floor(float(gl_VertexID) / 4.0);\n    animTime = GameTime;\n    float vid = mod(float(gl_VertexID), 4.0);\n    float x_t = (vid == 2.0 || vid == 3.0) ? 1.0 : 0.0;\n    float y_t = (vid == 1.0 || vid == 2.0) ? 1.0 : 0.0;\n    CustomEffectCornerT = (x_t + y_t) * 0.5;\n}\n`}
+function shaderJson(){return JSON.stringify({vertex:'rendertype_text',fragment:'rendertype_text',samplers:[{name:'Sampler0'}]},null,2)}
+function mcmeta(){return JSON.stringify({pack:{pack_format:46,description:'Text Shader Test Pack - generated by Minecraft Text Shader Designer',supported_formats:{min_inclusive:7,max_inclusive:100},min_format:[7,0],max_format:[100,0]},overlays:{entries:[{directory:'overlay_26_1',min_format:[84,0],max_format:[100,0]}]}},null,2)}
+function update(){const s=state();$('triggerInfo').innerHTML=`Main: <b>${s.mainHex}</b> RGB ${hexToRgb(s.mainHex).join(', ')}<br>Shadow: <b>${s.shadowHex}</b> RGB ${hexToRgb(s.shadowHex).join(', ')}`;$('fshOut').value=fsh();$('chatOut').value=`<#${s.mainHex.replace('#','')}>${s.preview}`;localStorage.setItem(STORAGE,JSON.stringify(s))}
+function validate(){let msg=[];let ok=true;if(!/^#[0-9a-fA-F]{6}$/.test($('mainHex').value)){ok=false;msg.push('Bad main HEX')}if(!window.JSZip){ok=false;msg.push('JSZip not loaded; texturepack download needs internet/CDN access')}if(colors.length<1){ok=false;msg.push('Need at least one color')}msg.unshift(ok?'✓ Ready to build':'✗ Not ready');$('validateStatus').innerHTML=msg.map((m,i)=>`<div class="${ok?'ok':'bad'}">${m}</div>`).join('')}
+async function buildPack(){validate();if(!window.JSZip){alert('JSZip is not loaded. Check internet/CDN access.');return}const zip=new JSZip();const base='assets/minecraft/shaders/core/';const files={'pack.mcmeta':mcmeta(),'README_TESTING.md':`Test in chat with:\n${$('chatOut').value}\n\nMain trigger: ${$('mainHex').value}\n`, 'shader-project.json':JSON.stringify(state(),null,2)};files[base+'rendertype_text.fsh']=fsh();files[base+'rendertype_text.vsh']=vsh();files[base+'rendertype_text.json']=shaderJson();files['overlay_26_1/'+base+'rendertype_text.fsh']=fsh();files['overlay_26_1/'+base+'rendertype_text.vsh']=vsh();files['overlay_26_1/'+base+'rendertype_text.json']=shaderJson();for(const [p,c] of Object.entries(files))zip.file(p,c);const blob=await zip.generateAsync({type:'blob',compression:'DEFLATE'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='Text-Shader-Test-Pack.zip';document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},1000)}
+function exportProject(){const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify(state(),null,2)],{type:'application/json'}));a.download='shader-project.json';a.click()}
+function init(){renderColors();renderShortcuts();try{setState(JSON.parse(localStorage.getItem(STORAGE)||'null'))}catch(e){}document.querySelectorAll('input,select').forEach(el=>el.addEventListener('input',update));$('addColor').onclick=()=>{colors.push('#ffffff');renderColors();update()};$('saveNow').onclick=()=>{localStorage.setItem(STORAGE,JSON.stringify(state()));alert('Saved')};$('resetSave').onclick=()=>{localStorage.removeItem(STORAGE);location.reload()};$('exportJson').onclick=exportProject;$('importJsonBtn').onclick=()=>$('importJson').click();$('importJson').onchange=e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>setState(JSON.parse(r.result));r.readAsText(f)};$('copyMain').onclick=()=>navigator.clipboard.writeText($('mainHex').value);$('copyShadow').onclick=()=>navigator.clipboard.writeText($('shadowHex').value);$('validateBtn').onclick=validate;$('buildPack').onclick=buildPack;update();validate();requestAnimationFrame(previewFrame)}
+init();
 </script>
 </body>
 </html>
