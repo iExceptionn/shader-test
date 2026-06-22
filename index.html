@@ -155,6 +155,11 @@ function sanitizeFileName(name){return String(name||'text-shader-test-pack').tri
 function fshBlockForStandalone(){
   let b=fullBlock().trim();
   if(b.startsWith('} else if')) b=b.replace(/^}\s*else\s+if/,'if');
+  // fullBlock() is meant to be pasted into an existing else-if chain, so it
+  // intentionally does not close the final shadow block. For a standalone
+  // generated rendertype_text.fsh we must close it, otherwise Minecraft reports
+  // a fragment shader EOF syntax error.
+  if(!b.endsWith('}')) b += '\n}';
   return b;
 }
 function generatedFullFsh(){
@@ -355,7 +360,7 @@ function packMcmeta(){
     },
     overlays:{
       entries:[
-        {directory:'overlay_26_1',formats:[84,100],min_format:84,max_format:100}
+        {directory:'overlay_26_1',min_format:84,max_format:100}
       ]
     }
   },null,2);
@@ -436,7 +441,7 @@ function buildResourcePack(){
     {name:'assets/minecraft/shaders/core/rendertype_text.json',content:shaderJson},
     {name:'assets/minecraft/shaders/core/rendertype_text.fsh',content:fsh},
     {name:'assets/minecraft/shaders/core/rendertype_text.vsh',content:vsh},
-    // Overlay for Minecraft 1.21.11-style pack formats 84-100.
+    // Overlay for Minecraft 1.21.11-style pack formats 84-100. Metadata uses min_format/max_format only.
     {name:'overlay_26_1/assets/minecraft/shaders/core/rendertype_text.fsh',content:fsh},
     {name:'overlay_26_1/assets/minecraft/shaders/core/rendertype_text.vsh',content:vsh},
     {name:'generated/rendertype_text_json.json',content:shaderJson},
