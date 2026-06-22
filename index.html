@@ -103,8 +103,77 @@ let x=start;for(let i=0;i<text.length;i++){let ch=text[i],w=ctx.measureText(ch).
 function glslGradientFn(){let name=normName();let cols=state.colors.map(vec);let body=''; if(cols.length===1) body=`return ${cols[0]};`; else {body+=`float phase = fract(t) * ${cols.length.toFixed(1)};\n`; for(let i=0;i<cols.length;i++){let next=cols[(i+1)%cols.length];if(i<cols.length-1)body+=`    if (phase < ${(i+1).toFixed(1)}) return mix(${cols[i]}, ${next}, phase - ${i.toFixed(1)});\n`;else body+=`    return mix(${cols[i]}, ${next}, phase - ${i.toFixed(1)});`;}}return `vec3 ${name}Gradient(float t) {\n    ${body}\n}`}
 function effectExpr(shadow=false){let d=collect(),name=normName(),base;if(d.baseMode==='Rainbow')base=`hsvToRgb(vec3(fract(t), 0.7, 1.0))`;else base=`${name}Gradient(t)`;let lines=[`float t = charIndex * ${d.spacing.toFixed(6)} - animTime * ${d.speed.toFixed(3)};`];if(d.addons.diagonal)lines.push(`t += CustomEffectCornerT * ${d.settings.diagonalStrength.toFixed(3)} + ${d.settings.diagonalOffset.toFixed(3)};`);lines.push(`vec3 rgb = ${base};`);if(d.addons.shimmer){lines.push(`float sweep = fract(animTime * ${d.settings.glintSpeed.toFixed(3)});`);lines.push(`float spos = fract(charIndex * ${d.settings.glintSpacing.toFixed(3)});`);lines.push(`float sd = abs(spos - sweep); sd = min(sd, 1.0 - sd);`);lines.push(`float glint = 1.0 - smoothstep(0.0, ${d.settings.glintWidth.toFixed(3)}, sd);`);lines.push(`rgb = mix(rgb, ${vec(d.settings.glintColor)}, glint * ${d.settings.glintStrength.toFixed(3)});`)}if(d.addons.pulse)lines.push(`rgb *= mix(${d.settings.pulseMin.toFixed(3)}, ${d.settings.pulseMax.toFixed(3)}, 0.5 + 0.5 * sin(animTime * ${d.settings.pulseSpeed.toFixed(3)} + charIndex * 0.03));`);if(d.addons.sparkle){lines.push(`float spark = fract(sin(charIndex * 12.9898 + animTime * ${d.settings.sparkleSpeed.toFixed(3)}) * 43758.5453);`);lines.push(`rgb = mix(rgb, ${vec(d.settings.sparkleColor)}, step(${(1-d.settings.sparkleAmount*.08).toFixed(3)}, spark) * 0.85);`)}if(d.addons.neon)lines.push(`rgb = min(rgb * ${d.settings.neonBoost.toFixed(3)}, vec3(1.0));`);if(shadow)lines.push(`rgb *= 0.25;`);return lines.join('\n        ')}
 function fsh(){let d=collect(),m=hexToRgb(d.mainHex),s=hexToRgb(d.shadowHex),name=normName();return `#version 150\n\n#moj_import <minecraft:fog.glsl>\n#moj_import <minecraft:dynamictransforms.glsl>\n#moj_import <minecraft:globals.glsl>\n\nuniform sampler2D Sampler0;\nuniform float FogStart;\nuniform float FogEnd;\n\nin float sphericalVertexDistance;\nin float cylindricalVertexDistance;\nin vec4 vertexColor;\nin vec2 texCoord0;\nin float charIndex;\nin float animTime;\nin float CustomEffectCornerT;\n\nout vec4 fragColor;\n\nvec3 hsvToRgb(vec3 c) {\n    vec4 K = vec4(1.0, 2.0 / 3.0, 1.0 / 3.0, 3.0);\n    vec3 p = abs(fract(c.xxx + K.xyz) * 6.0 - K.www);\n    return c.z * mix(K.xxx, clamp(p - K.xxx, 0.0, 1.0), c.y);\n}\n\nbool colorMatch(vec4 col, float r, float g, float b) {\n    return abs(col.r * 255.0 - r) < 1.0 && abs(col.g * 255.0 - g) < 1.0 && abs(col.b * 255.0 - b) < 1.0;\n}\n\n${glslGradientFn()}\n\nvoid main() {\n    vec4 color = texture(Sampler0, texCoord0) * vertexColor * ColorModulator;\n    if (color.a < 0.1) discard;\n    float texAlpha = texture(Sampler0, texCoord0).a;\n\n    if (colorMatch(vertexColor, ${m[0]}.0, ${m[1]}.0, ${m[2]}.0)) {\n        // ${d.effectName}: ${d.mainHex}\n        ${effectExpr(false)}\n        color = vec4(rgb * texAlpha, texAlpha) * ColorModulator;\n    } else if (colorMatch(vertexColor, ${s[0]}.0, ${s[1]}.0, ${s[2]}.0)) {\n        // ${d.effectName} shadow: ${d.shadowHex}\n        ${effectExpr(true)}\n        color = vec4(rgb * texAlpha, texAlpha) * ColorModulator;\n    }\n\n    fragColor = apply_fog(color, sphericalVertexDistance, cylindricalVertexDistance, FogEnvironmentalStart, FogEnvironmentalEnd, FogRenderDistanceStart, FogRenderDistanceEnd, FogColor);\n}\n`}
-function vsh(){return `#version 150\n\n#moj_import <minecraft:dynamictransforms.glsl>\n#moj_import <minecraft:projection.glsl>\n#moj_import <minecraft:globals.glsl>\n\nin vec3 Position;\nin vec4 Color;\nin vec2 UV0;\n\nuniform sampler2D Sampler0;\n\nout float sphericalVertexDistance;\nout float cylindricalVertexDistance;\nout vec4 vertexColor;\nout vec2 texCoord0;\nout float charIndex;\nout float animTime;\nout float CustomEffectCornerT;\n\nvoid main() {\n    vec4 pos = ProjMat * ModelViewMat * vec4(Position, 1.0);\n    gl_Position = pos;\n    sphericalVertexDistance = fog_spherical_distance(Position);\n    cylindricalVertexDistance = fog_cylindrical_distance(Position);\n    vertexColor = Color;\n    texCoord0 = UV0;\n    charIndex = pos.x;\n    animTime = GameTime;\n    float vid = mod(float(gl_VertexID), 4.0);\n    float x_t = (vid == 2.0 || vid == 3.0) ? 1.0 : 0.0;\n    float y_t = (vid == 1.0 || vid == 2.0) ? 1.0 : 0.0;\n    CustomEffectCornerT = (x_t + y_t) * 0.5;\n}\n`}
-function jsonShader(){return JSON.stringify({vertex:'rendertype_text',fragment:'rendertype_text',samplers:[{name:'Sampler0'}]},null,2)}
+function vsh(){return `#version 150
+
+#moj_import <minecraft:fog.glsl>
+#moj_import <minecraft:dynamictransforms.glsl>
+#moj_import <minecraft:projection.glsl>
+#moj_import <minecraft:globals.glsl>
+
+in vec3 Position;
+in vec4 Color;
+in vec2 UV0;
+in ivec2 UV2;
+
+uniform sampler2D Sampler2;
+
+out float sphericalVertexDistance;
+out float cylindricalVertexDistance;
+out vec4 vertexColor;
+out vec2 texCoord0;
+out float charIndex;
+out float animTime;
+out float CustomEffectCornerT;
+
+void main() {
+    vec3 pos = Position;
+
+    ivec3 ic = ivec3(Color.rgb * 255.0 + 0.5);
+    bool isTrigger = (ic.r == 230) && (ic.g >= 0) && (ic.b >= 0);
+    bool isShadowTrigger = (ic.r == 57) && (ic.g >= 0) && (ic.b >= 0);
+
+    gl_Position = ProjMat * ModelViewMat * vec4(pos, 1.0);
+
+    sphericalVertexDistance = fog_spherical_distance(Position);
+    cylindricalVertexDistance = fog_cylindrical_distance(Position);
+
+    if (isShadowTrigger) {
+        charIndex = pos.x - 1.0;
+    } else {
+        charIndex = pos.x;
+    }
+
+    if (isTrigger || isShadowTrigger) {
+        vertexColor = Color;
+    } else {
+        vertexColor = Color * texelFetch(Sampler2, UV2 / 16, 0);
+    }
+
+    texCoord0 = UV0;
+    animTime = GameTime;
+
+    float vid = mod(float(gl_VertexID), 4.0);
+    float x_t = (vid == 2.0 || vid == 3.0) ? 1.0 : 0.0;
+    float y_t = (vid == 1.0 || vid == 2.0) ? 1.0 : 0.0;
+    CustomEffectCornerT = (x_t + y_t) * 0.5;
+}
+`}
+function jsonShader(){return JSON.stringify({
+  blend:{func:'add',srcrgb:'srcalpha',dstrgb:'1-srcalpha'},
+  vertex:'rendertype_text',
+  fragment:'rendertype_text',
+  attributes:['Position','Color','UV0','UV2'],
+  samplers:[{name:'Sampler0'},{name:'Sampler2'}],
+  uniforms:[
+    {name:'ModelViewMat',type:'matrix4x4',count:16,values:[1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1]},
+    {name:'ProjMat',type:'matrix4x4',count:16,values:[1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1]},
+    {name:'ColorModulator',type:'float',count:4,values:[1,1,1,1]},
+    {name:'FogStart',type:'float',count:1,values:[0]},
+    {name:'FogEnd',type:'float',count:1,values:[1]},
+    {name:'FogColor',type:'float',count:4,values:[0,0,0,0]},
+    {name:'GameTime',type:'float',count:1,values:[0]}
+  ]
+},null,2)}
 function mcmeta(){return JSON.stringify({pack:{pack_format:46,description:'Text Shader Test Pack - generated by Minecraft Text Shader Designer',supported_formats:{min_inclusive:7,max_inclusive:100},min_format:7,max_format:100},overlays:{entries:[{directory:'overlay_26_1',min_format:84,max_format:100}]}},null,2)}
 function update(){showSettings();let d=collect();$('triggerInfo').textContent=`Main RGB ${hexToRgb(d.mainHex).join(', ')} | Shadow RGB ${hexToRgb(d.shadowHex).join(', ')}`;$('fshOut').textContent=fsh();$('vshOut').textContent=vsh();$('mcmetaOut').textContent=mcmeta();localStorage.setItem(LS,JSON.stringify(d))}
 async function buildPack(){try{if(typeof JSZip==='undefined')throw new Error('JSZip not loaded. Make sure vendor/jszip.min.js exists.');let zip=new JSZip();let files={'pack.mcmeta':mcmeta(),'README_TESTING.md':`Test with: ${collect().mainHex} Eternal Network\nMiniMessage: <${collect().mainHex}>Eternal Network\n`,'shader-project.json':JSON.stringify(collect(),null,2),'assets/minecraft/shaders/core/rendertype_text.fsh':fsh(),'assets/minecraft/shaders/core/rendertype_text.vsh':vsh(),'assets/minecraft/shaders/core/rendertype_text.json':jsonShader(),'overlay_26_1/assets/minecraft/shaders/core/rendertype_text.fsh':fsh(),'overlay_26_1/assets/minecraft/shaders/core/rendertype_text.vsh':vsh(),'overlay_26_1/assets/minecraft/shaders/core/rendertype_text.json':jsonShader()};Object.entries(files).forEach(([p,c])=>zip.file(p,c));let blob=await zip.generateAsync({type:'blob',compression:'DEFLATE'});let a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='Text-Shader-Test-Pack.zip';document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},1000);$('buildStatus').innerHTML='<span class="ok">Downloaded valid JSZip resource pack.</span>'}catch(e){$('buildStatus').innerHTML='<span class="warn">Build failed: '+e.message+'</span>';console.error(e)}}
