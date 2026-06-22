@@ -186,4 +186,97 @@ function validatePack(){let checks=[];checks.push(fsh().includes('void main()')?
 function init(){renderColors();renderShortcuts();document.querySelectorAll('input,select').forEach(el=>el.addEventListener('input',update));$('addColor').onclick=()=>{state.colors.push('#ffffff');renderColors();update()};$('previewMatchMinecraft').onclick=()=>{$('previewSpeedMultiplier').value='0.033333';$('previewSpacingMultiplier').value='40';update()};$('previewRawShader').onclick=()=>{$('previewSpeedMultiplier').value='1';$('previewSpacingMultiplier').value='1';update()};$('saveNow').onclick=save;$('exportJson').onclick=()=>{let b=new Blob([JSON.stringify(collect(),null,2)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='shader-project.json';a.click();URL.revokeObjectURL(a.href)};$('importJsonBtn').onclick=()=>$('importFile').click();$('importFile').onchange=async e=>{let f=e.target.files[0];if(f)applyData(JSON.parse(await f.text()))};$('resetSaved').onclick=()=>{localStorage.removeItem(LS);location.reload()};$('copyMain').onclick=()=>navigator.clipboard.writeText($('mainHex').value);$('copyShadow').onclick=()=>navigator.clipboard.writeText($('shadowHex').value);$('autoTrigger').onclick=()=>{let g=236+Math.floor(Math.random()*18);$('mainHex').value=rgbToHex(230,g,254);$('shadowHex').value=rgbToHex(57,Math.max(40,Math.floor(g/4)),63);update()};$('buildPack').onclick=buildPack;$('copyFsh').onclick=()=>navigator.clipboard.writeText(fsh());$('copyVsh').onclick=()=>navigator.clipboard.writeText(vsh());$('validate').onclick=validatePack;document.querySelectorAll('.tab').forEach(b=>b.onclick=()=>{document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));b.classList.add('active');['fshOut','vshOut','mcmetaOut'].forEach(id=>$(id).classList.toggle('hidden',id!==b.dataset.tab))});try{let saved=JSON.parse(localStorage.getItem(LS)||'null');if(saved)applyData(saved)}catch(e){}update();requestAnimationFrame(draw)}
 init();
 </script>
+
+<script>
+(function(){
+  const STORE_KEY = "mtsd_preview_font_calibration_v1";
+  const defaults = { fontScale: 0.58, letterSpacing: 0, shadowOffset: 1, compact: true };
+  function loadCal(){
+    try { return Object.assign({}, defaults, JSON.parse(localStorage.getItem(STORE_KEY)||"{}")); }
+    catch(e){ return Object.assign({}, defaults); }
+  }
+  function saveCal(v){ localStorage.setItem(STORE_KEY, JSON.stringify(v)); }
+  function applyCal(){
+    const c = loadCal();
+    document.documentElement.style.setProperty("--mc-preview-scale", String(c.fontScale));
+    document.documentElement.style.setProperty("--mc-preview-letter-spacing", c.letterSpacing + "px");
+    document.documentElement.style.setProperty("--mc-preview-shadow-offset", c.shadowOffset + "px");
+    document.body.classList.toggle("mc-compact-preview", !!c.compact);
+    const fs = document.getElementById("previewFontScale"); if(fs) fs.value = c.fontScale;
+    const ls = document.getElementById("previewLetterSpacing"); if(ls) ls.value = c.letterSpacing;
+    const so = document.getElementById("previewShadowOffset"); if(so) so.value = c.shadowOffset;
+    const cp = document.getElementById("previewCompactMode"); if(cp) cp.checked = !!c.compact;
+    if (typeof update === "function") { try { update(); } catch(e){} }
+  }
+  function controlHTML(){
+    return `
+      <div class="card" id="previewFontCalibrationCard">
+        <h2>Preview font calibration</h2>
+        <p class="muted">Only changes the browser preview. Exported Minecraft shader values stay unchanged.</p>
+        <label>Preview font scale <input id="previewFontScale" type="range" min="0.35" max="1.2" step="0.01"></label>
+        <label>Preview letter spacing <input id="previewLetterSpacing" type="range" min="-2" max="8" step="0.25"></label>
+        <label>Preview shadow offset <input id="previewShadowOffset" type="range" min="0" max="5" step="0.25"></label>
+        <label style="display:flex;gap:8px;align-items:center"><input id="previewCompactMode" type="checkbox"> Compact Minecraft chat preview</label>
+        <button type="button" id="minecraftChatPreset">Use Minecraft chat preset</button>
+      </div>`;
+  }
+  function installControls(){
+    if (document.getElementById("previewFontCalibrationCard")) return;
+    const cards = Array.from(document.querySelectorAll(".card"));
+    const previewCard = cards.find(c => /preview/i.test(c.textContent||"")) || cards[0] || document.body;
+    previewCard.insertAdjacentHTML("afterend", controlHTML());
+    ["previewFontScale","previewLetterSpacing","previewShadowOffset","previewCompactMode"].forEach(id=>{
+      const el = document.getElementById(id);
+      if (!el) return;
+      el.addEventListener("input", ()=>{
+        const c = loadCal();
+        c.fontScale = parseFloat(document.getElementById("previewFontScale").value || defaults.fontScale);
+        c.letterSpacing = parseFloat(document.getElementById("previewLetterSpacing").value || defaults.letterSpacing);
+        c.shadowOffset = parseFloat(document.getElementById("previewShadowOffset").value || defaults.shadowOffset);
+        c.compact = !!document.getElementById("previewCompactMode").checked;
+        saveCal(c); applyCal();
+      });
+    });
+    const preset = document.getElementById("minecraftChatPreset");
+    if (preset) preset.addEventListener("click", ()=>{
+      saveCal({fontScale:0.58, letterSpacing:0, shadowOffset:1, compact:true});
+      applyCal();
+    });
+  }
+
+  // Canvas font scaling patch: modifies font sizes assigned to canvas contexts after calibration.
+  const proto = CanvasRenderingContext2D && CanvasRenderingContext2D.prototype;
+  if (proto && !proto.__mcPreviewFontPatch) {
+    proto.__mcPreviewFontPatch = true;
+    const desc = Object.getOwnPropertyDescriptor(proto, "font");
+    if (desc && desc.set && desc.get) {
+      Object.defineProperty(proto, "font", {
+        get: function(){ return desc.get.call(this); },
+        set: function(v){
+          const c = loadCal();
+          let nv = String(v).replace(/(\d+(?:\.\d+)?)px/g, function(m,n){
+            return (parseFloat(n) * c.fontScale).toFixed(2) + "px";
+          });
+          return desc.set.call(this, nv);
+        }
+      });
+    }
+  }
+
+  const css = document.createElement("style");
+  css.textContent = `
+    .preview, #preview, canvas.previewCanvas { letter-spacing: var(--mc-preview-letter-spacing, 0px); }
+    .mc-compact-preview canvas { max-height: 120px; }
+    #previewFontCalibrationCard input[type=range]{ width:100%; }
+  `;
+  document.head.appendChild(css);
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", ()=>{ installControls(); applyCal(); });
+  } else {
+    installControls(); applyCal();
+  }
+})();
+</script>
+
 </body></html>
