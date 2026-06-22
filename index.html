@@ -11,12 +11,12 @@
 </style>
 </head>
 <body>
-<header><h1>Minecraft Text Shader Designer</h1><div class="sub">Stable build: Minecraft-accurate preview + working test resource pack builder.</div></header>
+<header><h1>Minecraft Text Shader Designer</h1><div class="sub">Stable build: working pack builder + shortcuts + fixed preview speed.</div></header>
 <div class="grid">
 <section class="card">
 <label>Effect name</label><input id="effectName" value="EternalChroma">
 <div class="row"><div><label>Base effect</label><select id="mode"><option value="gradient">Gradient</option><option value="diagonal">Diagonal Gradient</option><option value="rainbow">Rainbow</option><option value="chroma">Screenshot Chroma</option><option value="solid">Solid Color</option></select></div><div><label>Preview text</label><input id="previewText" value="Eternal Network"></div></div>
-<div class="row"><div><label>Speed <span class="small">same number used in GLSL</span></label><input id="speed" type="number" step="1" value="300"></div><div><label>Char spacing</label><input id="spacing" type="number" step="0.001" value="0.005"></div></div>
+<div class="row"><div><label>Speed <span class="small">same number used in GLSL</span></label><input id="speed" type="number" step="1" value="300"><div class="small">Minecraft-style scale: 300 normal, 30 slow, 600 fast.</div></div><div><label>Char spacing</label><input id="spacing" type="number" step="0.001" value="0.005"></div></div>
 <div class="row"><div><label>Shadow factor</label><input id="shadowFactor" type="number" step="0.01" value="0.25"></div><div><label>Pack name</label><input id="packName" value="Text-Shader-Test-Pack"></div></div>
 <h3>Color stops</h3><div id="stops"></div><button id="addColor">+ Add color</button>
 <h3>Combined add-ons</h3>
@@ -34,13 +34,14 @@
 <section class="card">
 <div class="previewWrap"><canvas id="preview"></canvas></div>
 <div class="actions" style="margin-top:12px"><button class="primary" id="buildPack">Build test resource pack .zip</button><button id="copyChat">Copy chat test</button></div>
-<h3>Effect library</h3><div class="small">Includes shortcut presets inspired by the uploaded Text_Effects pack. Some VSH-only examples are approximated with the current FSH/preview pipeline.</div><div id="library" class="library" style="margin-top:8px"></div>
+<h3>Effect library</h3><div id="library" class="library"></div>
 <div class="notice" style="margin-top:12px">The test pack is generated with the same working structure as the red debug pack that worked in-game: base shader files plus the 1.21 overlays and <code>overlay_26_1</code>.</div>
 <h3>Generated FSH</h3><textarea id="fshBlock" readonly></textarea>
 <h3>Generated VSH</h3><textarea id="vshBlock" readonly></textarea>
 </section>
 </div>
-<div class="footer small">Speed calibration: preview uses <code>previewTime = seconds / 120</code>, then applies <code>animTime * speed</code>. This matches the visible pace of the working Minecraft test pack much more closely than the previous <code>/1200</code> preview.</div>
+<div class="footer small">Speed calibration: preview uses the same visible speed scale as the generated shader. Default 300 should visibly move; 30 is slow, 600+ is fast.</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 <script>
 const $=id=>document.getElementById(id);
 const STORAGE='mc_text_shader_designer_stable_v2';
@@ -86,7 +87,7 @@ function hsv(h,s,v){h=fract(h);let r=0,g=0,b=0,i=Math.floor(h*6),f=h*6-i,p=v*(1-
 function gradient(t){if(colors.length===1)return hexToRgb(colors[0]);let n=colors.length,phase=fract(t)*n,i=Math.floor(phase),f=phase-i;return mix(hexToRgb(colors[i%n]),hexToRgb(colors[(i+1)%n]),f)}
 function getAddons(){return {shimmer:$('addShimmer').checked,pulse:$('addPulse').checked,sparkle:$('addSparkle').checked,neon:$('addNeon').checked}}
 function effectColor(x,charIndex,time,shadow=false){let mode=$('mode').value,speed=val('speed',300),spacing=val('spacing',.005),diagT=0.5;let t=charIndex*spacing-time*speed;let c=gradient(t);if(mode==='solid')c=hexToRgb(colors[0]);if(mode==='diagonal')c=gradient(diagT+charIndex*settings.diagChar-time*speed);if(mode==='rainbow')c=hsv(charIndex*spacing-time*speed,settings.saturation,settings.value);if(mode==='chroma')c=hsv(charIndex*spacing+diagT*settings.vertical-time*speed,settings.saturation,settings.value);let a=getAddons();if(a.shimmer){let pos=fract(charIndex*settings.glintSpacing+(mode==='diagonal'?diagT:0));let sweep=fract(time*settings.glintSpeed);let d=Math.min(Math.abs(pos-sweep),1-Math.abs(pos-sweep));let g=(1-smooth01(d/Math.max(settings.glintWidth,.001)))*settings.glintStrength;c=mix(c,hexToRgb(settings.glintColor),clamp(g))}if(a.pulse){let p=.5+.5*Math.sin((time*settings.pulseSpeed+charIndex*settings.pulsePhase)*6.2831853);let b=settings.pulseMin+(settings.pulseMax-settings.pulseMin)*p;c=c.map(v=>v*b)}if(a.sparkle){let n=fract(Math.sin(charIndex*12.9898+Math.floor(time*settings.sparkleSpeed*40.0)*78.233)*43758.5453);if(n>1-settings.sparkleAmount)c=mix(c,hexToRgb(settings.sparkleColor),settings.sparkleIntensity)}if(a.neon)c=c.map(v=>Math.min(255,v*settings.neonIntensity));if(shadow)c=c.map(v=>v*val('shadowFactor',.25));return c}
-function draw(){let can=$('preview'),box=can.parentElement,dpr=devicePixelRatio||1,w=box.clientWidth,h=box.clientHeight;if(can.width!==w*dpr||can.height!==h*dpr){can.width=w*dpr;can.height=h*dpr}let ctx=can.getContext('2d');ctx.setTransform(dpr,0,0,dpr,0,0);ctx.clearRect(0,0,w,h);let text=$('previewText').value||'Eternal Network';let time=(performance.now()/1000)/120;let fs=Math.max(34,Math.min(70,w/(text.length*.58)));ctx.textAlign='center';ctx.textBaseline='middle';drawText(ctx,text,w/2+3,h/2+36,fs*.64,time,true);drawText(ctx,text,w/2,h/2,fs,time,false);requestAnimationFrame(draw)}
+function draw(){let can=$('preview'),box=can.parentElement,dpr=devicePixelRatio||1,w=box.clientWidth,h=box.clientHeight;if(can.width!==w*dpr||can.height!==h*dpr){can.width=w*dpr;can.height=h*dpr}let ctx=can.getContext('2d');ctx.setTransform(dpr,0,0,dpr,0,0);ctx.clearRect(0,0,w,h);let text=$('previewText').value||'Eternal Network';let time=(performance.now()/1000)/12;let fs=Math.max(34,Math.min(70,w/(text.length*.58)));ctx.textAlign='center';ctx.textBaseline='middle';drawText(ctx,text,w/2+3,h/2+36,fs*.64,time,true);drawText(ctx,text,w/2,h/2,fs,time,false);requestAnimationFrame(draw)}
 function drawText(ctx,text,cx,cy,fs,time,shadow){ctx.font=`900 ${fs}px Trebuchet MS,Arial`;let tw=ctx.measureText(text).width,x=cx-tw/2;for(let i=0;i<text.length;i++){let ch=text[i],cw=ctx.measureText(ch).width,px=x+cw/2;let col=effectColor(px,i,time,shadow);ctx.fillStyle=rgbCss(col);ctx.shadowColor=shadow?'rgba(0,0,0,.8)':rgbCss(col);ctx.shadowBlur=shadow?2:8;ctx.fillText(ch,px,cy);x+=cw}}
 function renderStops(){let box=$('stops');box.innerHTML='';colors.forEach((c,i)=>{let d=document.createElement('div');d.className='stop';d.innerHTML=`<input type=color value="${c}"><code>${c}</code><button>↑</button><button class="danger">×</button>`;let inp=d.children[0],code=d.children[1];inp.oninput=()=>{colors[i]=inp.value;code.textContent=inp.value;update()};d.children[2].onclick=()=>{if(i>0){[colors[i-1],colors[i]]=[colors[i],colors[i-1]];renderStops();update()}};d.children[3].onclick=()=>{if(colors.length>1){colors.splice(i,1);renderStops();update()}};box.appendChild(d)})}
 function settingHtml(id,label,type='number',step='0.01'){return `<label>${label}</label><input id="s_${id}" type="${type}" value="${settings[id]}" step="${step}">`}
@@ -113,10 +114,76 @@ function applyProject(p){if(!p)return;if(p.effectName)$('effectName').value=p.ef
 function save(show=true){localStorage.setItem(STORAGE,JSON.stringify(currentProject()));if(show)$('log').value='Saved '+new Date().toLocaleTimeString()}function load(){try{let p=JSON.parse(localStorage.getItem(STORAGE)||'null');if(p)applyProject(p)}catch(e){$('log').value='Could not load saved data: '+e.message}}
 function exportJson(){let b=new Blob([JSON.stringify(currentProject(),null,2)],{type:'application/json'}),u=URL.createObjectURL(b),a=document.createElement('a');a.href=u;a.download=safeName()+'.shader-project.json';a.click();setTimeout(()=>URL.revokeObjectURL(u),1000)}function importJson(f){let r=new FileReader();r.onload=()=>{try{applyProject(JSON.parse(r.result));save()}catch(e){$('log').value='Import failed: '+e.message}};r.readAsText(f)}
 let CRC;function crcTable(){let t=[],c;for(let n=0;n<256;n++){c=n;for(let k=0;k<8;k++)c=(c&1)?(0xedb88320^(c>>>1)):(c>>>1);t[n]=c>>>0}return t}function crc(bytes){CRC=CRC||crcTable();let c=0xffffffff;for(let b of bytes)c=CRC[(c^b)&255]^(c>>>8);return (c^0xffffffff)>>>0}function u16(n){n=Math.floor(n);return [n&255,(n>>>8)&255]}function u32(n){n=Math.floor(n);return [n&255,(n>>>8)&255,(n>>>16)&255,(n>>>24)&255]}function zip(files){let enc=new TextEncoder(),local=[],central=[],offset=0,date=new Date();let tm=(date.getHours()<<11)|(date.getMinutes()<<5)|(Math.floor(date.getSeconds()/2)),dd=((date.getFullYear()-1980)<<9)|((date.getMonth()+1)<<5)|date.getDate();for(let [name,content] of Object.entries(files)){let data=typeof content==='string'?enc.encode(content):content,fn=enc.encode(name),c=crc(data);let lh=new Uint8Array([...u32(0x04034b50),...u16(20),...u16(0),...u16(0),...u16(tm),...u16(dd),...u32(c),...u32(data.length),...u32(data.length),...u16(fn.length),...u16(0),...fn,...data]);local.push(lh);let ch=new Uint8Array([...u32(0x02014b50),...u16(20),...u16(20),...u16(0),...u16(0),...u16(tm),...u16(dd),...u32(c),...u32(data.length),...u32(data.length),...u16(fn.length),...u16(0),...u16(0),...u16(0),...u16(0),...u32(0),...u32(offset),...fn]);central.push(ch);offset+=lh.length}let cs=central.reduce((s,a)=>s+a.length,0),end=new Uint8Array([...u32(0x06054b50),...u16(0),...u16(0),...u16(central.length),...u16(central.length),...u32(cs),...u32(offset),...u16(0)]);let out=new Uint8Array(offset+cs+end.length),p=0;for(let a of [...local,...central,end]){out.set(a,p);p+=a.length}return new Blob([out],{type:'application/zip'})}
-function build(){let newF=fsh(true),newV=vsh(true),oldF=fsh(false),oldV=vsh(false),coreJson=shaderJson(true),oldJson=shaderJson(false);let files={'pack.mcmeta':mcmeta(),'README_TESTING.md':readme(),'assets/minecraft/shaders/core/rendertype_text.json':oldJson,'assets/minecraft/shaders/core/rendertype_text.fsh':oldF,'assets/minecraft/shaders/core/rendertype_text.vsh':oldV,'overlay_1_20_5/assets/minecraft/shaders/core/rendertype_text.json':oldJson,'overlay_1_20_5/assets/minecraft/shaders/core/rendertype_text.vsh':oldV,'overlay_1_21_2/assets/minecraft/shaders/core/rendertype_text.json':coreJson,'overlay_1_21_5/assets/minecraft/shaders/core/rendertype_text.fsh':newF,'overlay_1_21_5/assets/minecraft/shaders/core/rendertype_text.vsh':newV,'overlay_1_21_7/assets/minecraft/shaders/core/rendertype_text.fsh':newF,'overlay_1_21_7/assets/minecraft/shaders/core/rendertype_text.vsh':newV,'overlay_1_21_9/assets/minecraft/shaders/core/rendertype_text.fsh':newF,'overlay_1_21_9/assets/minecraft/shaders/core/rendertype_text.vsh':newV,'overlay_26_1/assets/minecraft/shaders/core/rendertype_text.fsh':newF,'overlay_26_1/assets/minecraft/shaders/core/rendertype_text.vsh':newV,'generated/shader-project.json':JSON.stringify(currentProject(),null,2),'generated/rendertype_text_1_21_11.fsh':newF,'generated/rendertype_text_1_21_11.vsh':newV};let blob=zip(files),u=URL.createObjectURL(blob),a=document.createElement('a');a.href=u;a.download=($('packName').value||'Text-Shader-Test-Pack').replace(/[^a-z0-9._-]+/gi,'-')+'.zip';a.click();setTimeout(()=>URL.revokeObjectURL(u),1000)}
-function renderLibrary(){let box=$('library');box.innerHTML='';Object.entries(presets).forEach(([name,p])=>{let b=document.createElement('button');b.innerHTML=`<b>${name}</b><br><span class="small">${p.mode}${p.addons?.length?' + '+p.addons.join(', '):''}${p.trigger?' · '+p.trigger:''}</span>`;b.title=p.source||name;b.onclick=()=>{ $('effectName').value=name.replace(/[^a-zA-Z0-9_]/g,'');$('mode').value=p.mode;colors=[...p.colors];$('speed').value=p.speed;if(p.settings)settings={...settings,...p.settings};['Shimmer','Pulse','Sparkle','Neon'].forEach(x=>$('add'+x).checked=false);(p.addons||[]).forEach(x=>{let id='add'+x[0].toUpperCase()+x.slice(1); if($(id))$(id).checked=true});renderStops();renderSettings();if(p.trigger)syncRgb('main',hexToRgb(p.trigger));update()};box.appendChild(b)})}
+async function build(){
+    try{
+        let newF=fsh(true),newV=vsh(true),oldF=fsh(false),oldV=vsh(false),coreJson=shaderJson(true),oldJson=shaderJson(false);
+        let files={
+            'pack.mcmeta':mcmeta(),
+            'README_TESTING.md':readme(),
+            'assets/minecraft/shaders/core/rendertype_text.json':oldJson,
+            'assets/minecraft/shaders/core/rendertype_text.fsh':oldF,
+            'assets/minecraft/shaders/core/rendertype_text.vsh':oldV,
+            'overlay_1_20_5/assets/minecraft/shaders/core/rendertype_text.json':oldJson,
+            'overlay_1_20_5/assets/minecraft/shaders/core/rendertype_text.vsh':oldV,
+            'overlay_1_21_2/assets/minecraft/shaders/core/rendertype_text.json':coreJson,
+            'overlay_1_21_5/assets/minecraft/shaders/core/rendertype_text.fsh':newF,
+            'overlay_1_21_5/assets/minecraft/shaders/core/rendertype_text.vsh':newV,
+            'overlay_1_21_7/assets/minecraft/shaders/core/rendertype_text.fsh':newF,
+            'overlay_1_21_7/assets/minecraft/shaders/core/rendertype_text.vsh':newV,
+            'overlay_1_21_9/assets/minecraft/shaders/core/rendertype_text.fsh':newF,
+            'overlay_1_21_9/assets/minecraft/shaders/core/rendertype_text.vsh':newV,
+            'overlay_26_1/assets/minecraft/shaders/core/rendertype_text.fsh':newF,
+            'overlay_26_1/assets/minecraft/shaders/core/rendertype_text.vsh':newV,
+            'generated/shader-project.json':JSON.stringify(currentProject(),null,2),
+            'generated/rendertype_text_1_21_11.fsh':newF,
+            'generated/rendertype_text_1_21_11.vsh':newV
+        };
+        let blob;
+        if(window.JSZip){
+            const z=new JSZip();
+            Object.entries(files).forEach(([path,content])=>z.file(path,content));
+            blob=await z.generateAsync({type:'blob',compression:'STORE'});
+        } else {
+            blob=zip(files);
+        }
+        let u=URL.createObjectURL(blob),a=document.createElement('a');
+        a.href=u;
+        a.download=($('packName').value||'Text-Shader-Test-Pack').replace(/[^a-z0-9._-]+/gi,'-')+'.zip';
+        a.click();
+        setTimeout(()=>URL.revokeObjectURL(u),1000);
+        $('log').value='Resource pack built: '+a.download+'
+Files: '+Object.keys(files).length+'
+ZIP: '+(window.JSZip?'JSZip':'fallback zip');
+    }catch(e){
+        $('log').value='Build failed: '+e.message;
+        console.error(e);
+    }
+}
+function renderLibrary(){
+    let box=$('library');
+    box.innerHTML='';
+    Object.entries(presets).forEach(([name,p])=>{
+        let b=document.createElement('button');
+        let meta=[p.mode];
+        if(p.addons?.length)meta.push('+ '+p.addons.join(', '));
+        if(p.trigger)meta.push(p.trigger);
+        b.innerHTML=`<b>${name}</b><br><span class="small">${meta.join(' ')}</span>${p.source?`<br><span class="small">${p.source}</span>`:''}`;
+        b.onclick=()=>{
+            $('effectName').value=name.replace(/[^a-zA-Z0-9_]/g,'');
+            $('mode').value=p.mode;
+            colors=[...p.colors];
+            if(p.speed!==undefined)$('speed').value=p.speed;
+            if(p.settings)settings={...settings,...p.settings};
+            ['Shimmer','Pulse','Sparkle','Neon'].forEach(x=>$('add'+x).checked=false);
+            (p.addons||[]).forEach(x=>{let id='add'+x[0].toUpperCase()+x.slice(1); if($(id))$(id).checked=true});
+            if(p.trigger)syncRgb('main',hexToRgb(p.trigger));
+            renderStops();renderSettings();update();
+        };
+        box.appendChild(b);
+    })
+}
 ['effectName','mode','previewText','speed','spacing','shadowFactor','packName','addShimmer','addPulse','addSparkle','addNeon'].forEach(id=>$(id).addEventListener('input',()=>{renderSettings();update()}));
-$('addColor').onclick=()=>{colors.push('#ffffff');renderStops();update()};$('saveNow').onclick=()=>save(true);$('exportJson').onclick=exportJson;$('importJson').onclick=()=>$('importFile').click();$('importFile').onchange=e=>e.target.files[0]&&importJson(e.target.files[0]);$('resetSaved').onclick=()=>{localStorage.removeItem(STORAGE);$('log').value='Saved data reset'};$('buildPack').onclick=build;$('copyChat').onclick=()=>navigator.clipboard.writeText($('chatTest').textContent);
+$('addColor').onclick=()=>{colors.push('#ffffff');renderStops();update()};$('saveNow').onclick=()=>save(true);$('exportJson').onclick=exportJson;$('importJson').onclick=()=>$('importFile').click();$('importFile').onchange=e=>e.target.files[0]&&importJson(e.target.files[0]);$('resetSaved').onclick=()=>{localStorage.removeItem(STORAGE);$('log').value='Saved data reset'};$('buildPack').onclick=()=>build();$('copyChat').onclick=()=>navigator.clipboard.writeText($('chatTest').textContent);
 rgbEditor('main','Main trigger','#e6ecfe');rgbEditor('shadow','Shadow trigger','#393b3f');renderStops();renderLibrary();load();update(false);requestAnimationFrame(draw);
 </script>
 </body></html>
