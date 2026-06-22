@@ -6,8 +6,8 @@
 <title>Minecraft Text Shader Designer</title>
 <script src="vendor/jszip.min.js"></script>
 <style>
-:root{--bg:#0b0f18;--panel:#121a29;--panel2:#172235;--text:#e8eefc;--muted:#9fb0ce;--line:#26344f;--accent:#79b8ff;--bad:#ff6b6b;--good:#7cffb2}*{box-sizing:border-box}body{margin:0;background:linear-gradient(135deg,#080b12,#11192a);color:var(--text);font-family:Inter,system-ui,Segoe UI,Arial,sans-serif}.wrap{max-width:1540px;margin:0 auto;padding:22px}h1{margin:0 0 8px;font-size:28px}.sub{color:var(--muted);margin-bottom:18px}.grid{display:grid;grid-template-columns:420px minmax(820px,1fr);gap:20px;align-items:start}.card{background:rgba(18,26,41,.96);border:1px solid var(--line);border-radius:16px;padding:16px;box-shadow:0 12px 40px rgba(0,0,0,.25)}label{display:block;font-size:12px;color:var(--muted);margin:12px 0 6px}input,select,button,textarea{font:inherit}input[type=text],input[type=number],select,textarea{width:100%;background:#0c1220;color:var(--text);border:1px solid #2b3b58;border-radius:10px;padding:9px}input[type=color]{width:44px;height:36px;border:0;background:transparent}input[type=range]{width:100%}button{background:#20304a;color:var(--text);border:1px solid #395070;border-radius:10px;padding:9px 10px;cursor:pointer}button:hover{border-color:var(--accent)}.btns{display:flex;gap:8px;flex-wrap:wrap}.mini{font-size:12px;padding:6px 8px}.row{display:grid;grid-template-columns:1fr 90px;gap:8px;align-items:center}.colorRow{display:grid;grid-template-columns:44px 1fr 32px 32px 32px;gap:7px;align-items:center;margin:7px 0}.pill{display:inline-flex;gap:6px;align-items:center;border:1px solid #344865;border-radius:999px;padding:7px 9px;margin:4px 4px 0 0;color:#dce8ff;background:#0e1626}.danger{border-color:#704040}.ok{color:var(--good)}.warn{color:#ffd36f}.previewBox{background:#05070d;border-radius:16px;border:1px solid #243652;padding:16px;overflow:hidden}canvas{width:100%;height:520px;display:block;image-rendering:pixelated}.previewBox{min-height:552px}.previewCard{position:relative}.outputCard{margin-top:16px}.widePreviewHint{font-size:12px;color:var(--muted);margin-top:8px}.leftColumn .card,.leftColumn.card{margin-bottom:16px}.rightColumn{display:flex;flex-direction:column;gap:16px}.previewCard{min-height:0}.previewTitleRow{display:flex;justify-content:space-between;gap:12px;align-items:center}.previewTitleRow .muted{font-size:12px}.calibrationCard{border-color:#31517a}.outputCard{margin-top:0}.muted{color:var(--muted);font-size:12px}.tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}.tab{background:#10182a}.tab.active{border-color:#7ab7ff;background:#1b2a44}pre{background:#060a12;color:#dce8ff;border:1px solid #22314a;border-radius:12px;padding:12px;overflow:auto;max-height:330px;white-space:pre-wrap}.settingPanel{display:none;border:1px solid #243652;border-radius:12px;padding:12px;margin-top:10px;background:#0e1626}.settingPanel.show{display:block}.shortcutGrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:8px}.smallnote{font-size:12px;color:#9fb0ce;line-height:1.4}.split{display:grid;grid-template-columns:1fr 1fr;gap:10px}.hr{height:1px;background:#253551;margin:14px 0}.checkrow{display:flex;gap:8px;align-items:center;margin:8px 0}.status{font-size:12px;margin-top:8px}.hidden{display:none!important}
-@media(max-width:1100px){.grid{grid-template-columns:1fr}.previewCard{position:static}canvas{height:300px}}
+:root{--bg:#0b0f18;--panel:#121a29;--panel2:#172235;--text:#e8eefc;--muted:#9fb0ce;--line:#26344f;--accent:#79b8ff;--bad:#ff6b6b;--good:#7cffb2}*{box-sizing:border-box}body{margin:0;background:linear-gradient(135deg,#080b12,#11192a);color:var(--text);font-family:Inter,system-ui,Segoe UI,Arial,sans-serif}.wrap{max-width:1320px;margin:0 auto;padding:22px}h1{margin:0 0 8px;font-size:28px}.sub{color:var(--muted);margin-bottom:18px}.grid{display:grid;grid-template-columns:390px 1fr;gap:16px}.card{background:rgba(18,26,41,.96);border:1px solid var(--line);border-radius:16px;padding:16px;box-shadow:0 12px 40px rgba(0,0,0,.25)}label{display:block;font-size:12px;color:var(--muted);margin:12px 0 6px}input,select,button,textarea{font:inherit}input[type=text],input[type=number],select,textarea{width:100%;background:#0c1220;color:var(--text);border:1px solid #2b3b58;border-radius:10px;padding:9px}input[type=color]{width:44px;height:36px;border:0;background:transparent}input[type=range]{width:100%}button{background:#20304a;color:var(--text);border:1px solid #395070;border-radius:10px;padding:9px 10px;cursor:pointer}button:hover{border-color:var(--accent)}.btns{display:flex;gap:8px;flex-wrap:wrap}.mini{font-size:12px;padding:6px 8px}.row{display:grid;grid-template-columns:1fr 90px;gap:8px;align-items:center}.colorRow{display:grid;grid-template-columns:44px 1fr 32px 32px 32px;gap:7px;align-items:center;margin:7px 0}.pill{display:inline-flex;gap:6px;align-items:center;border:1px solid #344865;border-radius:999px;padding:7px 9px;margin:4px 4px 0 0;color:#dce8ff;background:#0e1626}.danger{border-color:#704040}.ok{color:var(--good)}.warn{color:#ffd36f}.previewBox{background:#05070d;border-radius:16px;border:1px solid #243652;padding:10px;overflow:hidden}canvas{width:100%;height:260px;display:block}.muted{color:var(--muted);font-size:12px}.tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}.tab{background:#10182a}.tab.active{border-color:#7ab7ff;background:#1b2a44}pre{background:#060a12;color:#dce8ff;border:1px solid #22314a;border-radius:12px;padding:12px;overflow:auto;max-height:330px;white-space:pre-wrap}.settingPanel{display:none;border:1px solid #243652;border-radius:12px;padding:12px;margin-top:10px;background:#0e1626}.settingPanel.show{display:block}.shortcutGrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:8px}.smallnote{font-size:12px;color:#9fb0ce;line-height:1.4}.split{display:grid;grid-template-columns:1fr 1fr;gap:10px}.hr{height:1px;background:#253551;margin:14px 0}.checkrow{display:flex;gap:8px;align-items:center;margin:8px 0}.status{font-size:12px;margin-top:8px}.hidden{display:none!important}
+.previewCalInline{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:10px}.previewCalInline label{margin-top:0}@media(max-width:900px){.previewCalInline{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
@@ -15,7 +15,7 @@
   <h1>Minecraft Text Shader Designer</h1>
   <div class="sub">Stable master: Minecraft-like timing, editable effects, add-ons, shortcuts, and JSZip resource-pack export.</div>
   <div class="grid">
-    <div class="card leftColumn">
+    <div class="card">
       <h2>Effect</h2>
       <label>Preview text</label><input id="previewText" value="Eternal Network">
       <label>Effect name</label><input id="effectName" value="CustomEffect">
@@ -44,25 +44,23 @@
       <div class="hr"></div>
       <h3>Save / import</h3>
       <div class="btns"><button id="saveNow">Save now</button><button id="exportJson">Export JSON</button><button id="importJsonBtn">Import JSON</button><button class="danger" id="resetSaved">Reset saved</button><input id="importFile" type="file" accept=".json" class="hidden"></div>
-      <div class="hr"></div>
-      <h3>Shortcuts</h3>
-      <div class="smallnote">Quick presets from Text Effects and your custom workflow.</div>
-      <div class="shortcutGrid" id="shortcuts"></div>
     </div>
-    <div class="rightColumn">
-      <div class="card previewCard">
-        <div class="previewTitleRow"><h2>Preview</h2><span class="muted">Large Minecraft bitmap preview</span></div>
-        <div class="previewBox"><canvas id="preview" width="1280" height="420"></canvas></div>
-        <div class="status" id="previewStatus"></div><div class="widePreviewHint">Large bitmap preview: the preview uses Minecraft shader math. The calibration below changes only the browser view, not the exported shader.</div>
+    <div>
+      <div class="card">
+        <h2>Preview</h2>
+        <div class="previewBox"><canvas id="preview" width="1280" height="280"></canvas></div>
+        <div class="status" id="previewStatus"></div>
+        <div class="previewCalInline">
+          <div><label>Preview text size</label><input id="previewFontScale" type="range" min="0.50" max="2.20" step="0.01" value="1.10"></div>
+          <div><label>Preview letter gap</label><input id="previewLetterSpacing" type="range" min="-1" max="6" step="0.25" value="0"></div>
+          <div><label>Preview shadow offset</label><input id="previewShadowOffset" type="range" min="0" max="4" step="0.25" value="1"></div>
+        </div>
+        <div class="smallnote">Preview timing is shader-accurate: <code>GameTime = seconds / 1200</code>. These controls only change preview size/layout.</div>
+        <div class="hr"></div>
+        <h3>Shortcuts</h3>
+        <div class="shortcutGrid" id="shortcuts"></div>
       </div>
-      <div class="card calibrationCard" id="previewFontCalibrationCard">
-        <h2>Minecraft bitmap preview calibration</h2>
-        <div class="smallnote">These values affect <b>only the browser preview</b>, not the generated Minecraft shader. Use this to match your chat size and monitor scale.</div>
-        <div class="split"><div><label>Preview speed multiplier</label><input id="previewSpeedMultiplier" type="number" value="0.033333" step="0.001"></div><div><label>Preview spacing multiplier</label><input id="previewSpacingMultiplier" type="number" value="40" step="1"></div></div>
-        <div class="split"><div><label>Preview font scale</label><input id="previewFontScale" type="range" min="0.35" max="1.2" step="0.01" value="0.58"></div><div><label>Preview shadow offset</label><input id="previewShadowOffset" type="range" min="0" max="5" step="0.25" value="1"></div></div>
-        <div class="btns" style="margin-top:8px"><button class="mini" id="previewMatchMinecraft" type="button">Use calibrated preview</button><button class="mini" id="previewRawShader" type="button">Raw shader math</button></div>
-      </div>
-      <div class="card outputCard">
+      <div class="card" style="margin-top:16px">
         <h2>Build / Output</h2>
         <div class="btns"><button id="buildPack">Download test resource pack .zip</button><button id="copyFsh">Copy FSH</button><button id="copyVsh">Copy VSH</button><button id="validate">Validate</button></div>
         <div id="buildStatus" class="status"></div>
@@ -97,18 +95,110 @@ const presets=[
 ];
 function renderShortcuts(){let box=$('shortcuts');box.innerHTML='';presets.forEach(p=>{let b=document.createElement('button');b.textContent=p.name;b.onclick=()=>setPreset(p);box.appendChild(b)})}
 function showSettings(){['diagonal','shimmer','pulse','sparkle','neon'].forEach(n=>$(n+'Settings').classList.toggle('show',$('addon'+n[0].toUpperCase()+n.slice(1)).checked));}
-function collect(){return{previewText:$('previewText').value,effectName:$('effectName').value,baseMode:$('baseMode').value,speed:+$('speed').value||300,spacing:+$('spacing').value||.005,colors:state.colors,mainHex:$('mainHex').value,shadowHex:$('shadowHex').value,addons:{diagonal:$('addonDiagonal').checked,shimmer:$('addonShimmer').checked,pulse:$('addonPulse').checked,sparkle:$('addonSparkle').checked,neon:$('addonNeon').checked},preview:{speedMultiplier:+$('previewSpeedMultiplier').value||0.033333,spacingMultiplier:+$('previewSpacingMultiplier').value||40},settings:{diagonalStrength:+$('diagonalStrength').value||1,diagonalOffset:+$('diagonalOffset').value||0,glintColor:$('glintColor').value,glintStrength:+$('glintStrength').value||.85,glintWidth:+$('glintWidth').value||.08,glintSpeed:+$('glintSpeed').value||1,glintSpacing:+$('glintSpacing').value||.05,pulseMin:+$('pulseMin').value||.7,pulseMax:+$('pulseMax').value||1.25,pulseSpeed:+$('pulseSpeed').value||3,sparkleColor:$('sparkleColor').value,sparkleAmount:+$('sparkleAmount').value||.35,sparkleSpeed:+$('sparkleSpeed').value||8,neonBoost:+$('neonBoost').value||1.35}}}
-function applyData(d){if(!d)return;['previewText','effectName','baseMode','speed','spacing','mainHex','shadowHex'].forEach(id=>{if(d[id]!=null)$(id).value=d[id]});if(d.colors){state.colors=d.colors;renderColors()}if(d.addons){Object.entries(d.addons).forEach(([k,v])=>{let el=$('addon'+k[0].toUpperCase()+k.slice(1));if(el)el.checked=v})}if(d.settings){Object.entries(d.settings).forEach(([k,v])=>{let el=$(k);if(el)el.value=v})}if(d.preview){if(d.preview.speedMultiplier!=null)$('previewSpeedMultiplier').value=d.preview.speedMultiplier;if(d.preview.spacingMultiplier!=null)$('previewSpacingMultiplier').value=d.preview.spacingMultiplier}update()}
+function collect(){return{previewText:$('previewText').value,effectName:$('effectName').value,baseMode:$('baseMode').value,speed:+$('speed').value||300,spacing:+$('spacing').value||.005,colors:state.colors,mainHex:$('mainHex').value,shadowHex:$('shadowHex').value,addons:{diagonal:$('addonDiagonal').checked,shimmer:$('addonShimmer').checked,pulse:$('addonPulse').checked,sparkle:$('addonSparkle').checked,neon:$('addonNeon').checked},settings:{diagonalStrength:+$('diagonalStrength').value||1,diagonalOffset:+$('diagonalOffset').value||0,glintColor:$('glintColor').value,glintStrength:+$('glintStrength').value||.85,glintWidth:+$('glintWidth').value||.08,glintSpeed:+$('glintSpeed').value||1,glintSpacing:+$('glintSpacing').value||.05,pulseMin:+$('pulseMin').value||.7,pulseMax:+$('pulseMax').value||1.25,pulseSpeed:+$('pulseSpeed').value||3,sparkleColor:$('sparkleColor').value,sparkleAmount:+$('sparkleAmount').value||.35,sparkleSpeed:+$('sparkleSpeed').value||8,neonBoost:+$('neonBoost').value||1.35}}}
+function applyData(d){if(!d)return;['previewText','effectName','baseMode','speed','spacing','mainHex','shadowHex'].forEach(id=>{if(d[id]!=null)$(id).value=d[id]});if(d.colors){state.colors=d.colors;renderColors()}if(d.addons){Object.entries(d.addons).forEach(([k,v])=>{let el=$('addon'+k[0].toUpperCase()+k.slice(1));if(el)el.checked=v})}if(d.settings){Object.entries(d.settings).forEach(([k,v])=>{let el=$(k);if(el)el.value=v})}update()}
 function save(){localStorage.setItem(LS,JSON.stringify(collect()));$('buildStatus').innerHTML='<span class="ok">Saved.</span>'}
 function phase(t){return t-Math.floor(t)}
 function mix(a,b,t){return a+(b-a)*t}
 function mix3(c1,c2,t){return [mix(c1[0],c2[0],t),mix(c1[1],c2[1],t),mix(c1[2],c2[2],t)]}
 function gradientAt(colors,t){let n=colors.length;if(n===1)return hexToRgb(colors[0]);let x=phase(t)*n;let i=Math.floor(x)%n;return mix3(hexToRgb(colors[i]),hexToRgb(colors[(i+1)%n]),x-i)}
 function hsvToRgb(h,s,v){let f=(n,k=(n+h*6)%6)=>v-v*s*Math.max(Math.min(k,4-k,1),0);return [f(5)*255,f(3)*255,f(1)*255]}
-function colorAt(pos,corner,time,shadow=false){let d=collect(),previewSpacing=d.spacing*(d.preview?.spacingMultiplier??40),previewSpeed=d.speed*(d.preview?.speedMultiplier??0.033333),t=pos*previewSpacing-time*previewSpeed; if(d.addons.diagonal)t+=corner*d.settings.diagonalStrength+d.settings.diagonalOffset;let rgb;if(d.baseMode==='Rainbow')rgb=hsvToRgb(phase(t),.7,1);else rgb=gradientAt(d.colors,t); if(d.addons.shimmer){let sweep=phase(time*d.settings.glintSpeed);let p=phase(pos*d.settings.glintSpacing);let dist=Math.abs(p-sweep);dist=Math.min(dist,1-dist);let g=1-smoothstep(0,d.settings.glintWidth,dist);let gc=hexToRgb(d.settings.glintColor);rgb=mix3(rgb,gc,g*d.settings.glintStrength)} if(d.addons.pulse){let p=(Math.sin(time*d.settings.pulseSpeed+pos*.03)+1)/2;let mul=mix(d.settings.pulseMin,d.settings.pulseMax,p);rgb=rgb.map(v=>v*mul)} if(d.addons.sparkle){let s=Math.sin(pos*12.9898+time*d.settings.sparkleSpeed)*43758.5453;s=phase(s);if(s>1-d.settings.sparkleAmount*.08){let sc=hexToRgb(d.settings.sparkleColor);rgb=mix3(rgb,sc,.85)}} if(d.addons.neon)rgb=rgb.map(v=>v*d.settings.neonBoost); if(shadow)rgb=rgb.map(v=>v*.25);return rgb.map(v=>clamp(v,0,255))}
+function colorAt(pos,corner,time,shadow=false){let d=collect(),t=pos*d.spacing-time*d.speed; if(d.addons.diagonal)t+=corner*d.settings.diagonalStrength+d.settings.diagonalOffset;let rgb;if(d.baseMode==='Rainbow')rgb=hsvToRgb(phase(t),.7,1);else rgb=gradientAt(d.colors,t); if(d.addons.shimmer){let sweep=phase(time*d.settings.glintSpeed);let p=phase(pos*d.settings.glintSpacing);let dist=Math.abs(p-sweep);dist=Math.min(dist,1-dist);let g=1-smoothstep(0,d.settings.glintWidth,dist);let gc=hexToRgb(d.settings.glintColor);rgb=mix3(rgb,gc,g*d.settings.glintStrength)} if(d.addons.pulse){let p=(Math.sin(time*d.settings.pulseSpeed+pos*.03)+1)/2;let mul=mix(d.settings.pulseMin,d.settings.pulseMax,p);rgb=rgb.map(v=>v*mul)} if(d.addons.sparkle){let s=Math.sin(pos*12.9898+time*d.settings.sparkleSpeed)*43758.5453;s=phase(s);if(s>1-d.settings.sparkleAmount*.08){let sc=hexToRgb(d.settings.sparkleColor);rgb=mix3(rgb,sc,.85)}} if(d.addons.neon)rgb=rgb.map(v=>v*d.settings.neonBoost); if(shadow)rgb=rgb.map(v=>v*.25);return rgb.map(v=>clamp(v,0,255))}
 function smoothstep(a,b,x){let t=clamp((x-a)/(b-a),0,1);return t*t*(3-2*t)}
-function draw(){let c=$('preview'),ctx=c.getContext('2d'),d=collect();ctx.clearRect(0,0,c.width,c.height);ctx.fillStyle='#05070d';ctx.fillRect(0,0,c.width,c.height);ctx.font='bold 54px monospace';ctx.textBaseline='middle';let text=d.previewText||'Eternal Network';let start=42,y=105;let time=performance.now()/1000; // browser seconds; preview multipliers calibrate this to Minecraft GameTime feel
-let x=start;for(let i=0;i<text.length;i++){let ch=text[i],w=ctx.measureText(ch).width||32;let pos=x;let corner=(i%2)*.5;let sh=colorAt(pos-1,corner,time,true);ctx.fillStyle=`rgb(${sh[0]},${sh[1]},${sh[2]})`;ctx.fillText(ch,x+3,y+4);let rgb=colorAt(pos,corner,time,false);ctx.fillStyle=`rgb(${rgb[0]},${rgb[1]},${rgb[2]})`;ctx.fillText(ch,x,y);x+=w} $('previewStatus').textContent=`Preview uses calibrated values only visually: speed ${d.speed} × ${d.preview.speedMultiplier} = ${(d.speed*d.preview.speedMultiplier).toFixed(3)}, spacing ${d.spacing} × ${d.preview.spacingMultiplier} = ${(d.spacing*d.preview.spacingMultiplier).toFixed(3)}. Export remains speed ${d.speed}, spacing ${d.spacing}.`;requestAnimationFrame(draw)}
+const MC_FONT={
+' ':['000','000','000','000','000','000','000'],
+'A':['01110','10001','10001','11111','10001','10001','10001'],
+'B':['11110','10001','10001','11110','10001','10001','11110'],
+'C':['01111','10000','10000','10000','10000','10000','01111'],
+'D':['11110','10001','10001','10001','10001','10001','11110'],
+'E':['11111','10000','10000','11110','10000','10000','11111'],
+'F':['11111','10000','10000','11110','10000','10000','10000'],
+'G':['01111','10000','10000','10011','10001','10001','01110'],
+'H':['10001','10001','10001','11111','10001','10001','10001'],
+'I':['111','010','010','010','010','010','111'],
+'J':['00111','00010','00010','00010','10010','10010','01100'],
+'K':['10001','10010','10100','11000','10100','10010','10001'],
+'L':['10000','10000','10000','10000','10000','10000','11111'],
+'M':['10001','11011','10101','10101','10001','10001','10001'],
+'N':['10001','11001','10101','10011','10001','10001','10001'],
+'O':['01110','10001','10001','10001','10001','10001','01110'],
+'P':['11110','10001','10001','11110','10000','10000','10000'],
+'Q':['01110','10001','10001','10001','10101','10010','01101'],
+'R':['11110','10001','10001','11110','10100','10010','10001'],
+'S':['01111','10000','10000','01110','00001','00001','11110'],
+'T':['11111','00100','00100','00100','00100','00100','00100'],
+'U':['10001','10001','10001','10001','10001','10001','01110'],
+'V':['10001','10001','10001','10001','10001','01010','00100'],
+'W':['10001','10001','10001','10101','10101','10101','01010'],
+'X':['10001','10001','01010','00100','01010','10001','10001'],
+'Y':['10001','10001','01010','00100','00100','00100','00100'],
+'Z':['11111','00001','00010','00100','01000','10000','11111'],
+'0':['01110','10001','10011','10101','11001','10001','01110'],
+'1':['010','110','010','010','010','010','111'],
+'2':['01110','10001','00001','00010','00100','01000','11111'],
+'3':['11110','00001','00001','01110','00001','00001','11110'],
+'4':['10010','10010','10010','11111','00010','00010','00010'],
+'5':['11111','10000','10000','11110','00001','00001','11110'],
+'6':['01110','10000','10000','11110','10001','10001','01110'],
+'7':['11111','00001','00010','00100','01000','01000','01000'],
+'8':['01110','10001','10001','01110','10001','10001','01110'],
+'9':['01110','10001','10001','01111','00001','00001','01110'],
+'-':['00000','00000','00000','11111','00000','00000','00000'],
+'_':['00000','00000','00000','00000','00000','00000','11111'],
+'[':['111','100','100','100','100','100','111'],
+']':['111','001','001','001','001','001','111'],
+':':['0','1','0','0','1','0','0'],
+'.':['0','0','0','0','0','0','1']
+};
+function glyphRows(ch){
+  if(MC_FONT[ch]) return MC_FONT[ch];
+  let u=ch.toUpperCase();
+  return MC_FONT[u] || ['11111','00001','00010','00100','00100','00000','00100'];
+}
+function glyphWidth(ch){return glyphRows(ch)[0].length;}
+function textLogicalWidth(text,letterGap){let w=0; for(let ch of text){w+=glyphWidth(ch)+letterGap+1;} return Math.max(0,w-1-letterGap);}
+function drawGlyphPixels(ctx,ch,baseX,baseY,scale,gameTime,shadow=false,shadowOffset=1){
+  let rows=glyphRows(ch), h=rows.length, w=rows[0].length;
+  let ox=shadow?shadowOffset:0, oy=shadow?shadowOffset:0;
+  for(let yy=0; yy<h; yy++){
+    let row=rows[yy];
+    for(let xx=0; xx<w; xx++){
+      if(row[xx]!=='1') continue;
+      let localX=w<=1?0:xx/(w-1);
+      let localY=h<=1?0:yy/(h-1);
+      let corner=(localX+(1-localY))*0.5;
+      let pos=baseX+xx;
+      let rgb=colorAt(pos,corner,gameTime,shadow);
+      ctx.fillStyle=`rgb(${rgb[0]|0},${rgb[1]|0},${rgb[2]|0})`;
+      ctx.fillRect(Math.round((baseX+xx+ox)*scale),Math.round((baseY+yy+oy)*scale),Math.ceil(scale),Math.ceil(scale));
+    }
+  }
+}
+function draw(){
+  let c=$('preview'),ctx=c.getContext('2d'),d=collect();
+  ctx.imageSmoothingEnabled=false;
+  ctx.clearRect(0,0,c.width,c.height);
+  ctx.fillStyle='#05070d';ctx.fillRect(0,0,c.width,c.height);
+  let text=d.previewText||'Eternal Network';
+  // True shader time simulation. This is the only time value used for preview color math.
+  let gameTime=(performance.now()/1000)/1200;
+  let fontScaleEl=$('previewFontScale');
+  let letterSpacingEl=$('previewLetterSpacing');
+  let shadowOffsetEl=$('previewShadowOffset');
+  let scale=8*(fontScaleEl?parseFloat(fontScaleEl.value||'1.10'):1.10);
+  scale=clamp(scale,3.0,18);
+  let letterGap=letterSpacingEl?parseFloat(letterSpacingEl.value||'0'):0;
+  let shadowOffset=shadowOffsetEl?parseFloat(shadowOffsetEl.value||'1'):1;
+  let logicalW=textLogicalWidth(text,letterGap);
+  let start=(c.width/scale-logicalW)/2;
+  let y=(c.height/scale-7)/2;
+  let x=start;
+  for(let ch of text){drawGlyphPixels(ctx,ch,x,y,scale,gameTime,true,shadowOffset); x+=glyphWidth(ch)+1+letterGap;}
+  x=start;
+  for(let ch of text){drawGlyphPixels(ctx,ch,x,y,scale,gameTime,false,shadowOffset); x+=glyphWidth(ch)+1+letterGap;}
+  $('previewStatus').textContent=`Minecraft bitmap preview: GameTime = seconds / 1200, charIndex = pixel X, speed ${d.speed}, spacing ${d.spacing}. Visual scale only: ${scale.toFixed(2)}×.`;
+  requestAnimationFrame(draw);
+}
 function glslGradientFn(){let name=normName();let cols=state.colors.map(vec);let body=''; if(cols.length===1) body=`return ${cols[0]};`; else {body+=`float phase = fract(t) * ${cols.length.toFixed(1)};\n`; for(let i=0;i<cols.length;i++){let next=cols[(i+1)%cols.length];if(i<cols.length-1)body+=`    if (phase < ${(i+1).toFixed(1)}) return mix(${cols[i]}, ${next}, phase - ${i.toFixed(1)});\n`;else body+=`    return mix(${cols[i]}, ${next}, phase - ${i.toFixed(1)});`;}}return `vec3 ${name}Gradient(float t) {\n    ${body}\n}`}
 function effectExpr(shadow=false){let d=collect(),name=normName(),base;if(d.baseMode==='Rainbow')base=`hsvToRgb(vec3(fract(t), 0.7, 1.0))`;else base=`${name}Gradient(t)`;let lines=[`float t = charIndex * ${d.spacing.toFixed(6)} - animTime * ${d.speed.toFixed(3)};`];if(d.addons.diagonal)lines.push(`t += CustomEffectCornerT * ${d.settings.diagonalStrength.toFixed(3)} + ${d.settings.diagonalOffset.toFixed(3)};`);lines.push(`vec3 rgb = ${base};`);if(d.addons.shimmer){lines.push(`float sweep = fract(animTime * ${d.settings.glintSpeed.toFixed(3)});`);lines.push(`float spos = fract(charIndex * ${d.settings.glintSpacing.toFixed(3)});`);lines.push(`float sd = abs(spos - sweep); sd = min(sd, 1.0 - sd);`);lines.push(`float glint = 1.0 - smoothstep(0.0, ${d.settings.glintWidth.toFixed(3)}, sd);`);lines.push(`rgb = mix(rgb, ${vec(d.settings.glintColor)}, glint * ${d.settings.glintStrength.toFixed(3)});`)}if(d.addons.pulse)lines.push(`rgb *= mix(${d.settings.pulseMin.toFixed(3)}, ${d.settings.pulseMax.toFixed(3)}, 0.5 + 0.5 * sin(animTime * ${d.settings.pulseSpeed.toFixed(3)} + charIndex * 0.03));`);if(d.addons.sparkle){lines.push(`float spark = fract(sin(charIndex * 12.9898 + animTime * ${d.settings.sparkleSpeed.toFixed(3)}) * 43758.5453);`);lines.push(`rgb = mix(rgb, ${vec(d.settings.sparkleColor)}, step(${(1-d.settings.sparkleAmount*.08).toFixed(3)}, spark) * 0.85);`)}if(d.addons.neon)lines.push(`rgb = min(rgb * ${d.settings.neonBoost.toFixed(3)}, vec3(1.0));`);if(shadow)lines.push(`rgb *= 0.25;`);return lines.join('\n        ')}
 function fsh(){let d=collect(),m=hexToRgb(d.mainHex),s=hexToRgb(d.shadowHex),name=normName();return `#version 150\n\n#moj_import <minecraft:fog.glsl>\n#moj_import <minecraft:dynamictransforms.glsl>\n#moj_import <minecraft:globals.glsl>\n\nuniform sampler2D Sampler0;\nuniform float FogStart;\nuniform float FogEnd;\n\nin float sphericalVertexDistance;\nin float cylindricalVertexDistance;\nin vec4 vertexColor;\nin vec2 texCoord0;\nin float charIndex;\nin float animTime;\nin float CustomEffectCornerT;\n\nout vec4 fragColor;\n\nvec3 hsvToRgb(vec3 c) {\n    vec4 K = vec4(1.0, 2.0 / 3.0, 1.0 / 3.0, 3.0);\n    vec3 p = abs(fract(c.xxx + K.xyz) * 6.0 - K.www);\n    return c.z * mix(K.xxx, clamp(p - K.xxx, 0.0, 1.0), c.y);\n}\n\nbool colorMatch(vec4 col, float r, float g, float b) {\n    return abs(col.r * 255.0 - r) < 1.0 && abs(col.g * 255.0 - g) < 1.0 && abs(col.b * 255.0 - b) < 1.0;\n}\n\n${glslGradientFn()}\n\nvoid main() {\n    vec4 color = texture(Sampler0, texCoord0) * vertexColor * ColorModulator;\n    if (color.a < 0.1) discard;\n    float texAlpha = texture(Sampler0, texCoord0).a;\n\n    if (colorMatch(vertexColor, ${m[0]}.0, ${m[1]}.0, ${m[2]}.0)) {\n        // ${d.effectName}: ${d.mainHex}\n        ${effectExpr(false)}\n        color = vec4(rgb * texAlpha, texAlpha) * ColorModulator;\n    } else if (colorMatch(vertexColor, ${s[0]}.0, ${s[1]}.0, ${s[2]}.0)) {\n        // ${d.effectName} shadow: ${d.shadowHex}\n        ${effectExpr(true)}\n        color = vec4(rgb * texAlpha, texAlpha) * ColorModulator;\n    }\n\n    fragColor = apply_fog(color, sphericalVertexDistance, cylindricalVertexDistance, FogEnvironmentalStart, FogEnvironmentalEnd, FogRenderDistanceStart, FogRenderDistanceEnd, FogColor);\n}\n`}
@@ -187,100 +277,7 @@ function mcmeta(){return JSON.stringify({pack:{pack_format:46,description:'Text 
 function update(){showSettings();let d=collect();$('triggerInfo').textContent=`Main RGB ${hexToRgb(d.mainHex).join(', ')} | Shadow RGB ${hexToRgb(d.shadowHex).join(', ')}`;$('fshOut').textContent=fsh();$('vshOut').textContent=vsh();$('mcmetaOut').textContent=mcmeta();localStorage.setItem(LS,JSON.stringify(d))}
 async function buildPack(){try{if(typeof JSZip==='undefined')throw new Error('JSZip not loaded. Make sure vendor/jszip.min.js exists.');let zip=new JSZip();let files={'pack.mcmeta':mcmeta(),'README_TESTING.md':`Test with: ${collect().mainHex} Eternal Network\nMiniMessage: <${collect().mainHex}>Eternal Network\n`,'shader-project.json':JSON.stringify(collect(),null,2),'assets/minecraft/shaders/core/rendertype_text.fsh':fsh(),'assets/minecraft/shaders/core/rendertype_text.vsh':vsh(),'assets/minecraft/shaders/core/rendertype_text.json':jsonShader(),'overlay_26_1/assets/minecraft/shaders/core/rendertype_text.fsh':fsh(),'overlay_26_1/assets/minecraft/shaders/core/rendertype_text.vsh':vsh(),'overlay_26_1/assets/minecraft/shaders/core/rendertype_text.json':jsonShader()};Object.entries(files).forEach(([p,c])=>zip.file(p,c));let blob=await zip.generateAsync({type:'blob',compression:'DEFLATE'});let a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='Text-Shader-Test-Pack.zip';document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},1000);$('buildStatus').innerHTML='<span class="ok">Downloaded valid JSZip resource pack.</span>'}catch(e){$('buildStatus').innerHTML='<span class="warn">Build failed: '+e.message+'</span>';console.error(e)}}
 function validatePack(){let checks=[];checks.push(fsh().includes('void main()')?'✓ FSH has main':'✗ FSH missing main');checks.push(vsh().includes('#moj_import <minecraft:globals.glsl>')?'✓ VSH imports globals.glsl':'✗ VSH missing globals.glsl');checks.push(vsh().includes('animTime = GameTime')?'✓ VSH passes GameTime':'✗ VSH missing GameTime');checks.push(/^#[0-9a-fA-F]{6}$/.test($('mainHex').value)?'✓ Main trigger valid':'✗ Main trigger invalid');$('buildStatus').innerHTML=checks.join('<br>')}
-function init(){renderColors();renderShortcuts();document.querySelectorAll('input,select').forEach(el=>el.addEventListener('input',update));$('addColor').onclick=()=>{state.colors.push('#ffffff');renderColors();update()};$('previewMatchMinecraft').onclick=()=>{$('previewSpeedMultiplier').value='0.033333';$('previewSpacingMultiplier').value='40';update()};$('previewRawShader').onclick=()=>{$('previewSpeedMultiplier').value='1';$('previewSpacingMultiplier').value='1';update()};$('saveNow').onclick=save;$('exportJson').onclick=()=>{let b=new Blob([JSON.stringify(collect(),null,2)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='shader-project.json';a.click();URL.revokeObjectURL(a.href)};$('importJsonBtn').onclick=()=>$('importFile').click();$('importFile').onchange=async e=>{let f=e.target.files[0];if(f)applyData(JSON.parse(await f.text()))};$('resetSaved').onclick=()=>{localStorage.removeItem(LS);location.reload()};$('copyMain').onclick=()=>navigator.clipboard.writeText($('mainHex').value);$('copyShadow').onclick=()=>navigator.clipboard.writeText($('shadowHex').value);$('autoTrigger').onclick=()=>{let g=236+Math.floor(Math.random()*18);$('mainHex').value=rgbToHex(230,g,254);$('shadowHex').value=rgbToHex(57,Math.max(40,Math.floor(g/4)),63);update()};$('buildPack').onclick=buildPack;$('copyFsh').onclick=()=>navigator.clipboard.writeText(fsh());$('copyVsh').onclick=()=>navigator.clipboard.writeText(vsh());$('validate').onclick=validatePack;document.querySelectorAll('.tab').forEach(b=>b.onclick=()=>{document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));b.classList.add('active');['fshOut','vshOut','mcmetaOut'].forEach(id=>$(id).classList.toggle('hidden',id!==b.dataset.tab))});try{let saved=JSON.parse(localStorage.getItem(LS)||'null');if(saved)applyData(saved)}catch(e){}update();requestAnimationFrame(draw)}
+function init(){renderColors();renderShortcuts();document.querySelectorAll('input,select').forEach(el=>el.addEventListener('input',update));$('addColor').onclick=()=>{state.colors.push('#ffffff');renderColors();update()};$('saveNow').onclick=save;$('exportJson').onclick=()=>{let b=new Blob([JSON.stringify(collect(),null,2)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='shader-project.json';a.click();URL.revokeObjectURL(a.href)};$('importJsonBtn').onclick=()=>$('importFile').click();$('importFile').onchange=async e=>{let f=e.target.files[0];if(f)applyData(JSON.parse(await f.text()))};$('resetSaved').onclick=()=>{localStorage.removeItem(LS);location.reload()};$('copyMain').onclick=()=>navigator.clipboard.writeText($('mainHex').value);$('copyShadow').onclick=()=>navigator.clipboard.writeText($('shadowHex').value);$('autoTrigger').onclick=()=>{let g=236+Math.floor(Math.random()*18);$('mainHex').value=rgbToHex(230,g,254);$('shadowHex').value=rgbToHex(57,Math.max(40,Math.floor(g/4)),63);update()};$('buildPack').onclick=buildPack;$('copyFsh').onclick=()=>navigator.clipboard.writeText(fsh());$('copyVsh').onclick=()=>navigator.clipboard.writeText(vsh());$('validate').onclick=validatePack;document.querySelectorAll('.tab').forEach(b=>b.onclick=()=>{document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));b.classList.add('active');['fshOut','vshOut','mcmetaOut'].forEach(id=>$(id).classList.toggle('hidden',id!==b.dataset.tab))});try{let saved=JSON.parse(localStorage.getItem(LS)||'null');if(saved)applyData(saved)}catch(e){}update();requestAnimationFrame(draw)}
 init();
 </script>
-
-<script>
-(function(){
-  const STORE_KEY = "mtsd_preview_font_calibration_v1";
-  const defaults = { fontScale: 0.58, letterSpacing: 0, shadowOffset: 1, compact: true };
-  function loadCal(){
-    try { return Object.assign({}, defaults, JSON.parse(localStorage.getItem(STORE_KEY)||"{}")); }
-    catch(e){ return Object.assign({}, defaults); }
-  }
-  function saveCal(v){ localStorage.setItem(STORE_KEY, JSON.stringify(v)); }
-  function applyCal(){
-    const c = loadCal();
-    document.documentElement.style.setProperty("--mc-preview-scale", String(c.fontScale));
-    document.documentElement.style.setProperty("--mc-preview-letter-spacing", c.letterSpacing + "px");
-    document.documentElement.style.setProperty("--mc-preview-shadow-offset", c.shadowOffset + "px");
-    document.body.classList.toggle("mc-compact-preview", !!c.compact);
-    const fs = document.getElementById("previewFontScale"); if(fs) fs.value = c.fontScale;
-    const ls = document.getElementById("previewLetterSpacing"); if(ls) ls.value = c.letterSpacing;
-    const so = document.getElementById("previewShadowOffset"); if(so) so.value = c.shadowOffset;
-    const cp = document.getElementById("previewCompactMode"); if(cp) cp.checked = !!c.compact;
-    if (typeof update === "function") { try { update(); } catch(e){} }
-  }
-  function controlHTML(){
-    return `
-      <div class="card" id="previewFontCalibrationCard">
-        <h2>Minecraft bitmap preview calibration</h2>
-        <p class="muted">Only changes the browser preview. Exported Minecraft shader values stay unchanged.</p>
-        <label>Preview font scale <input id="previewFontScale" type="range" min="0.35" max="1.2" step="0.01"></label>
-        <label>Preview letter spacing <input id="previewLetterSpacing" type="range" min="-2" max="8" step="0.25"></label>
-        <label>Preview shadow offset <input id="previewShadowOffset" type="range" min="0" max="5" step="0.25"></label>
-        <label style="display:flex;gap:8px;align-items:center"><input id="previewCompactMode" type="checkbox"> Compact Minecraft chat preview</label>
-        <button type="button" id="minecraftChatPreset">Use Minecraft chat preset</button>
-      </div>`;
-  }
-  function installControls(){
-    if (document.getElementById("previewFontCalibrationCard")) return;
-    const cards = Array.from(document.querySelectorAll(".card"));
-    const previewCard = cards.find(c => /preview/i.test(c.textContent||"")) || cards[0] || document.body;
-    previewCard.insertAdjacentHTML("afterend", controlHTML());
-    ["previewFontScale","previewLetterSpacing","previewShadowOffset","previewCompactMode"].forEach(id=>{
-      const el = document.getElementById(id);
-      if (!el) return;
-      el.addEventListener("input", ()=>{
-        const c = loadCal();
-        c.fontScale = parseFloat(document.getElementById("previewFontScale").value || defaults.fontScale);
-        c.letterSpacing = parseFloat(document.getElementById("previewLetterSpacing").value || defaults.letterSpacing);
-        c.shadowOffset = parseFloat(document.getElementById("previewShadowOffset").value || defaults.shadowOffset);
-        c.compact = !!document.getElementById("previewCompactMode").checked;
-        saveCal(c); applyCal();
-      });
-    });
-    const preset = document.getElementById("minecraftChatPreset");
-    if (preset) preset.addEventListener("click", ()=>{
-      saveCal({fontScale:0.58, letterSpacing:0, shadowOffset:1, compact:true});
-      applyCal();
-    });
-  }
-
-  // Canvas font scaling patch: modifies font sizes assigned to canvas contexts after calibration.
-  const proto = CanvasRenderingContext2D && CanvasRenderingContext2D.prototype;
-  if (proto && !proto.__mcPreviewFontPatch) {
-    proto.__mcPreviewFontPatch = true;
-    const desc = Object.getOwnPropertyDescriptor(proto, "font");
-    if (desc && desc.set && desc.get) {
-      Object.defineProperty(proto, "font", {
-        get: function(){ return desc.get.call(this); },
-        set: function(v){
-          const c = loadCal();
-          let nv = String(v).replace(/(\d+(?:\.\d+)?)px/g, function(m,n){
-            return (parseFloat(n) * c.fontScale).toFixed(2) + "px";
-          });
-          return desc.set.call(this, nv);
-        }
-      });
-    }
-  }
-
-  const css = document.createElement("style");
-  css.textContent = `
-    .preview, #preview, canvas.previewCanvas { letter-spacing: var(--mc-preview-letter-spacing, 0px); }
-    .mc-compact-preview canvas { max-height: 120px; }
-    #previewFontCalibrationCard input[type=range]{ width:100%; }
-  `;
-  document.head.appendChild(css);
-
-  if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", ()=>{ installControls(); applyCal(); });
-  } else {
-    installControls(); applyCal();
-  }
-})();
-</script>
-
 </body></html>
