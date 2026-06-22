@@ -6,7 +6,7 @@
 <title>Minecraft Text Shader Designer</title>
 <script src="vendor/jszip.min.js"></script>
 <style>
-:root{--bg:#0b0f18;--panel:#121a29;--panel2:#172235;--text:#e8eefc;--muted:#9fb0ce;--line:#26344f;--accent:#79b8ff;--bad:#ff6b6b;--good:#7cffb2}*{box-sizing:border-box}body{margin:0;background:linear-gradient(135deg,#080b12,#11192a);color:var(--text);font-family:Inter,system-ui,Segoe UI,Arial,sans-serif}.wrap{max-width:1540px;margin:0 auto;padding:22px}h1{margin:0 0 8px;font-size:28px}.sub{color:var(--muted);margin-bottom:18px}.grid{display:grid;grid-template-columns:360px minmax(760px,1fr);gap:18px;align-items:start}.card{background:rgba(18,26,41,.96);border:1px solid var(--line);border-radius:16px;padding:16px;box-shadow:0 12px 40px rgba(0,0,0,.25)}label{display:block;font-size:12px;color:var(--muted);margin:12px 0 6px}input,select,button,textarea{font:inherit}input[type=text],input[type=number],select,textarea{width:100%;background:#0c1220;color:var(--text);border:1px solid #2b3b58;border-radius:10px;padding:9px}input[type=color]{width:44px;height:36px;border:0;background:transparent}input[type=range]{width:100%}button{background:#20304a;color:var(--text);border:1px solid #395070;border-radius:10px;padding:9px 10px;cursor:pointer}button:hover{border-color:var(--accent)}.btns{display:flex;gap:8px;flex-wrap:wrap}.mini{font-size:12px;padding:6px 8px}.row{display:grid;grid-template-columns:1fr 90px;gap:8px;align-items:center}.colorRow{display:grid;grid-template-columns:44px 1fr 32px 32px 32px;gap:7px;align-items:center;margin:7px 0}.pill{display:inline-flex;gap:6px;align-items:center;border:1px solid #344865;border-radius:999px;padding:7px 9px;margin:4px 4px 0 0;color:#dce8ff;background:#0e1626}.danger{border-color:#704040}.ok{color:var(--good)}.warn{color:#ffd36f}.previewBox{background:#05070d;border-radius:16px;border:1px solid #243652;padding:16px;overflow:hidden}canvas{width:100%;height:360px;display:block}.previewBox{min-height:392px}.previewCard{position:sticky;top:14px}.outputCard{margin-top:16px}.widePreviewHint{font-size:12px;color:var(--muted);margin-top:8px}.muted{color:var(--muted);font-size:12px}.tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}.tab{background:#10182a}.tab.active{border-color:#7ab7ff;background:#1b2a44}pre{background:#060a12;color:#dce8ff;border:1px solid #22314a;border-radius:12px;padding:12px;overflow:auto;max-height:330px;white-space:pre-wrap}.settingPanel{display:none;border:1px solid #243652;border-radius:12px;padding:12px;margin-top:10px;background:#0e1626}.settingPanel.show{display:block}.shortcutGrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:8px}.smallnote{font-size:12px;color:#9fb0ce;line-height:1.4}.split{display:grid;grid-template-columns:1fr 1fr;gap:10px}.hr{height:1px;background:#253551;margin:14px 0}.checkrow{display:flex;gap:8px;align-items:center;margin:8px 0}.status{font-size:12px;margin-top:8px}.hidden{display:none!important}
+:root{--bg:#0b0f18;--panel:#121a29;--panel2:#172235;--text:#e8eefc;--muted:#9fb0ce;--line:#26344f;--accent:#79b8ff;--bad:#ff6b6b;--good:#7cffb2}*{box-sizing:border-box}body{margin:0;background:linear-gradient(135deg,#080b12,#11192a);color:var(--text);font-family:Inter,system-ui,Segoe UI,Arial,sans-serif}.wrap{max-width:1540px;margin:0 auto;padding:22px}h1{margin:0 0 8px;font-size:28px}.sub{color:var(--muted);margin-bottom:18px}.grid{display:grid;grid-template-columns:420px minmax(820px,1fr);gap:20px;align-items:start}.card{background:rgba(18,26,41,.96);border:1px solid var(--line);border-radius:16px;padding:16px;box-shadow:0 12px 40px rgba(0,0,0,.25)}label{display:block;font-size:12px;color:var(--muted);margin:12px 0 6px}input,select,button,textarea{font:inherit}input[type=text],input[type=number],select,textarea{width:100%;background:#0c1220;color:var(--text);border:1px solid #2b3b58;border-radius:10px;padding:9px}input[type=color]{width:44px;height:36px;border:0;background:transparent}input[type=range]{width:100%}button{background:#20304a;color:var(--text);border:1px solid #395070;border-radius:10px;padding:9px 10px;cursor:pointer}button:hover{border-color:var(--accent)}.btns{display:flex;gap:8px;flex-wrap:wrap}.mini{font-size:12px;padding:6px 8px}.row{display:grid;grid-template-columns:1fr 90px;gap:8px;align-items:center}.colorRow{display:grid;grid-template-columns:44px 1fr 32px 32px 32px;gap:7px;align-items:center;margin:7px 0}.pill{display:inline-flex;gap:6px;align-items:center;border:1px solid #344865;border-radius:999px;padding:7px 9px;margin:4px 4px 0 0;color:#dce8ff;background:#0e1626}.danger{border-color:#704040}.ok{color:var(--good)}.warn{color:#ffd36f}.previewBox{background:#05070d;border-radius:16px;border:1px solid #243652;padding:16px;overflow:hidden}canvas{width:100%;height:520px;display:block;image-rendering:pixelated}.previewBox{min-height:552px}.previewCard{position:relative}.outputCard{margin-top:16px}.widePreviewHint{font-size:12px;color:var(--muted);margin-top:8px}.leftColumn .card,.leftColumn.card{margin-bottom:16px}.rightColumn{display:flex;flex-direction:column;gap:16px}.previewCard{min-height:0}.previewTitleRow{display:flex;justify-content:space-between;gap:12px;align-items:center}.previewTitleRow .muted{font-size:12px}.calibrationCard{border-color:#31517a}.outputCard{margin-top:0}.muted{color:var(--muted);font-size:12px}.tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}.tab{background:#10182a}.tab.active{border-color:#7ab7ff;background:#1b2a44}pre{background:#060a12;color:#dce8ff;border:1px solid #22314a;border-radius:12px;padding:12px;overflow:auto;max-height:330px;white-space:pre-wrap}.settingPanel{display:none;border:1px solid #243652;border-radius:12px;padding:12px;margin-top:10px;background:#0e1626}.settingPanel.show{display:block}.shortcutGrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:8px}.smallnote{font-size:12px;color:#9fb0ce;line-height:1.4}.split{display:grid;grid-template-columns:1fr 1fr;gap:10px}.hr{height:1px;background:#253551;margin:14px 0}.checkrow{display:flex;gap:8px;align-items:center;margin:8px 0}.status{font-size:12px;margin-top:8px}.hidden{display:none!important}
 @media(max-width:1100px){.grid{grid-template-columns:1fr}.previewCard{position:static}canvas{height:300px}}
 </style>
 </head>
@@ -15,18 +15,13 @@
   <h1>Minecraft Text Shader Designer</h1>
   <div class="sub">Stable master: Minecraft-like timing, editable effects, add-ons, shortcuts, and JSZip resource-pack export.</div>
   <div class="grid">
-    <div class="card">
+    <div class="card leftColumn">
       <h2>Effect</h2>
       <label>Preview text</label><input id="previewText" value="Eternal Network">
       <label>Effect name</label><input id="effectName" value="CustomEffect">
       <label>Base effect</label><select id="baseMode"><option>Gradient</option><option>Rainbow</option><option>Solid</option><option>Fire</option><option>Aurora</option><option>Galaxy</option><option>Ocean</option><option>Venom</option><option>Starlight</option></select>
       <div class="split"><div><label>Speed</label><input id="speed" type="number" value="300" step="1"></div><div><label>Spacing</label><input id="spacing" type="number" value="0.005" step="0.001"></div></div>
       <div class="smallnote">Uses server-pack defaults: <code>charIndex = pos.x</code>, shadow offset <code>-1.0</code>, <code>GameTime</code>, speed default <code>300</code>, spacing default <code>0.005</code>.</div>
-      <details class="settingPanel show" style="display:block"><summary><b>Preview calibration helper</b></summary>
-        <div class="smallnote">These values affect <b>only the browser preview</b>, not the generated Minecraft shader. Defaults are tuned from your working export: site preview at speed 10 / spacing 0.2 ≈ Minecraft speed 300 / spacing 0.005.</div>
-        <div class="split"><div><label>Preview speed multiplier</label><input id="previewSpeedMultiplier" type="number" value="0.033333" step="0.001"></div><div><label>Preview spacing multiplier</label><input id="previewSpacingMultiplier" type="number" value="40" step="1"></div></div>
-        <div class="btns" style="margin-top:8px"><button class="mini" id="previewMatchMinecraft" type="button">Use calibrated preview</button><button class="mini" id="previewRawShader" type="button">Raw shader math</button></div>
-      </details>
       <div id="colorsPanel"><label>Gradient colors</label><div id="colors"></div><button class="mini" id="addColor">+ Add color</button></div>
       <div id="modeSettings"></div>
       <div class="hr"></div>
@@ -49,15 +44,23 @@
       <div class="hr"></div>
       <h3>Save / import</h3>
       <div class="btns"><button id="saveNow">Save now</button><button id="exportJson">Export JSON</button><button id="importJsonBtn">Import JSON</button><button class="danger" id="resetSaved">Reset saved</button><input id="importFile" type="file" accept=".json" class="hidden"></div>
+      <div class="hr"></div>
+      <h3>Shortcuts</h3>
+      <div class="smallnote">Quick presets from Text Effects and your custom workflow.</div>
+      <div class="shortcutGrid" id="shortcuts"></div>
     </div>
-    <div>
+    <div class="rightColumn">
       <div class="card previewCard">
-        <h2>Preview</h2>
+        <div class="previewTitleRow"><h2>Preview</h2><span class="muted">Large Minecraft bitmap preview</span></div>
         <div class="previewBox"><canvas id="preview" width="1280" height="420"></canvas></div>
-        <div class="status" id="previewStatus"></div><div class="widePreviewHint">Large bitmap preview: the preview uses Minecraft shader math; the calibration controls only change the browser display size.</div>
-        <div class="hr"></div>
-        <h3>Shortcuts</h3>
-        <div class="shortcutGrid" id="shortcuts"></div>
+        <div class="status" id="previewStatus"></div><div class="widePreviewHint">Large bitmap preview: the preview uses Minecraft shader math. The calibration below changes only the browser view, not the exported shader.</div>
+      </div>
+      <div class="card calibrationCard" id="previewFontCalibrationCard">
+        <h2>Minecraft bitmap preview calibration</h2>
+        <div class="smallnote">These values affect <b>only the browser preview</b>, not the generated Minecraft shader. Use this to match your chat size and monitor scale.</div>
+        <div class="split"><div><label>Preview speed multiplier</label><input id="previewSpeedMultiplier" type="number" value="0.033333" step="0.001"></div><div><label>Preview spacing multiplier</label><input id="previewSpacingMultiplier" type="number" value="40" step="1"></div></div>
+        <div class="split"><div><label>Preview font scale</label><input id="previewFontScale" type="range" min="0.35" max="1.2" step="0.01" value="0.58"></div><div><label>Preview shadow offset</label><input id="previewShadowOffset" type="range" min="0" max="5" step="0.25" value="1"></div></div>
+        <div class="btns" style="margin-top:8px"><button class="mini" id="previewMatchMinecraft" type="button">Use calibrated preview</button><button class="mini" id="previewRawShader" type="button">Raw shader math</button></div>
       </div>
       <div class="card outputCard">
         <h2>Build / Output</h2>
