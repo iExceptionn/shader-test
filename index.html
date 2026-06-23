@@ -6,7 +6,7 @@
 <title>Minecraft Text Shader Designer</title>
 <script src="vendor/jszip.min.js"></script>
 <style>
-:root{--bg:#0b0f18;--panel:#121a29;--panel2:#172235;--text:#e8eefc;--muted:#9fb0ce;--line:#26344f;--accent:#79b8ff;--bad:#ff6b6b;--good:#7cffb2}*{box-sizing:border-box}body{margin:0;background:linear-gradient(135deg,#080b12,#11192a);color:var(--text);font-family:Inter,system-ui,Segoe UI,Arial,sans-serif}.wrap{max-width:1320px;margin:0 auto;padding:22px}h1{margin:0 0 8px;font-size:28px}.sub{color:var(--muted);margin-bottom:18px}.grid{display:grid;grid-template-columns:390px 1fr;gap:16px}.card{background:rgba(18,26,41,.96);border:1px solid var(--line);border-radius:16px;padding:16px;box-shadow:0 12px 40px rgba(0,0,0,.25)}label{display:block;font-size:12px;color:var(--muted);margin:12px 0 6px}input,select,button,textarea{font:inherit}input[type=text],input[type=number],select,textarea{width:100%;background:#0c1220;color:var(--text);border:1px solid #2b3b58;border-radius:10px;padding:9px}input[type=color]{width:44px;height:36px;border:0;background:transparent}input[type=range]{width:100%}button{background:#20304a;color:var(--text);border:1px solid #395070;border-radius:10px;padding:9px 10px;cursor:pointer}button:hover{border-color:var(--accent)}.btns{display:flex;gap:8px;flex-wrap:wrap}.mini{font-size:12px;padding:6px 8px}.row{display:grid;grid-template-columns:1fr 90px;gap:8px;align-items:center}.colorRow{display:grid;grid-template-columns:44px 1fr 32px 32px 32px;gap:7px;align-items:center;margin:7px 0}.pill{display:inline-flex;gap:6px;align-items:center;border:1px solid #344865;border-radius:999px;padding:7px 9px;margin:4px 4px 0 0;color:#dce8ff;background:#0e1626}.danger{border-color:#704040}.ok{color:var(--good)}.warn{color:#ffd36f}.previewBox{background:#05070d;border-radius:16px;border:1px solid #243652;padding:10px;overflow:hidden}canvas{width:100%;height:230px;display:block}.muted{color:var(--muted);font-size:12px}.tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}.tab{background:#10182a}.tab.active{border-color:#7ab7ff;background:#1b2a44}pre{background:#060a12;color:#dce8ff;border:1px solid #22314a;border-radius:12px;padding:12px;overflow:auto;max-height:330px;white-space:pre-wrap}.settingPanel{display:none;border:1px solid #243652;border-radius:12px;padding:12px;margin-top:10px;background:#0e1626}.settingPanel.show{display:block}
+:root{--bg:#0b0f18;--panel:#121a29;--panel2:#172235;--text:#e8eefc;--muted:#9fb0ce;--line:#26344f;--accent:#79b8ff;--bad:#ff6b6b;--good:#7cffb2}*{box-sizing:border-box}body{margin:0;background:linear-gradient(135deg,#080b12,#11192a);color:var(--text);font-family:Inter,system-ui,Segoe UI,Arial,sans-serif}.wrap{max-width:1320px;margin:0 auto;padding:22px}h1{margin:0 0 8px;font-size:28px}.sub{color:var(--muted);margin-bottom:18px}.grid{display:grid;grid-template-columns:390px 1fr;gap:16px}.card{background:rgba(18,26,41,.96);border:1px solid var(--line);border-radius:16px;padding:16px;box-shadow:0 12px 40px rgba(0,0,0,.25)}label{display:block;font-size:12px;color:var(--muted);margin:12px 0 6px}input,select,button,textarea{font:inherit}input[type=text],input[type=number],select,textarea{width:100%;background:#0c1220;color:var(--text);border:1px solid #2b3b58;border-radius:10px;padding:9px}input[type=color]{width:44px;height:36px;border:0;background:transparent}input[type=range]{width:100%}button{background:#20304a;color:var(--text);border:1px solid #395070;border-radius:10px;padding:9px 10px;cursor:pointer}button:hover{border-color:var(--accent)}.btns{display:flex;gap:8px;flex-wrap:wrap}.mini{font-size:12px;padding:6px 8px}.row{display:grid;grid-template-columns:1fr 90px;gap:8px;align-items:center}.colorRow{display:grid;grid-template-columns:44px 1fr 32px 32px 32px;gap:7px;align-items:center;margin:7px 0}.pill{display:inline-flex;gap:6px;align-items:center;border:1px solid #344865;border-radius:999px;padding:7px 9px;margin:4px 4px 0 0;color:#dce8ff;background:#0e1626}.danger{border-color:#704040}.ok{color:var(--good)}.warn{color:#ffd36f}.previewBox{background:#05070d;border-radius:16px;border:1px solid #243652;padding:10px;overflow:hidden}canvas{width:100%;height:260px;display:block}.muted{color:var(--muted);font-size:12px}.tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}.tab{background:#10182a}.tab.active{border-color:#7ab7ff;background:#1b2a44}pre{background:#060a12;color:#dce8ff;border:1px solid #22314a;border-radius:12px;padding:12px;overflow:auto;max-height:330px;white-space:pre-wrap}.settingPanel{display:none;border:1px solid #243652;border-radius:12px;padding:12px;margin-top:10px;background:#0e1626}.settingPanel.show{display:block}
 #secondGradientSettings .colorRow{grid-template-columns:44px 1fr 36px 36px 36px}.shortcutGrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:8px}.smallnote{font-size:12px;color:#9fb0ce;line-height:1.4}.split{display:grid;grid-template-columns:1fr 1fr;gap:10px}.hr{height:1px;background:#253551;margin:14px 0}.checkrow{display:flex;gap:8px;align-items:center;margin:8px 0}.status{font-size:12px;margin-top:8px}.hidden{display:none!important}
 .previewCalInline{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:10px}.previewCalInline label{margin-top:0}@media(max-width:900px){.previewCalInline{grid-template-columns:1fr}}
 </style>
@@ -304,16 +304,16 @@ init();
 
 /* --- Multi Trigger Mode v1 injected --- */
 (function(){
-  const MT_LS = 'minecraft-text-shader-designer-multitrigger-v1';
+  const MT_LS = 'minecraft-text-shader-designer-multitrigger-v5-clean';
   const MAX_SLOTS = 8;
   const oldFsh = fsh;
   const oldDraw = draw;
   function slug(s,i){ return String(s||('Slot'+i)).replace(/[^A-Za-z0-9_]/g,'') || ('Slot'+i); }
   function getMulti(){
-    try { return normalizeMulti(JSON.parse(localStorage.getItem(MT_LS)||'null') || defaultMulti()); }
+    try { return JSON.parse(localStorage.getItem(MT_LS)||'null') || defaultMulti(); }
     catch(e){ return defaultMulti(); }
   }
-  function saveMulti(m){ localStorage.setItem(MT_LS, JSON.stringify(normalizeMulti(m))); }
+  function saveMulti(m){ localStorage.setItem(MT_LS, JSON.stringify(m)); }
   function defaultSlot(i){
     const g = 236 + i;
     const snap = collect ? collect() : {};
@@ -324,30 +324,6 @@ init();
     return { enabled:i<3, label:snap.effectName, mainHex:snap.mainHex, shadowHex:snap.shadowHex, sample:'['+snap.effectName+']', config:snap };
   }
   function defaultMulti(){ return { enabled:false, selected:0, desyncMode:'By line Y', desyncAmount:1.0, previewStyle:'Smooth Chat', slots:Array.from({length:MAX_SLOTS},(_,i)=>defaultSlot(i)) }; }
-  function normalizeMulti(m){
-    if(!m || typeof m !== 'object') m = defaultMulti();
-    if(!Array.isArray(m.slots)) m.slots = Array.from({length:MAX_SLOTS},(_,i)=>defaultSlot(i));
-    while(m.slots.length < MAX_SLOTS) m.slots.push(defaultSlot(m.slots.length));
-    m.slots = m.slots.slice(0, MAX_SLOTS).map((s,i)=>{
-      const d = defaultSlot(i);
-      s = (s && typeof s === 'object') ? s : d;
-      s.enabled = !!s.enabled;
-      s.label = s.label || d.label;
-      s.mainHex = /^#[0-9a-fA-F]{6}$/.test(s.mainHex||'') ? s.mainHex : d.mainHex;
-      s.shadowHex = /^#[0-9a-fA-F]{6}$/.test(s.shadowHex||'') ? s.shadowHex : d.shadowHex;
-      s.sample = s.sample || d.sample;
-      if(!s.config || typeof s.config !== 'object') s.config = d.config;
-      if(!Array.isArray(s.config.colors) || !s.config.colors.length) s.config.colors = ['#ffffff'];
-      if(!Array.isArray(s.config.layer2Colors) || !s.config.layer2Colors.length) s.config.layer2Colors = ['#ffffff','#00fbff'];
-      s.config.mainHex = s.mainHex; s.config.shadowHex = s.shadowHex; s.config.effectName = s.label; s.config.previewText = s.sample;
-      return s;
-    });
-    m.selected = Math.max(0, Math.min(MAX_SLOTS-1, Number(m.selected||0)));
-    m.desyncMode = m.desyncMode || 'By line Y';
-    m.desyncAmount = Number(m.desyncAmount ?? 1);
-    m.previewStyle = m.previewStyle || 'Smooth Chat';
-    return m;
-  }
   function ensureUI(){
     if(document.getElementById('multiTriggerCard')) return;
     const leftCard = document.querySelector('.grid > .card');
@@ -358,19 +334,26 @@ init();
     div.style.marginTop='14px';
     div.innerHTML = `
       <h3>Multi Trigger Mode</h3>
-      <div class="smallnote">Eerste test: max 8 trigger-slots. Elk slot bewaart z'n eigen effect/settings en krijgt een eigen HEX trigger.</div>
+      <div class="smallnote">Max 8 trigger-slots. Elk slot bewaart z'n eigen effect/settings, triggerkleur én eigen speed/spacing.</div>
       <div class="checkrow"><input id="mtEnabled" type="checkbox"><label for="mtEnabled" style="margin:0">Enable multi trigger export/preview</label></div>
-      <div style="display:grid;grid-template-columns:1fr 120px;gap:8px;margin:8px 0">
-        <div><label>Per-instance offset</label><select id="mtDesyncMode"><option>Off</option><option>By line Y</option><option>By screen position</option><option>By text X/Y</option></select></div>
-        <div><label>Amount</label><input id="mtDesyncAmount" type="number" value="1" step="0.05" min="0" max="4"></div>
-      </div>
-      <div style="display:grid;grid-template-columns:1fr;gap:8px;margin:8px 0">
-        <div><label>Preview render style</label><select id="mtPreviewStyle"><option>Smooth Chat</option><option>Pixel Accurate</option></select></div>
-      </div>
-      <div class="smallnote">Offset verschuift de kleurfase per chatregel/positie, zodat dezelfde trigger niet overal tegelijk loopt.</div>
+      <label>Per-instance offset
+        <select id="mtDesyncMode">
+          <option>Off</option>
+          <option>By line Y</option>
+          <option>By screen position</option>
+          <option>By text X/Y</option>
+        </select>
+      </label>
+      <label>Instance offset amount <input id="mtDesyncAmount" type="range" min="0" max="4" step="0.05"></label>
+      <label>Preview render style
+        <select id="mtPreviewStyle">
+          <option>Smooth Chat</option>
+          <option>Pixel Accurate</option>
+        </select>
+      </label>
       <div id="mtSlots"></div>
       <div class="btns" style="margin-top:8px">
-        <button class="mini" id="mtSaveCurrent" type="button">Save current effect to selected slot</button>
+        <button class="mini" id="mtSaveCurrent" type="button">Save current effect/settings to selected slot</button>
         <button class="mini" id="mtLoadSelected" type="button">Load selected slot into editor</button>
         <button class="mini" id="mtAutoColors" type="button">Auto trigger colors</button>
       </div>
@@ -407,12 +390,18 @@ init();
           <input class="mtMain" type="text" value="${s.mainHex||''}">
           <input class="mtShadow" type="text" value="${s.shadowHex||''}">
         </div>
-        <input class="mtSample" type="text" style="margin-top:6px" value="${(s.sample||'').replace(/"/g,'&quot;')}" title="Preview sample text">`;
+        <input class="mtSample" type="text" style="margin-top:6px" value="${(s.sample||'').replace(/"/g,'&quot;')}" title="Preview sample text">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:6px">
+          <label style="margin:0">Speed<input class="mtSpeed" type="number" step="1" value="${Number((s.config&&s.config.speed)!=null?s.config.speed:300)}"></label>
+          <label style="margin:0">Spacing<input class="mtSpacing" type="number" step="0.001" value="${Number((s.config&&s.config.spacing)!=null?s.config.spacing:0.005)}"></label>
+        </div>`;
       row.querySelector('.mtEn').oninput=e=>{m.slots[i].enabled=e.target.checked;saveMulti(m);update();};
       row.querySelector('.mtLabel').oninput=e=>{m.slots[i].label=e.target.value;if(m.slots[i].config)m.slots[i].config.effectName=e.target.value;saveMulti(m);update();};
       row.querySelector('.mtMain').oninput=e=>{m.slots[i].mainHex=e.target.value;if(m.slots[i].config)m.slots[i].config.mainHex=e.target.value;saveMulti(m);update();};
       row.querySelector('.mtShadow').oninput=e=>{m.slots[i].shadowHex=e.target.value;if(m.slots[i].config)m.slots[i].config.shadowHex=e.target.value;saveMulti(m);update();};
       row.querySelector('.mtSample').oninput=e=>{m.slots[i].sample=e.target.value;if(m.slots[i].config)m.slots[i].config.previewText=e.target.value;saveMulti(m);update();};
+      row.querySelector('.mtSpeed').oninput=e=>{if(!m.slots[i].config)m.slots[i].config=collect();m.slots[i].config.speed=Number(e.target.value)||300;saveMulti(m);update();};
+      row.querySelector('.mtSpacing').oninput=e=>{if(!m.slots[i].config)m.slots[i].config=collect();m.slots[i].config.spacing=Number(e.target.value)||0.005;saveMulti(m);update();};
       row.querySelector('.mtSelect').onclick=()=>{m.selected=i;saveMulti(m);renderMulti();};
       box.appendChild(row);
     });
@@ -422,21 +411,23 @@ init();
   function arrFromSlot(s,key, fallback){ return (s.config && s.config[key] && s.config[key].length) ? s.config[key] : fallback; }
   function addonsOf(s){ return (s.config && s.config.addons) || {}; }
   function settingsOf(s){ return (s.config && s.config.settings) || {}; }
+
   function shaderInstanceOffsetExpr(m){
-    const amt=Number(m.desyncAmount??1).toFixed(3);
-    const mode=m.desyncMode||'By line Y';
-    if(mode==='Off' || Number(amt)===0) return '0.0';
-    if(mode==='By screen position') return `(hash11(floor(gl_FragCoord.x / 24.0) + floor(gl_FragCoord.y / 9.0) * 57.0) * ${amt})`;
-    if(mode==='By text X/Y') return `(hash11(floor(charIndex / 24.0) + floor(gl_FragCoord.y / 9.0) * 57.0) * ${amt})`;
-    return `(hash11(floor(gl_FragCoord.y / 9.0)) * ${amt})`;
+    const amt = Number(m.desyncAmount??1).toFixed(3);
+    const mode = m.desyncMode || 'By line Y';
+    if(mode==='Off') return '0.0';
+    if(mode==='By screen position') return `(hash11(floor(gl_FragCoord.x / 32.0) + floor(gl_FragCoord.y / 9.0) * 37.0) * 6.28318 * ${amt})`;
+    if(mode==='By text X/Y') return `(hash11(floor(charIndex / 20.0) + floor(gl_FragCoord.y / 9.0) * 37.0) * 6.28318 * ${amt})`;
+    return `(hash11(floor(gl_FragCoord.y / 9.0)) * 6.28318 * ${amt})`;
   }
-  function hashPreview(n){ return ((Math.sin(n)*43758.5453)%1+1)%1; }
-  function previewInstanceOffset(m,line,pos){
-    const amt=Number(m.desyncAmount??1), mode=m.desyncMode||'By line Y';
-    if(mode==='Off' || amt===0) return 0;
-    if(mode==='By screen position') return hashPreview(Math.floor(pos/24)+Math.floor(line)*57)*amt;
-    if(mode==='By text X/Y') return hashPreview(Math.floor(pos/24)+Math.floor(line)*57)*amt;
-    return hashPreview(Math.floor(line))*amt;
+  function previewInstanceOffset(m,line,x){
+    const amt=Number(m.desyncAmount??1);
+    const mode=m.desyncMode||'By line Y';
+    if(mode==='Off') return 0;
+    let n=line;
+    if(mode==='By screen position') n=Math.floor((x||0)/32)+line*37;
+    if(mode==='By text X/Y') n=Math.floor((x||0)/20)+line*37;
+    return (Math.sin(n*12.9898)*43758.5453 % 1) * 6.28318 * amt;
   }
   function effectLinesForSlot(s, idx, shadow){
     const c=s.config||{}; const a=addonsOf(s); const set=settingsOf(s); const nm='Slot'+idx;
@@ -475,7 +466,7 @@ init();
     slots.forEach((s,i)=>{let mm=hexToRgb(s.mainHex), ss=hexToRgb(s.shadowHex);
       cases.push(`    ${cases.length?'else ':''}if (colorMatch(vertexColor, ${mm[0]}.0, ${mm[1]}.0, ${mm[2]}.0)) {\n        // Slot ${i+1}: ${s.label||''} ${s.mainHex}\n        ${effectLinesForSlot(s,i,false)}\n        color = vec4(rgb * texAlpha, texAlpha) * ColorModulator;\n    } else if (colorMatch(vertexColor, ${ss[0]}.0, ${ss[1]}.0, ${ss[2]}.0)) {\n        // Slot ${i+1} shadow: ${s.shadowHex}\n        ${effectLinesForSlot(s,i,true)}\n        color = vec4(rgb * texAlpha, texAlpha) * ColorModulator;\n    }`);
     });
-    return `#version 150\n\n#moj_import <minecraft:fog.glsl>\n#moj_import <minecraft:dynamictransforms.glsl>\n#moj_import <minecraft:globals.glsl>\n\nuniform sampler2D Sampler0;\nuniform float FogStart;\nuniform float FogEnd;\n\nin float sphericalVertexDistance;\nin float cylindricalVertexDistance;\nin vec4 vertexColor;\nin vec2 texCoord0;\nin float charIndex;\nin float animTime;\nin float CustomEffectCornerT;\n\nout vec4 fragColor;\n\nvec3 hsvToRgb(vec3 c) {\n    vec4 K = vec4(1.0, 2.0 / 3.0, 1.0 / 3.0, 3.0);\n    vec3 p = abs(fract(c.xxx + K.xyz) * 6.0 - K.www);\n    return c.z * mix(K.xxx, clamp(p - K.xxx, 0.0, 1.0), c.y);\n}\n\nbool colorMatch(vec4 col, float r, float g, float b) {\n    return abs(col.r * 255.0 - r) < 1.0 && abs(col.g * 255.0 - g) < 1.0 && abs(col.b * 255.0 - b) < 1.0;\n}\n\nfloat hash11(float n) {\n    return fract(sin(n) * 43758.5453);\n}\n\n${gradFns.join('\n\n')}\n\nvoid main() {\n    vec4 color = texture(Sampler0, texCoord0) * vertexColor * ColorModulator;\n    if (color.a < 0.1) discard;\n    float texAlpha = texture(Sampler0, texCoord0).a;\n    float instanceOffset = ${shaderInstanceOffsetExpr(m)};\n\n${cases.join('\n')}\n\n    fragColor = apply_fog(color, sphericalVertexDistance, cylindricalVertexDistance, FogEnvironmentalStart, FogEnvironmentalEnd, FogRenderDistanceStart, FogRenderDistanceEnd, FogColor);\n}\n`;
+    return `#version 150\n\n#moj_import <minecraft:fog.glsl>\n#moj_import <minecraft:dynamictransforms.glsl>\n#moj_import <minecraft:globals.glsl>\n\nuniform sampler2D Sampler0;\nuniform float FogStart;\nuniform float FogEnd;\n\nin float sphericalVertexDistance;\nin float cylindricalVertexDistance;\nin vec4 vertexColor;\nin vec2 texCoord0;\nin float charIndex;\nin float animTime;\nin float CustomEffectCornerT;\n\nout vec4 fragColor;\n\nvec3 hsvToRgb(vec3 c) {\n    vec4 K = vec4(1.0, 2.0 / 3.0, 1.0 / 3.0, 3.0);\n    vec3 p = abs(fract(c.xxx + K.xyz) * 6.0 - K.www);\n    return c.z * mix(K.xxx, clamp(p - K.xxx, 0.0, 1.0), c.y);\n}\n\nbool colorMatch(vec4 col, float r, float g, float b) {\n    return abs(col.r * 255.0 - r) < 1.0 && abs(col.g * 255.0 - g) < 1.0 && abs(col.b * 255.0 - b) < 1.0;\n}\n\n${gradFns.join('\n\n')}\n\nvoid main() {\n    vec4 color = texture(Sampler0, texCoord0) * vertexColor * ColorModulator;\n    if (color.a < 0.1) discard;\n    float texAlpha = texture(Sampler0, texCoord0).a;\n\n${cases.join('\n')}\n\n    fragColor = apply_fog(color, sphericalVertexDistance, cylindricalVertexDistance, FogEnvironmentalStart, FogEnvironmentalEnd, FogRenderDistanceStart, FogRenderDistanceEnd, FogColor);\n}\n`;
   }
   fsh = multiFsh;
   function colorForSlot(s,pos,corner,time,shadow,phaseOffset){
@@ -489,7 +480,6 @@ init();
     const fontPx = Math.max(10, Math.round(8 * scale));
     ctx.font = fontPx + 'px Arial, sans-serif';
     ctx.textBaseline = 'top';
-    ctx.lineJoin = 'round';
     for (let ch of text) {
       const w = Math.max(4, ctx.measureText(ch).width / scale);
       const phaseOffset=(m.desyncMode==='By screen position'||m.desyncMode==='By text X/Y')?previewInstanceOffset(m,line,x):previewInstanceOffset(m,line,0);
@@ -505,7 +495,7 @@ init();
     try {
       const c=document.getElementById('preview'),ctx=c.getContext('2d'),m=getMulti();
       if(!m.enabled) return oldDraw();
-      ctx.imageSmoothingEnabled=true;ctx.clearRect(0,0,c.width,c.height);ctx.fillStyle='#05070d';ctx.fillRect(0,0,c.width,c.height);
+      ctx.imageSmoothingEnabled=(m.previewStyle||'Smooth Chat')==='Smooth Chat';ctx.clearRect(0,0,c.width,c.height);ctx.fillStyle='#05070d';ctx.fillRect(0,0,c.width,c.height);
       let slots=m.slots.filter(s=>s && s.enabled && s.config); if(!slots.length) return oldDraw();
       let gameTime=(performance.now()/1000)/1200;
       let fs=document.getElementById('previewFontScale'), ls=document.getElementById('previewLetterSpacing'), so=document.getElementById('previewShadowOffset');
@@ -518,10 +508,12 @@ init();
         let prefix='['+(line+1)+'] ';
         if(smooth){
           let x=2;
-          x=drawSmoothSlotText(ctx,prefix,x,y,scale,{config:{baseMode:'Gradient',colors:['#9fb0ce'],spacing:0.005,speed:0,addons:{},settings:{}}},gameTime,true,shadowOffset,line,m);
+          const shadowPrefix={config:{baseMode:'Gradient',colors:['#566070'],spacing:0.005,speed:0,addons:{},settings:{}}};
+          const mainPrefix={config:{baseMode:'Gradient',colors:['#dce8ff'],spacing:0.005,speed:0,addons:{},settings:{}}};
+          x=drawSmoothSlotText(ctx,prefix,x,y,scale,shadowPrefix,gameTime,true,shadowOffset,line,m);
           drawSmoothSlotText(ctx,text,x,y,scale,s,gameTime,true,shadowOffset,line,m);
           x=2;
-          x=drawSmoothSlotText(ctx,prefix,x,y,scale,{config:{baseMode:'Gradient',colors:['#dce8ff'],spacing:0.005,speed:0,addons:{},settings:{}}},gameTime,false,shadowOffset,line,m);
+          x=drawSmoothSlotText(ctx,prefix,x,y,scale,mainPrefix,gameTime,false,shadowOffset,line,m);
           drawSmoothSlotText(ctx,text,x,y,scale,s,gameTime,false,shadowOffset,line,m);
         } else {
           let linePhaseOffset = previewInstanceOffset(m,line,0);
@@ -546,7 +538,7 @@ init();
       }
       const st=document.getElementById('previewStatus'); if(st)st.textContent=`Multi Trigger preview: ${slots.length} enabled slots. Minecraft timing: GameTime = seconds / 1200. Desync: ${m.desyncMode||'By line Y'} × ${Number(m.desyncAmount??1)}. Style: ${m.previewStyle||'Smooth Chat'}.`;
     } catch(e) {
-      console.error('Preview failed, falling back to normal draw', e);
+      console.error('Multi Trigger preview failed; falling back.', e);
       try { oldDraw(); return; } catch(_){}
     }
     requestAnimationFrame(draw);
@@ -556,10 +548,7 @@ init();
   const oldApply=applyData;
   applyData=function(d){ oldApply(d); if(d&&d.multiTrigger){saveMulti(d.multiTrigger); renderMulti();} };
   try { ensureUI(); update(); }
-  catch(e) {
-    console.error('Multi Trigger startup failed; resetting Multi Trigger cache.', e);
-    try { localStorage.removeItem(MT_LS); ensureUI(); update(); } catch(_){}
-  }
+  catch(e) { console.error('Multi Trigger startup failed; resetting clean cache.', e); try { localStorage.removeItem(MT_LS); ensureUI(); update(); } catch(_){} }
 })();
 
 </script>
