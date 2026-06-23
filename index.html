@@ -304,10 +304,11 @@ init();
 
 /* --- Multi Trigger Mode v1 injected --- */
 (function(){
-  const MT_LS = 'minecraft-text-shader-designer-multitrigger-v5-clean';
+  const MT_LS = 'minecraft-text-shader-designer-multitrigger-v6-norecursion';
   const MAX_SLOTS = 8;
   const oldFsh = fsh;
   const oldDraw = draw;
+  const baseCollectForSlots = collect; // IMPORTANT: prevent collect->getMulti->defaultSlot recursion
   function slug(s,i){ return String(s||('Slot'+i)).replace(/[^A-Za-z0-9_]/g,'') || ('Slot'+i); }
   function getMulti(){
     try { return JSON.parse(localStorage.getItem(MT_LS)||'null') || defaultMulti(); }
@@ -316,7 +317,7 @@ init();
   function saveMulti(m){ localStorage.setItem(MT_LS, JSON.stringify(m)); }
   function defaultSlot(i){
     const g = 236 + i;
-    const snap = collect ? collect() : {};
+    const snap = baseCollectForSlots ? baseCollectForSlots() : {};
     snap.effectName = ['Swirl','Paint','Goal','Aurora','Candy','Lava','Ocean','Galaxy'][i] || ('Slot '+(i+1));
     snap.previewText = snap.effectName;
     snap.mainHex = rgbToHex(230,g,254);
@@ -544,7 +545,18 @@ init();
     requestAnimationFrame(draw);
   };
   const oldCollect=collect;
-  collect=function(){ const d=oldCollect(); d.multiTrigger=getMulti(); return d; };
+  let __collectingMulti = false;
+  collect=function(){
+    const d=oldCollect();
+    // Guard against recursion when getMulti() has to create default slots.
+    if(!__collectingMulti){
+      __collectingMulti = true;
+      try { d.multiTrigger=getMulti(); }
+      catch(e){ console.warn('Multi Trigger collect fallback', e); d.multiTrigger=null; }
+      finally { __collectingMulti = false; }
+    }
+    return d;
+  };
   const oldApply=applyData;
   applyData=function(d){ oldApply(d); if(d&&d.multiTrigger){saveMulti(d.multiTrigger); renderMulti();} };
   try { ensureUI(); update(); }
