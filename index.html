@@ -301,5 +301,203 @@ async function buildPack(){try{if(typeof JSZip==='undefined')throw new Error('JS
 function validatePack(){let checks=[];checks.push(fsh().includes('void main()')?'✓ FSH has main':'✗ FSH missing main');checks.push(vsh().includes('#moj_import <minecraft:globals.glsl>')?'✓ VSH imports globals.glsl':'✗ VSH missing globals.glsl');checks.push(vsh().includes('animTime = GameTime')?'✓ VSH passes GameTime':'✗ VSH missing GameTime');checks.push(/^#[0-9a-fA-F]{6}$/.test($('mainHex').value)?'✓ Main trigger valid':'✗ Main trigger invalid');$('buildStatus').innerHTML=checks.join('<br>')}
 function init(){renderColors();renderLayer2Colors();renderShortcuts();document.querySelectorAll('input,select').forEach(el=>el.addEventListener('input',update));$('addColor').onclick=()=>{state.colors.push('#ffffff');renderColors();update()};$('addLayer2Color').onclick=()=>{state.layer2Colors.push('#ffffff');renderLayer2Colors();update()};$('saveNow').onclick=save;$('exportJson').onclick=()=>{let b=new Blob([JSON.stringify(collect(),null,2)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='shader-project.json';a.click();URL.revokeObjectURL(a.href)};$('importJsonBtn').onclick=()=>$('importFile').click();$('importFile').onchange=async e=>{let f=e.target.files[0];if(f)applyData(JSON.parse(await f.text()))};$('resetSaved').onclick=()=>{localStorage.removeItem(LS);location.reload()};$('copyMain').onclick=()=>navigator.clipboard.writeText($('mainHex').value);$('copyShadow').onclick=()=>navigator.clipboard.writeText($('shadowHex').value);$('autoTrigger').onclick=()=>{let g=236+Math.floor(Math.random()*18);$('mainHex').value=rgbToHex(230,g,254);$('shadowHex').value=rgbToHex(57,Math.max(40,Math.floor(g/4)),63);update()};$('buildPack').onclick=buildPack;$('copyFsh').onclick=()=>navigator.clipboard.writeText(fsh());$('copyVsh').onclick=()=>navigator.clipboard.writeText(vsh());$('validate').onclick=validatePack;document.querySelectorAll('.tab').forEach(b=>b.onclick=()=>{document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));b.classList.add('active');['fshOut','vshOut','mcmetaOut'].forEach(id=>$(id).classList.toggle('hidden',id!==b.dataset.tab))});try{let saved=JSON.parse(localStorage.getItem(LS)||'null');if(saved)applyData(saved)}catch(e){}update();requestAnimationFrame(draw)}
 init();
+
+/* --- Multi Trigger Mode v1 injected --- */
+(function(){
+  const MT_LS = 'minecraft-text-shader-designer-multitrigger-v1';
+  const MAX_SLOTS = 8;
+  const oldFsh = fsh;
+  const oldDraw = draw;
+  function slug(s,i){ return String(s||('Slot'+i)).replace(/[^A-Za-z0-9_]/g,'') || ('Slot'+i); }
+  function getMulti(){
+    try { return JSON.parse(localStorage.getItem(MT_LS)||'null') || defaultMulti(); }
+    catch(e){ return defaultMulti(); }
+  }
+  function saveMulti(m){ localStorage.setItem(MT_LS, JSON.stringify(m)); }
+  function defaultSlot(i){
+    const g = 236 + i;
+    const snap = collect ? collect() : {};
+    snap.effectName = ['Swirl','Paint','Goal','Aurora','Candy','Lava','Ocean','Galaxy'][i] || ('Slot '+(i+1));
+    snap.previewText = snap.effectName;
+    snap.mainHex = rgbToHex(230,g,254);
+    snap.shadowHex = rgbToHex(57,Math.max(40,Math.floor(g/4)),63);
+    return { enabled:i<3, label:snap.effectName, mainHex:snap.mainHex, shadowHex:snap.shadowHex, sample:'['+snap.effectName+']', config:snap };
+  }
+  function defaultMulti(){ return { enabled:false, selected:0, desyncMode:'By line Y', desyncAmount:1.0, slots:Array.from({length:MAX_SLOTS},(_,i)=>defaultSlot(i)) }; }
+  function ensureUI(){
+    if(document.getElementById('multiTriggerCard')) return;
+    const leftCard = document.querySelector('.grid > .card');
+    if(!leftCard) return;
+    const div = document.createElement('div');
+    div.id='multiTriggerCard';
+    div.className='settingPanel show';
+    div.style.marginTop='14px';
+    div.innerHTML = `
+      <h3>Multi Trigger Mode</h3>
+      <div class="smallnote">Eerste test: max 8 trigger-slots. Elk slot bewaart z'n eigen effect/settings en krijgt een eigen HEX trigger.</div>
+      <div class="checkrow"><input id="mtEnabled" type="checkbox"><label for="mtEnabled" style="margin:0">Enable multi trigger export/preview</label></div>
+      <div style="display:grid;grid-template-columns:1fr 120px;gap:8px;margin:8px 0">
+        <div><label>Per-instance offset</label><select id="mtDesyncMode"><option>Off</option><option>By line Y</option><option>By screen position</option><option>By text X/Y</option></select></div>
+        <div><label>Amount</label><input id="mtDesyncAmount" type="number" value="1" step="0.05" min="0" max="4"></div>
+      </div>
+      <div class="smallnote">Offset verschuift de kleurfase per chatregel/positie, zodat dezelfde trigger niet overal tegelijk loopt.</div>
+      <div id="mtSlots"></div>
+      <div class="btns" style="margin-top:8px">
+        <button class="mini" id="mtSaveCurrent" type="button">Save current effect to selected slot</button>
+        <button class="mini" id="mtLoadSelected" type="button">Load selected slot into editor</button>
+        <button class="mini" id="mtAutoColors" type="button">Auto trigger colors</button>
+      </div>
+      <div class="smallnote" id="mtHint"></div>`;
+    leftCard.appendChild(div);
+    document.getElementById('mtEnabled').addEventListener('input',()=>{let m=getMulti();m.enabled=document.getElementById('mtEnabled').checked;saveMulti(m);renderMulti();update();});
+    document.getElementById('mtDesyncMode').addEventListener('input',()=>{let m=getMulti();m.desyncMode=document.getElementById('mtDesyncMode').value;saveMulti(m);renderMulti();update();});
+    document.getElementById('mtDesyncAmount').addEventListener('input',()=>{let m=getMulti();m.desyncAmount=parseFloat(document.getElementById('mtDesyncAmount').value||'0');saveMulti(m);renderMulti();update();});
+    document.getElementById('mtSaveCurrent').onclick=()=>{let m=getMulti();let i=m.selected||0;let c=collect();m.slots[i]={enabled:true,label:c.effectName||('Slot '+(i+1)),mainHex:c.mainHex,shadowHex:c.shadowHex,sample:c.previewText||('Slot '+(i+1)),config:JSON.parse(JSON.stringify(c))};saveMulti(m);renderMulti();update();};
+    document.getElementById('mtLoadSelected').onclick=()=>{let m=getMulti();let s=m.slots[m.selected||0]; if(s&&s.config) applyData(s.config);};
+    document.getElementById('mtAutoColors').onclick=()=>{let m=getMulti();m.slots.forEach((s,i)=>{let g=236+i;s.mainHex=rgbToHex(230,g,254);s.shadowHex=rgbToHex(57,Math.max(40,Math.floor(g/4)),63);if(s.config){s.config.mainHex=s.mainHex;s.config.shadowHex=s.shadowHex;}});saveMulti(m);renderMulti();update();};
+    renderMulti();
+  }
+  function renderMulti(){
+    ensureUI();
+    const m=getMulti();
+    const en=document.getElementById('mtEnabled'); if(en) en.checked=!!m.enabled;
+    const dm=document.getElementById('mtDesyncMode'); if(dm) dm.value=m.desyncMode||'By line Y';
+    const da=document.getElementById('mtDesyncAmount'); if(da) da.value=Number(m.desyncAmount??1);
+    const box=document.getElementById('mtSlots'); if(!box) return;
+    box.innerHTML='';
+    m.slots.forEach((s,i)=>{
+      const row=document.createElement('div');
+      row.style.cssText='border:1px solid #26344f;border-radius:10px;padding:8px;margin:8px 0;background:#0c1220';
+      row.innerHTML=`
+        <div style="display:grid;grid-template-columns:22px 1fr 90px;gap:6px;align-items:center">
+          <input class="mtEn" type="checkbox" ${s.enabled?'checked':''}>
+          <input class="mtLabel" type="text" value="${(s.label||'').replace(/"/g,'&quot;')}" title="Slot label">
+          <button class="mini mtSelect" type="button">${m.selected===i?'Selected':'Select'}</button>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:6px">
+          <input class="mtMain" type="text" value="${s.mainHex||''}">
+          <input class="mtShadow" type="text" value="${s.shadowHex||''}">
+        </div>
+        <input class="mtSample" type="text" style="margin-top:6px" value="${(s.sample||'').replace(/"/g,'&quot;')}" title="Preview sample text">`;
+      row.querySelector('.mtEn').oninput=e=>{m.slots[i].enabled=e.target.checked;saveMulti(m);update();};
+      row.querySelector('.mtLabel').oninput=e=>{m.slots[i].label=e.target.value;if(m.slots[i].config)m.slots[i].config.effectName=e.target.value;saveMulti(m);update();};
+      row.querySelector('.mtMain').oninput=e=>{m.slots[i].mainHex=e.target.value;if(m.slots[i].config)m.slots[i].config.mainHex=e.target.value;saveMulti(m);update();};
+      row.querySelector('.mtShadow').oninput=e=>{m.slots[i].shadowHex=e.target.value;if(m.slots[i].config)m.slots[i].config.shadowHex=e.target.value;saveMulti(m);update();};
+      row.querySelector('.mtSample').oninput=e=>{m.slots[i].sample=e.target.value;if(m.slots[i].config)m.slots[i].config.previewText=e.target.value;saveMulti(m);update();};
+      row.querySelector('.mtSelect').onclick=()=>{m.selected=i;saveMulti(m);renderMulti();};
+      box.appendChild(row);
+    });
+    const hint=document.getElementById('mtHint');
+    if(hint) hint.textContent = m.enabled ? 'Multi export actief: FSH krijgt if/else blokken voor alle enabled slots.' : 'Uit: de normale enkele trigger export blijft actief.';
+  }
+  function arrFromSlot(s,key, fallback){ return (s.config && s.config[key] && s.config[key].length) ? s.config[key] : fallback; }
+  function addonsOf(s){ return (s.config && s.config.addons) || {}; }
+  function settingsOf(s){ return (s.config && s.config.settings) || {}; }
+  function shaderInstanceOffsetExpr(m){
+    const amt=Number(m.desyncAmount??1).toFixed(3);
+    const mode=m.desyncMode||'By line Y';
+    if(mode==='Off' || Number(amt)===0) return '0.0';
+    if(mode==='By screen position') return `(hash11(floor(gl_FragCoord.x / 24.0) + floor(gl_FragCoord.y / 9.0) * 57.0) * ${amt})`;
+    if(mode==='By text X/Y') return `(hash11(floor(charIndex / 24.0) + floor(gl_FragCoord.y / 9.0) * 57.0) * ${amt})`;
+    return `(hash11(floor(gl_FragCoord.y / 9.0)) * ${amt})`;
+  }
+  function hashPreview(n){ return ((Math.sin(n)*43758.5453)%1+1)%1; }
+  function previewInstanceOffset(m,line,pos){
+    const amt=Number(m.desyncAmount??1), mode=m.desyncMode||'By line Y';
+    if(mode==='Off' || amt===0) return 0;
+    if(mode==='By screen position') return hashPreview(Math.floor(pos/24)+Math.floor(line)*57)*amt;
+    if(mode==='By text X/Y') return hashPreview(Math.floor(pos/24)+Math.floor(line)*57)*amt;
+    return hashPreview(Math.floor(line))*amt;
+  }
+  function effectLinesForSlot(s, idx, shadow){
+    const c=s.config||{}; const a=addonsOf(s); const set=settingsOf(s); const nm='Slot'+idx;
+    const speed=Number(c.speed??300), spacing=Number(c.spacing??0.005);
+    let lines=[`float t = charIndex * ${spacing.toFixed(6)} - animTime * ${speed.toFixed(3)} + instanceOffset;`];
+    if(a.diagonal) lines.push(`t += CustomEffectCornerT * ${Number(set.diagonalStrength??1).toFixed(3)} + ${Number(set.diagonalOffset??0).toFixed(3)};`);
+    if((c.baseMode||'Gradient')==='Rainbow') lines.push(`vec3 rgb = hsvToRgb(vec3(fract(t), 0.7, 1.0));`);
+    else lines.push(`vec3 rgb = ${nm}Gradient(t);`);
+    if(a.secondGradient){
+      lines.push(`float t2 = charIndex * ${Number(set.layer2Spacing??0.008).toFixed(6)} - animTime * ${Number(set.layer2Speed??220).toFixed(3)} + ${Number(set.layer2Offset??0.25).toFixed(3)} + instanceOffset;`);
+      if(set.layer2UseDiagonal) lines.push(`t2 += CustomEffectCornerT * ${Number(set.diagonalStrength??1).toFixed(3)} + ${Number(set.diagonalOffset??0).toFixed(3)};`);
+      lines.push(`vec3 rgb2 = ${nm}Layer2Gradient(t2);`);
+      const amt=Number(set.layer2Blend??0.45).toFixed(3), mode=set.layer2BlendMode||'Mix';
+      if(mode==='Wave Mask') {lines.push(`float layer2Mask = 0.5 + 0.5 * sin(charIndex * 0.08 - animTime * ${Number(set.layer2WaveSpeed??2).toFixed(3)} * 6.28318);`);lines.push(`rgb = mix(rgb, rgb2, ${amt} * layer2Mask);`);}
+      else if(mode==='Add') lines.push(`rgb = mix(rgb, min(rgb + rgb2, vec3(1.0)), ${amt});`);
+      else if(mode==='Multiply') lines.push(`rgb = mix(rgb, rgb * rgb2, ${amt});`);
+      else if(mode==='Screen') lines.push(`rgb = mix(rgb, 1.0 - (1.0 - rgb) * (1.0 - rgb2), ${amt});`);
+      else lines.push(`rgb = mix(rgb, rgb2, ${amt});`);
+    }
+    if(a.hatch){lines.push(`float hatchBand = fract((CustomEffectCornerT * 2.0 + charIndex * 0.03) * ${Number(set.hatchDensity??6).toFixed(3)} - animTime * ${Number(set.hatchSpeed??1).toFixed(3)} * 2.0);`);lines.push(`float hatchStripe = 1.0 - step(${Number(set.hatchWidth??0.25).toFixed(3)}, hatchBand);`);lines.push(`rgb = mix(rgb, ${vec(set.hatchColor||'#ffffff')}, hatchStripe * ${Number(set.hatchStrength??0.55).toFixed(3)});`)}
+    if(a.shimmer){lines.push(`float sweep = fract(animTime * ${Number(set.glintSpeed??1).toFixed(3)});`);lines.push(`float spos = fract(charIndex * ${Number(set.glintSpacing??0.05).toFixed(3)});`);lines.push(`float sd = abs(spos - sweep); sd = min(sd, 1.0 - sd);`);lines.push(`float glint = 1.0 - smoothstep(0.0, ${Number(set.glintWidth??0.08).toFixed(3)}, sd);`);lines.push(`rgb = mix(rgb, ${vec(set.glintColor||'#fff0aa')}, glint * ${Number(set.glintStrength??0.85).toFixed(3)});`)}
+    if(a.pulse) lines.push(`rgb *= mix(${Number(set.pulseMin??0.7).toFixed(3)}, ${Number(set.pulseMax??1.25).toFixed(3)}, 0.5 + 0.5 * sin(animTime * ${Number(set.pulseSpeed??3).toFixed(3)} + charIndex * 0.03));`);
+    if(a.blink) lines.push(`rgb *= mix(${Number(set.blinkMin??0.15).toFixed(3)}, ${Number(set.blinkMax??1.15).toFixed(3)}, 0.5 + 0.5 * sin(animTime * ${Number(set.blinkSpeed??4).toFixed(3)} * 6.28318));`);
+    if(a.chromatic){lines.push(`float chroma = (0.5 + 0.5 * sin(animTime * ${Number(set.chromaSpeed??2.5).toFixed(3)} * 6.28318 + charIndex * 0.07)) * ${Number(set.chromaStrength??0.25).toFixed(3)};`);lines.push(`rgb = min(vec3(rgb.r + chroma, rgb.g * (1.0 - chroma * 0.15), rgb.b + chroma * 0.75), vec3(1.0));`)}
+    if(a.sparkle){lines.push(`float spark = fract(sin(charIndex * 12.9898 + animTime * ${Number(set.sparkleSpeed??8).toFixed(3)}) * 43758.5453);`);lines.push(`rgb = mix(rgb, ${vec(set.sparkleColor||'#ffffff')}, step(${(1-Number(set.sparkleAmount??0.35)*.08).toFixed(3)}, spark) * 0.85);`)}
+    if(a.neon) lines.push(`rgb = min(rgb * ${Number(set.neonBoost??1.35).toFixed(3)}, vec3(1.0));`);
+    if(shadow) lines.push(`rgb *= 0.25;`);
+    return lines.join('\n        ');
+  }
+  function multiFsh(){
+    const m=getMulti(); const slots=m.slots.filter(s=>s.enabled && s.config);
+    if(!m.enabled || !slots.length) return oldFsh();
+    let gradFns=[];
+    slots.forEach((s,i)=>{gradFns.push(gradientFunctionSource('Slot'+i+'Gradient', arrFromSlot(s,'colors',['#ffffff']))); if(addonsOf(s).secondGradient) gradFns.push(gradientFunctionSource('Slot'+i+'Layer2Gradient', arrFromSlot(s,'layer2Colors',['#ffffff','#00fbff'])));});
+    let cases=[];
+    slots.forEach((s,i)=>{let mm=hexToRgb(s.mainHex), ss=hexToRgb(s.shadowHex);
+      cases.push(`    ${cases.length?'else ':''}if (colorMatch(vertexColor, ${mm[0]}.0, ${mm[1]}.0, ${mm[2]}.0)) {\n        // Slot ${i+1}: ${s.label||''} ${s.mainHex}\n        ${effectLinesForSlot(s,i,false)}\n        color = vec4(rgb * texAlpha, texAlpha) * ColorModulator;\n    } else if (colorMatch(vertexColor, ${ss[0]}.0, ${ss[1]}.0, ${ss[2]}.0)) {\n        // Slot ${i+1} shadow: ${s.shadowHex}\n        ${effectLinesForSlot(s,i,true)}\n        color = vec4(rgb * texAlpha, texAlpha) * ColorModulator;\n    }`);
+    });
+    return `#version 150\n\n#moj_import <minecraft:fog.glsl>\n#moj_import <minecraft:dynamictransforms.glsl>\n#moj_import <minecraft:globals.glsl>\n\nuniform sampler2D Sampler0;\nuniform float FogStart;\nuniform float FogEnd;\n\nin float sphericalVertexDistance;\nin float cylindricalVertexDistance;\nin vec4 vertexColor;\nin vec2 texCoord0;\nin float charIndex;\nin float animTime;\nin float CustomEffectCornerT;\n\nout vec4 fragColor;\n\nvec3 hsvToRgb(vec3 c) {\n    vec4 K = vec4(1.0, 2.0 / 3.0, 1.0 / 3.0, 3.0);\n    vec3 p = abs(fract(c.xxx + K.xyz) * 6.0 - K.www);\n    return c.z * mix(K.xxx, clamp(p - K.xxx, 0.0, 1.0), c.y);\n}\n\nbool colorMatch(vec4 col, float r, float g, float b) {\n    return abs(col.r * 255.0 - r) < 1.0 && abs(col.g * 255.0 - g) < 1.0 && abs(col.b * 255.0 - b) < 1.0;\n}\n\nfloat hash11(float n) {\n    return fract(sin(n) * 43758.5453);\n}\n\n${gradFns.join('\n\n')}\n\nvoid main() {\n    vec4 color = texture(Sampler0, texCoord0) * vertexColor * ColorModulator;\n    if (color.a < 0.1) discard;\n    float texAlpha = texture(Sampler0, texCoord0).a;\n    float instanceOffset = ${shaderInstanceOffsetExpr(m)};\n\n${cases.join('\n')}\n\n    fragColor = apply_fog(color, sphericalVertexDistance, cylindricalVertexDistance, FogEnvironmentalStart, FogEnvironmentalEnd, FogRenderDistanceStart, FogRenderDistanceEnd, FogColor);\n}\n`;
+  }
+  fsh = multiFsh;
+  function colorForSlot(s,pos,corner,time,shadow,phaseOffset){
+    const backupCollect=collect;
+    // Reuse existing colorAt logic by temporarily returning slot config.
+    collect = function(){ return s.config || backupCollect(); };
+    try { const spacing=Number((s.config&&s.config.spacing)||0.005); return colorAt(pos + ((phaseOffset||0)/(spacing||0.005)),corner,time,shadow); }
+    finally { collect = backupCollect; }
+  }
+  draw = function(){
+    const c=document.getElementById('preview'),ctx=c.getContext('2d'),m=getMulti();
+    if(!m.enabled) return oldDraw();
+    ctx.imageSmoothingEnabled=false;ctx.clearRect(0,0,c.width,c.height);ctx.fillStyle='#05070d';ctx.fillRect(0,0,c.width,c.height);
+    let slots=m.slots.filter(s=>s.enabled && s.config); if(!slots.length) return oldDraw();
+    let gameTime=(performance.now()/1000)/1200;
+    let fs=document.getElementById('previewFontScale'), ls=document.getElementById('previewLetterSpacing'), so=document.getElementById('previewShadowOffset');
+    let scale=8*(fs?parseFloat(fs.value||'1.10'):1.10); scale=clamp(scale,3,18);
+    let letterGap=ls?parseFloat(ls.value||'0'):0, shadowOffset=so?parseFloat(so.value||'1'):1;
+    let y=2, lineH=11, maxLines=Math.min(slots.length, Math.floor((c.height/scale-4)/lineH));
+    for(let line=0;line<maxLines;line++){
+      let s=slots[line], text=s.sample || ('['+(s.label||('Slot '+(line+1)))+']');
+      let linePhaseOffset = previewInstanceOffset(m,line,0);
+      let prefix='['+(line+1)+'] ';
+      let x=2;
+      for(let ch of prefix){ drawGlyphPixels(ctx,ch,x,y,scale,gameTime,true,shadowOffset); x+=glyphWidth(ch)+1+letterGap; }
+      x=2; for(let ch of prefix){ drawGlyphPixels(ctx,ch,x,y,scale,gameTime,false,shadowOffset); x+=glyphWidth(ch)+1+letterGap; }
+      for(let ch of text){
+        let rows=glyphRows(ch), w=rows[0].length;
+        for(let sh=1;sh>=0;sh--){
+          for(let yy=0;yy<rows.length;yy++)for(let xx=0;xx<w;xx++) if(rows[yy][xx]==='1'){
+            let corner=((w<=1?0:xx/(w-1))+(1-(rows.length<=1?0:yy/(rows.length-1))))*.5;
+            let phaseOffset=(m.desyncMode==='By screen position'||m.desyncMode==='By text X/Y')?previewInstanceOffset(m,line,x+xx):linePhaseOffset;
+            let rgb=colorForSlot(s,x+xx,corner,gameTime,!!sh,phaseOffset);
+            ctx.fillStyle=`rgb(${rgb[0]|0},${rgb[1]|0},${rgb[2]|0})`;
+            let off=sh?shadowOffset:0; ctx.fillRect(Math.round((x+xx+off)*scale),Math.round((y+yy+off)*scale),Math.ceil(scale),Math.ceil(scale));
+          }
+        }
+        x+=glyphWidth(ch)+1+letterGap;
+      }
+      y+=lineH;
+    }
+    const st=document.getElementById('previewStatus'); if(st)st.textContent=`Multi Trigger preview: ${slots.length} enabled slots. Minecraft timing: GameTime = seconds / 1200. Desync: ${m.desyncMode||'By line Y'} × ${Number(m.desyncAmount??1)}.`;
+    requestAnimationFrame(draw);
+  };
+  const oldCollect=collect;
+  collect=function(){ const d=oldCollect(); d.multiTrigger=getMulti(); return d; };
+  const oldApply=applyData;
+  applyData=function(d){ oldApply(d); if(d&&d.multiTrigger){saveMulti(d.multiTrigger); renderMulti();} };
+  ensureUI();
+  update();
+})();
+
 </script>
 </body></html>
