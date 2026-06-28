@@ -14,7 +14,7 @@
 <body>
 <div class="wrap">
   <h1>Minecraft Text Shader Designer</h1>
-  <div class="sub">Stable master: Minecraft-like timing, editable effects, add-ons, shortcuts, and JSZip resource-pack export.</div>
+  <div class="sub">Stable master: Multi Trigger, Minecraft-like timing, cosmetic presets, add-ons, shortcuts, and JSZip resource-pack export.</div>
   <div class="grid">
     <div class="card">
       <h2>Effect</h2>
@@ -114,6 +114,11 @@ const presets=[
 {name:'TE Fade Blink',mode:'Gradient',colors:['#ffffff','#66ccff'],speed:180,spacing:.004,blink:true,settings:{blinkMin:.2,blinkMax:1.1,blinkSpeed:4}},
 {name:'TE Dual Aurora',mode:'Gradient',colors:['#004cff','#00fbff'],speed:300,spacing:.005,secondGradient:true,layer2Colors:['#a94cff','#ffffff','#4cffb4'],settings:{layer2Speed:180,layer2Spacing:.009,layer2Blend:.5,layer2BlendMode:'Wave Mask',layer2WaveSpeed:2.2}},
 {name:'TE Blue Fire Overlay',mode:'Gradient',colors:['#003e80','#00fbff'],speed:315,spacing:.005,secondGradient:true,shimmer:true,layer2Colors:['#ff7a00','#fff0aa','#ff2b00'],settings:{layer2Speed:220,layer2Spacing:.006,layer2Blend:.38,layer2BlendMode:'Screen',glintColor:'#00fbff'}}
+,{name:'TE Goal',mode:'Gradient',colors:['#ff2b2b','#ffae00','#ffffff','#00d9ff','#345bff'],speed:315,spacing:.005,secondGradient:true,diagonal:true,chromatic:true,neon:true,layer2Colors:['#00fbff','#ffffff','#ff2b76','#ffae00'],settings:{diagonalStrength:5.5,diagonalOffset:.15,layer2Speed:260,layer2Spacing:.007,layer2Blend:.55,layer2BlendMode:'Wave Mask',layer2WaveSpeed:2.4,chromaStrength:.18,chromaSpeed:2.2,neonBoost:1.22}}
+,{name:'TE Swirl',mode:'Rainbow',colors:['#ff4040','#ffffff','#44d8ff','#ffffff'],speed:285,spacing:.006,secondGradient:true,diagonal:true,shimmer:true,layer2Colors:['#ff4040','#ffffff','#44d8ff','#ffffff'],settings:{diagonalStrength:8.0,diagonalOffset:.35,layer2Speed:-180,layer2Spacing:.010,layer2Blend:.42,layer2BlendMode:'Screen',layer2UseDiagonal:true,glintColor:'#ffffff',glintStrength:.55,glintWidth:.10,glintSpeed:.7,glintSpacing:.045}}
+,{name:'TE Paint',mode:'Gradient',colors:['#ff2b5f','#ff8a00','#fff15a','#00fbff','#345bff','#b05cff'],speed:260,spacing:.006,secondGradient:true,chromatic:true,hatch:true,sparkle:true,layer2Colors:['#00fbff','#ff2bff','#ffffff'],settings:{layer2Speed:210,layer2Spacing:.009,layer2Blend:.35,layer2BlendMode:'Add',hatchColor:'#ffffff',hatchStrength:.25,hatchDensity:8,hatchSpeed:1.3,hatchWidth:.18,chromaStrength:.28,chromaSpeed:3.1,sparkleAmount:.28,sparkleSpeed:7}}
+,{name:'TE World Cup',mode:'Gradient',colors:['#00aaff','#ffffff','#ff4040','#ffae00','#00fbff'],speed:300,spacing:.005,secondGradient:true,diagonal:true,neon:true,layer2Colors:['#345bff','#b05cff','#ff2b76','#ffae00'],settings:{diagonalStrength:4.0,diagonalOffset:.0,layer2Speed:235,layer2Spacing:.008,layer2Blend:.48,layer2BlendMode:'Wave Mask',layer2WaveSpeed:1.9,neonBoost:1.18}}
+
 ];function renderShortcuts(){let box=$('shortcuts');box.innerHTML='';presets.forEach(p=>{let b=document.createElement('button');b.textContent=p.name;b.onclick=()=>setPreset(p);box.appendChild(b)})}
 function showSettings(){['diagonal','secondGradient','shimmer','pulse','blink','hatch','chromatic','sparkle','neon'].forEach(n=>{let panel=$(n+'Settings'), check=$('addon'+n[0].toUpperCase()+n.slice(1)); if(panel&&check)panel.classList.toggle('show',check.checked)});}
 function val(id, fallback){let el=$(id);let n=el?parseFloat(el.value):NaN;return Number.isFinite(n)?n:fallback}
@@ -325,6 +330,28 @@ init();
     return { enabled:i<3, label:snap.effectName, mainHex:snap.mainHex, shadowHex:snap.shadowHex, sample:'['+snap.effectName+']', config:snap };
   }
   function defaultMulti(){ return { enabled:false, selected:0, desyncMode:'By line Y', desyncAmount:1.0, previewStyle:'Smooth Chat', slots:Array.from({length:MAX_SLOTS},(_,i)=>defaultSlot(i)) }; }
+
+  function clone(o){ return JSON.parse(JSON.stringify(o)); }
+  function presetByName(name){ return (typeof presets!=='undefined' ? presets.find(p=>p.name===name) : null); }
+  function configFromPreset(p, label, sample, mainHex, shadowHex){
+    const cfg = clone(baseCollectForSlots ? baseCollectForSlots() : {});
+    cfg.effectName = label || (p&&p.name) || 'Slot';
+    cfg.previewText = sample || ('['+cfg.effectName+']');
+    cfg.baseMode = (p&&p.mode) || 'Gradient';
+    cfg.speed = Number((p&&p.speed)!=null?p.speed:300);
+    cfg.spacing = Number((p&&p.spacing)!=null?p.spacing:0.005);
+    cfg.colors = clone((p&&p.colors)||['#ffffff','#00fbff']);
+    cfg.layer2Colors = clone((p&&p.layer2Colors)||['#ffffff','#00fbff']);
+    cfg.mainHex = mainHex || '#e6ecfe';
+    cfg.shadowHex = shadowHex || '#393c3f';
+    cfg.addons = {diagonal:false,secondGradient:false,shimmer:false,pulse:false,blink:false,hatch:false,chromatic:false,sparkle:false,neon:false};
+    ['diagonal','secondGradient','shimmer','pulse','blink','hatch','chromatic','sparkle','neon'].forEach(k=>{ cfg.addons[k]=!!(p && (p[k] || p[k[0].toUpperCase()+k.slice(1)])); });
+    if(p&&p.diag) cfg.addons.diagonal=true;
+    if(p&&p.layer2) cfg.addons.secondGradient=true;
+    cfg.settings = Object.assign({}, cfg.settings||{}, clone((p&&p.settings)||{}));
+    return cfg;
+  }
+
   function ensureUI(){
     if(document.getElementById('multiTriggerCard')) return;
     const leftCard = document.querySelector('.grid > .card');
@@ -357,6 +384,7 @@ init();
         <button class="mini" id="mtSaveCurrent" type="button">Save current effect/settings to selected slot</button>
         <button class="mini" id="mtLoadSelected" type="button">Load selected slot into editor</button>
         <button class="mini" id="mtAutoColors" type="button">Auto trigger colors</button>
+        <button class="mini" id="mtLoadCosmeticDemo" type="button">Load Goal / Swirl / Paint demo</button>
       </div>
       <div class="smallnote" id="mtHint"></div>`;
     leftCard.appendChild(div);
@@ -367,6 +395,7 @@ init();
     document.getElementById('mtSaveCurrent').onclick=()=>{let m=getMulti();let i=m.selected||0;let c=collect();m.slots[i]={enabled:true,label:c.effectName||('Slot '+(i+1)),mainHex:c.mainHex,shadowHex:c.shadowHex,sample:c.previewText||('Slot '+(i+1)),config:JSON.parse(JSON.stringify(c))};saveMulti(m);renderMulti();update();};
     document.getElementById('mtLoadSelected').onclick=()=>{let m=getMulti();let s=m.slots[m.selected||0]; if(s&&s.config) applyData(s.config);};
     document.getElementById('mtAutoColors').onclick=()=>{let m=getMulti();m.slots.forEach((s,i)=>{let g=236+i;s.mainHex=rgbToHex(230,g,254);s.shadowHex=rgbToHex(57,Math.max(40,Math.floor(g/4)),63);if(s.config){s.config.mainHex=s.mainHex;s.config.shadowHex=s.shadowHex;}});saveMulti(m);renderMulti();update();};
+    document.getElementById('mtLoadCosmeticDemo').onclick=()=>{let m=getMulti();m.enabled=true;m.desyncMode='By line Y';m.desyncAmount=1.0;m.previewStyle='Smooth Chat';const defs=[['TE Swirl','Swirl','[Swirl]','#e6ecfe','#393b3f'],['TE Paint','Paint','[Paint]','#e6edfe','#393b3f'],['TE Goal','Goal','[Goal]','#e6eefe','#393b3f'],['TE World Cup','World Cup','World Cup Set 1/1','#e6effe','#393b3f']];defs.forEach((d,i)=>{const p=presetByName(d[0]);const cfg=configFromPreset(p,d[1],d[2],d[3],d[4]);m.slots[i]={enabled:true,label:d[1],mainHex:d[3],shadowHex:d[4],sample:d[2],config:cfg};});for(let i=defs.length;i<m.slots.length;i++){m.slots[i].enabled=false;}saveMulti(m);renderMulti();update();};
     renderMulti();
   }
   function renderMulti(){
